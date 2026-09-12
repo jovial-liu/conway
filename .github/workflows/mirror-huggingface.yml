@@ -1,0 +1,26 @@
+name: Mirror repository to Hugging Face
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push main branch to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          test -n "$HF_TOKEN" || (echo "Missing repository secret HF_TOKEN" && exit 1)
+          git config user.name "Conway mirror"
+          git config user.email "conway-mirror@users.noreply.github.com"
+          git remote add huggingface "https://oauth2:${HF_TOKEN}@huggingface.co/jnjnkj/conway"
+          git push huggingface HEAD:main --force
