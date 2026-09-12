@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import deque
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 import json
@@ -15,6 +16,10 @@ class RuntimeState:
     status: str = "idle"
     last_action: str | None = None
     last_result: str | None = None
+    profile: str | None = None
+    model: str | None = None
+    started_at: str | None = None
+    updated_at: str | None = None
 
 
 class FileMemory:
@@ -39,27 +44,67 @@ class FileMemory:
     def constitution(self) -> str:
         return self.constitution_path.read_text(encoding="utf-8")
 
-    def recall(self, max_chars: int = 12000) -> str:
-        text = self.memory_path.read_text(encoding="utf-8")
+    def recent_events(self, limit: int = 12, max_chars: int = 8000) -> str:
+        lines: deque[str] = deque(maxlen=max(1, limit))
+        for path in sorted(self.journal_dir.glob("*.jsonl"), reverse=True)[:3]:
+            try:
+                file_lines = path.read_text(encoding="utf-8").splitlines()
+            except OSError:
+                continue
+            for line in reversed(file_lines):
+                lines.appendleft(line)
+                if len(lines) >= limit:
+                    break
+            if len(lines) >= limit:
+                break
+        text = "\n".join(lines)
+        return text[-max_chars:]
+
+    def recall(self, max_chars: int = 16000) -> str:
+        durable = self.memory_path.read_text(encoding="utf-8")
+        recent = self.recent_events()
+        text = f"{durable}\n\n# Recent trajectory\n{recent}" if recent else durable
         if len(text) <= max_chars:
             return text
-        return "# Conway Memory (recent excerpt)\n\n" + text[-max_chars:]
+        return "# Conway Context (recent excerpt)\n\n" + text[-max_chars:]
 
     def append_memory(self, note: str | None) -> None:
         if not note or not note.strip():
             return
+        clean = " ".join(note.strip().split())
+        tail = self.memory_path.read_text(encoding="utf-8")[-8000:]
+        if clean in tail:
+            return
         timestamp = datetime.now(timezone.utc).isoformat()
         with self.memory_path.open("a", encoding="utf-8") as f:
-            f.write(f"\n- [{timestamp}] {note.strip()}\n")
+            f.write(f"\n- [{timestamp}] {clean}\n")
+
+    def compact_if_needed(self, max_bytes: int = 256_000, keep_lines: int = 500) -> None:
+        try:
+            if self.memory_path.stat().st_size <= max_bytes:
+                return
+            lines = self.memory_path.read_text(encoding="utf-8").splitlines()
+            kept = lines[-keep_lines:]
+            self.memory_path.write_text(
+                "# Conway Memory (compacted)\n\n" + "\n".join(kept) + "\n",
+                encoding="utf-8",
+            )
+        except OSError:
+            return
 
     def load_state(self) -> RuntimeState:
         try:
             data = json.loads(self.state_path.read_text(encoding="utf-8"))
-            return RuntimeState(**data)
+            if not isinstance(data, dict):
+                return RuntimeState()
+            allowed = RuntimeState.__dataclass_fields__.keys()
+            filtered = {key: value for key, value in data.items() if key in allowed}
+            return RuntimeState(**filtered)
         except (OSError, json.JSONDecodeError, TypeError):
             return RuntimeState()
 
     def save_state(self, state: RuntimeState) -> None:
+        state.updated_at = datetime.now(timezone.utc).isoformat()
         self.state_path.write_text(json.dumps(asdict(state), ensure_ascii=False, indent=2), encoding="utf-8")
 
     def journal(self, event: dict) -> None:
