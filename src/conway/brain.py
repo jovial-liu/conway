@@ -30,7 +30,7 @@ class OpenAICompatibleVLM(Brain):
         self,
         base_url: str = "http://127.0.0.1:8042/v1",
         model: str = "local-model",
-        timeout: float = 120.0,
+        timeout: float = 180.0,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.model = model
@@ -40,6 +40,18 @@ class OpenAICompatibleVLM(Brain):
     def _image_data_url(path: Path) -> str:
         encoded = base64.b64encode(path.read_bytes()).decode("ascii")
         return f"data:image/png;base64,{encoded}"
+
+    @staticmethod
+    def _content_text(content: Any) -> str:
+        if isinstance(content, str):
+            return content
+        if isinstance(content, list):
+            chunks: list[str] = []
+            for item in content:
+                if isinstance(item, dict) and isinstance(item.get("text"), str):
+                    chunks.append(item["text"])
+            return "\n".join(chunks)
+        return str(content)
 
     @staticmethod
     def _extract_json(text: str) -> dict[str, Any]:
@@ -52,35 +64,45 @@ class OpenAICompatibleVLM(Brain):
                 lines = lines[:-1]
             text = "\n".join(lines).strip()
         try:
-            return json.loads(text)
+            parsed = json.loads(text)
+            if not isinstance(parsed, dict):
+                raise ValueError("model JSON response must be an object")
+            return parsed
         except json.JSONDecodeError:
             start = text.find("{")
             end = text.rfind("}")
             if start >= 0 and end > start:
-                return json.loads(text[start : end + 1])
+                parsed = json.loads(text[start : end + 1])
+                if not isinstance(parsed, dict):
+                    raise ValueError("model JSON response must be an object")
+                return parsed
             raise
 
     def decide(self, constitution: str, memory: str, observation: Observation) -> Decision:
-        instruction = f"""You are the decision core of Conway.
+        instruction = f"""You are Conway's decision core. There is no chat operator waiting to give you a next instruction.
 
-CONSTITUTION:\n{constitution}\n
-CURRENT MEMORY:\n{memory}\n
-CURRENT SCREEN SIZE: {observation.width}x{observation.height}
+CURRENT CONTEXT:\n{memory}\n
+OBSERVATION METADATA:
+- screen: {observation.width}x{observation.height}
+- cursor: ({observation.cursor_x}, {observation.cursor_y})
 
-Look at the screenshot and choose exactly one next GUI action. Do not wait for a human prompt.
-Return JSON only, using this schema:
+Inspect the screenshot and choose exactly one next GUI action that best advances the objectives in the constitution. Verify prior results from the context before retrying an action.
+
+Return JSON only with this exact shape:
 {{
   "action": {{"type": "wait|click|double_click|move|type|press|hotkey|scroll|drag", "args": {{}}}},
   "rationale": "one concise sentence",
   "memory_note": "optional concise durable fact, or null"
 }}
 
-For click/double_click/move/drag use absolute screenshot coordinates x/y. For hotkey use args.keys as a list. For press use args.key. For typing use args.text. For scroll use args.amount. If no useful action is justified, use wait. Do not output hidden chain-of-thought."""
+Coordinates are absolute screenshot pixels. click/double_click/move/drag use args.x and args.y. hotkey uses args.keys. press uses args.key. type uses args.text. scroll uses args.amount. wait may use args.seconds. If the state is ambiguous or no useful action is justified, choose wait. Do not output private chain-of-thought."""
 
         payload = {
             "model": self.model,
-            "temperature": 0.2,
+            "temperature": 0.1,
+            "max_tokens": 512,
             "messages": [
+                {"role": "system", "content": constitution},
                 {
                     "role": "user",
                     "content": [
@@ -90,27 +112,30 @@ For click/double_click/move/drag use absolute screenshot coordinates x/y. For ho
                             "image_url": {"url": self._image_data_url(observation.screenshot_path)},
                         },
                     ],
-                }
+                },
             ],
         }
         response = self.client.post(f"{self.base_url}/chat/completions", json=payload)
         response.raise_for_status()
         data = response.json()
-        raw = data["choices"][0]["message"]["content"]
+        raw = self._content_text(data["choices"][0]["message"]["content"])
         parsed = self._extract_json(raw)
         action = parsed.get("action") or {"type": "wait", "args": {"seconds": 1}}
         if not isinstance(action, dict):
-            raise ValueError("Model returned a non-object action")
+            raise ValueError("model returned a non-object action")
+        memory_note = parsed.get("memory_note")
+        if memory_note is not None:
+            memory_note = str(memory_note).strip() or None
         return Decision(
             action=action,
-            rationale=str(parsed.get("rationale", "")),
-            memory_note=parsed.get("memory_note"),
+            rationale=str(parsed.get("rationale", "")).strip(),
+            memory_note=memory_note,
         )
 
 
 class MockBrain(Brain):
     def decide(self, constitution: str, memory: str, observation: Observation) -> Decision:
         return Decision(
-            action={"type": "wait", "args": {"seconds": 1}},
-            rationale="Mock brain is active; no model action was executed.",
+            action={"type": "wait", "args": {"seconds": 0.1}},
+            rationale="Mock brain is active; no model action was requested.",
         )

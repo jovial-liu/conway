@@ -1,23 +1,20 @@
 # Conway
 
-**Conway is a local-first, headless autonomous computer-use agent harness.**
+Conway is a **local-first, headless autonomous computer-use agent harness**. It has no chat box in its control loop: after you start it, Conway repeatedly observes the desktop, asks a pluggable vision-language model for one next action, executes that action through a cross-platform GUI adapter, records the result, and observes again.
 
-Conway continuously observes the current computer state, reasons with a pluggable vision-language model, chooses the next action, executes it through a cross-platform computer adapter, records a lightweight file-based journal, and repeats — without requiring a chat interface or a human prompt for every step.
+> Status: early v0.2 MVP. The public APIs and model manifest may change.
 
-> Status: early v0.1 scaffold. APIs and model manifests will change.
+## What v0.2 contains
 
-## What v0.1 contains
-
-- **Headless loop** — observe → decide → act → record → repeat.
-- **VLM-first perception** — the current screenshot is sent to a multimodal model each cycle.
-- **Computer use** — mouse, keyboard, hotkeys, scrolling, dragging, and screenshots.
-- **Cross-platform base layer** — PyAutoGUI-backed input/screenshot adapter for macOS, Windows, and Linux desktop sessions.
-- **Hardware detection** — RAM, Apple unified-memory/Metal, NVIDIA VRAM/CUDA, and CPU fallback.
-- **Automatic model profile selection** — local 4B/8B multimodal GGUF profiles selected from detected effective memory.
-- **OpenAI-compatible model adapter** — works with local llama.cpp-style and compatible multimodal servers.
-- **File-based context** — `constitution.md`, `memory.md`, `state.json`, and JSONL journals; no SQL/vector DB.
-- **No per-action Conway approval dialogs** once GUI execution is explicitly enabled at startup.
-- **OS-native security boundary** — Conway does not bypass OS permissions, UAC, TCC, sudo, sandboxing, or other platform security controls.
+- Screenshot-first VLM observations.
+- Mouse, keyboard, scrolling, dragging, and Unicode text paste support.
+- A continuous observe → decide → act → verify loop.
+- File-only state, memory, and JSONL trajectory logs; no SQL or vector database.
+- Model-output validation and bounded GUI actions before execution.
+- Automatic local model profile selection based on available memory.
+- Local llama.cpp server integration plus any external OpenAI-compatible multimodal endpoint.
+- PyAutoGUI desktop backend for macOS, Windows, and Linux.
+- A mock brain for installation/loop testing without downloading a model.
 
 ## Architecture
 
@@ -25,85 +22,93 @@ Conway continuously observes the current computer state, reasons with a pluggabl
 constitution.md
       │
       ▼
-Autonomous Loop ─────── File Context / Journal
+Autonomous Loop ───── File Context / Recent Journal
       │
-  ┌───┴──────────┐
-  ▼              ▼
-Brain         Computer
-(VLM)        (OS adapter)
-  │              │
-  ▼              ▼
-Model       Screen / Mouse /
-Backend     Keyboard / GUI
+  ┌───┴─────────────┐
+  ▼                 ▼
+VLM Brain        Computer Adapter
+  │                 │
+  ▼                 ▼
+llama.cpp /      Screenshot / Mouse /
+external API     Keyboard / Scroll / Drag
 ```
+
+Conway is the harness. The VLM is replaceable.
 
 ## Install
 
 Requires Python 3.11+.
 
 ```bash
+git clone https://github.com/jovial-liu/conway.git
+cd conway
 python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+```
+
+macOS/Linux:
+
+```bash
+source .venv/bin/activate
 pip install -e .
 ```
 
-For automatic local model startup, install a current `llama.cpp` build so either `llama-server` or `llama` is available on `PATH`.
+Windows PowerShell:
 
-## Run
+```powershell
+.venv\Scripts\Activate.ps1
+pip install -e .
+```
 
-Inspect the machine and see which profile Conway would select:
+## Hardware detection
 
 ```bash
 conway doctor
 ```
 
-Observation-only mode (the model can inspect and plan, but Conway does not execute GUI actions):
+Conway currently selects between bundled local VLM profiles using detected RAM/VRAM/unified memory. The local backend expects a current `llama-server`/llama.cpp installation; model files are then pulled by llama.cpp from Hugging Face on first launch.
+
+Bundled profiles currently reference:
+
+- `mradermacher/Qwen3-VL-4B-Instruct-abliterated-GGUF` for lower-memory machines.
+- `mradermacher/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF` for stronger machines.
+- `xlangai/OpenCUA-7B` as an optional computer-use-specialized model served through a compatible external endpoint.
+
+These model repositories are third-party/open model artifacts and are not part of Conway itself.
+
+## Run
+
+Test the loop without a real model:
+
+```bash
+conway start --mock --max-steps 3
+```
+
+Start with automatic local model selection in observation-only mode:
 
 ```bash
 conway start
 ```
 
-Enable GUI execution for the running Conway process:
+Allow Conway to execute its selected GUI actions after the one-time process start:
 
 ```bash
 conway start --execute
 ```
 
-Run a bounded session:
+Use an already-running OpenAI-compatible multimodal server:
 
 ```bash
-conway start --execute --max-steps 100
+conway start \
+  --endpoint http://127.0.0.1:8000/v1 \
+  --model your-model-name \
+  --execute
 ```
 
-Exercise the loop without downloading/loading a VLM:
-
-```bash
-conway start --mock --max-steps 5
-```
-
-Connect to an already-running OpenAI-compatible multimodal server:
-
-```bash
-conway start --endpoint http://127.0.0.1:8000/v1 --model your-model --execute
-```
-
-Your OS may require normal user-granted permissions such as Accessibility and Screen Recording on macOS. Conway does not attempt to bypass those controls.
-
-## Model profiles
-
-The current manifest lives at `src/conway/models.yaml`.
-
-| Profile | Model | Runtime |
-| --- | --- | --- |
-| `small` | `mradermacher/Qwen3-VL-4B-Instruct-abliterated-GGUF` (`Q4_K_M`) | auto-start via llama.cpp |
-| `standard` | `mradermacher/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF` (`Q4_K_M`) | auto-start via llama.cpp |
-| `computer-use` | `xlangai/OpenCUA-7B` | external compatible server |
-
-The first two are community-modified low-refusal variants, not official Qwen safety-tuned releases. The model layer is deliberately replaceable; Conway is the harness, not a particular checkpoint.
+`Ctrl+C` stops the loop. PyAutoGUI's corner-of-screen failsafe remains enabled.
 
 ## Local state
 
-Conway stores runtime state under the platform-standard user data directory:
+The default per-user state directory contains:
 
 ```text
 conway/
@@ -111,23 +116,39 @@ conway/
 ├── memory.md
 ├── state.json
 ├── llama-runtime.log
-├── screenshots/
-└── journal/
-    └── YYYY-MM-DD.jsonl
+├── journal/
+│   └── YYYY-MM-DD.jsonl
+└── screenshots/
 ```
 
-No SQL database or vector database is required for v0.1.
+The journal is intentionally plain JSONL so later continual-learning work can transform successful trajectories into datasets without migrating a database first.
 
-## Current limitations
+## OS notes
 
-- The v0.1 computer adapter uses screenshot + coordinate interaction; native accessibility-tree adapters are the next major computer-use improvement.
-- Wayland environments may restrict screenshot/input automation depending on compositor policy.
-- Model selection is hardware-aware but intentionally conservative; users can override it with `--profile` or provide `--endpoint`.
-- This repository is an early scaffold and has not yet been packaged as a signed desktop application.
+- **macOS:** grant the normal Accessibility and Screen Recording permissions when the OS requests them.
+- **Windows:** Conway runs with the permissions of the user who started it; it does not require administrator privileges for ordinary desktop control.
+- **Linux:** X11/XWayland is the easiest current path. Wayland behavior depends on compositor/session permissions and will get a native adapter later.
 
 ## Security boundary
 
-Conway operates with permissions already granted to the current user account. It deliberately does **not** implement privilege escalation, permission bypass, credential harvesting, stealth/persistence mechanisms, or security-control evasion.
+Conway does not add a confirmation dialog before every GUI action once `--execute` is explicitly used. It also does not implement privilege escalation, UAC/TCC/sudo bypass, credential harvesting, stealth persistence, or OS security-control evasion. The operating system's existing permission model remains the outer boundary.
+
+## Development
+
+```bash
+pip install -e ".[dev]"
+pytest
+```
+
+GitHub is the primary source repository. `jnjnkj/conway` on Hugging Face is maintained as a mirror/distribution page.
+
+## Next engineering targets
+
+1. Native accessibility/UI-tree adapters for macOS, Windows, and Linux.
+2. Better GUI grounding profiles and model-specific action adapters.
+3. Easier llama.cpp runtime bootstrap for users who do not know their hardware stack.
+4. Context compaction driven by the VLM rather than simple bounded file history.
+5. Optional continual-learning pipelines built from the JSONL trajectories.
 
 ## License
 

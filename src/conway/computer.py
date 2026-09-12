@@ -2,8 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+import platform
 import time
 from typing import Any
+
+from .actions import validate_action
 
 
 @dataclass(slots=True)
@@ -11,32 +14,35 @@ class Observation:
     screenshot_path: Path
     width: int
     height: int
+    cursor_x: int = 0
+    cursor_y: int = 0
 
     def summary(self) -> dict[str, Any]:
         return {
             "screenshot_path": str(self.screenshot_path),
             "screen_width": self.width,
             "screen_height": self.height,
+            "cursor": {"x": self.cursor_x, "y": self.cursor_y},
         }
 
 
 class Computer:
     """Cross-platform GUI adapter backed by PyAutoGUI.
 
-    It operates only with permissions already granted by the OS. Platform-native
-    accessibility-tree adapters can be layered on top later without changing the
-    autonomous loop API.
+    Conway uses only permissions already granted to the current OS user. The
+    adapter intentionally keeps the loop API independent of the eventual native
+    accessibility-tree implementations for macOS, Windows, and Linux.
     """
 
     def __init__(self, screenshot_dir: Path) -> None:
         self.screenshot_dir = screenshot_dir
         self.screenshot_dir.mkdir(parents=True, exist_ok=True)
         try:
-            import pyautogui  # imported lazily so `conway doctor` works headlessly
+            import pyautogui  # lazy import: `conway doctor` remains headless
         except Exception as exc:  # pragma: no cover - depends on desktop session
             raise RuntimeError(
-                "GUI backend could not initialize. Make sure Conway is running in a desktop session "
-                "and that normal OS screen/input permissions are granted."
+                "GUI backend could not initialize. Run Conway in a desktop session and grant normal "
+                "OS screen/input permissions."
             ) from exc
         self.gui = pyautogui
         self.gui.PAUSE = 0.08
@@ -44,66 +50,84 @@ class Computer:
 
     def observe(self, cycle: int) -> Observation:
         width, height = self.gui.size()
+        cursor = self.gui.position()
         path = self.screenshot_dir / f"screen-{cycle:08d}.png"
         image = self.gui.screenshot()
         image.save(path)
-        return Observation(path, int(width), int(height))
+        return Observation(path, int(width), int(height), int(cursor.x), int(cursor.y))
 
-    def _point(self, x: Any, y: Any) -> tuple[int, int]:
-        width, height = self.gui.size()
-        xi = max(0, min(int(x), int(width) - 1))
-        yi = max(0, min(int(y), int(height) - 1))
-        return xi, yi
+    def prune_screenshots(self, keep: int = 30) -> None:
+        files = sorted(self.screenshot_dir.glob("screen-*.png"))
+        for path in files[:-max(1, keep)]:
+            try:
+                path.unlink()
+            except OSError:
+                pass
 
-    def execute(self, action: dict[str, Any]) -> str:
-        kind = str(action.get("type", "wait")).lower()
-        args = action.get("args") or {}
+    def _paste_text(self, text: str) -> bool:
+        try:
+            import pyperclip
+
+            pyperclip.copy(text)
+            modifier = "command" if platform.system() == "Darwin" else "ctrl"
+            self.gui.hotkey(modifier, "v")
+            return True
+        except Exception:
+            return False
+
+    def execute(self, action: dict[str, Any], width: int | None = None, height: int | None = None) -> str:
+        if width is None or height is None:
+            current_width, current_height = self.gui.size()
+            width, height = int(current_width), int(current_height)
+        normalized = validate_action(action, width, height)
+        kind = normalized["type"]
+        args = normalized["args"]
 
         if kind == "wait":
-            seconds = max(0.0, min(float(args.get("seconds", 1.0)), 30.0))
+            seconds = float(args["seconds"])
             time.sleep(seconds)
             return f"waited {seconds:.2f}s"
 
         if kind == "click":
-            x, y = self._point(args["x"], args["y"])
-            self.gui.click(x=x, y=y, button=str(args.get("button", "left")))
-            return f"clicked ({x}, {y})"
+            self.gui.click(x=args["x"], y=args["y"], button=args["button"])
+            return f"clicked ({args['x']}, {args['y']})"
 
         if kind == "double_click":
-            x, y = self._point(args["x"], args["y"])
-            self.gui.doubleClick(x=x, y=y, interval=0.12, button=str(args.get("button", "left")))
-            return f"double-clicked ({x}, {y})"
+            self.gui.doubleClick(x=args["x"], y=args["y"], interval=0.12, button=args["button"])
+            return f"double-clicked ({args['x']}, {args['y']})"
 
         if kind == "move":
-            x, y = self._point(args["x"], args["y"])
-            self.gui.moveTo(x, y, duration=min(float(args.get("duration", 0.2)), 2.0))
-            return f"moved pointer to ({x}, {y})"
+            self.gui.moveTo(args["x"], args["y"], duration=args["duration"])
+            return f"moved pointer to ({args['x']}, {args['y']})"
 
         if kind == "type":
-            text = str(args.get("text", ""))
-            self.gui.write(text, interval=max(0.0, min(float(args.get("interval", 0.01)), 0.5)))
+            text = args["text"]
+            # PyAutoGUI's write() is ASCII-oriented. Clipboard paste gives much
+            # better Unicode behavior across macOS/Windows and many Linux desktops.
+            if any(ord(char) > 127 for char in text) and self._paste_text(text):
+                return f"pasted {len(text)} characters"
+            self.gui.write(text, interval=args["interval"])
             return f"typed {len(text)} characters"
 
         if kind == "press":
-            key = str(args["key"])
-            self.gui.press(key)
-            return f"pressed {key}"
+            self.gui.press(args["key"])
+            return f"pressed {args['key']}"
 
         if kind == "hotkey":
-            keys = [str(k) for k in args.get("keys", [])]
-            if not keys:
-                raise ValueError("hotkey requires args.keys")
-            self.gui.hotkey(*keys)
-            return f"pressed hotkey {'+'.join(keys)}"
+            self.gui.hotkey(*args["keys"])
+            return f"pressed hotkey {'+'.join(args['keys'])}"
 
         if kind == "scroll":
-            amount = int(args.get("amount", 0))
-            self.gui.scroll(amount)
-            return f"scrolled {amount}"
+            self.gui.scroll(args["amount"])
+            return f"scrolled {args['amount']}"
 
         if kind == "drag":
-            x, y = self._point(args["x"], args["y"])
-            self.gui.dragTo(x, y, duration=min(float(args.get("duration", 0.5)), 3.0), button=str(args.get("button", "left")))
-            return f"dragged pointer to ({x}, {y})"
+            self.gui.dragTo(
+                args["x"],
+                args["y"],
+                duration=args["duration"],
+                button=args["button"],
+            )
+            return f"dragged pointer to ({args['x']}, {args['y']})"
 
         raise ValueError(f"Unsupported action type: {kind}")

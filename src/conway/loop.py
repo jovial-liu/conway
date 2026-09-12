@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
 import time
 
+from .actions import validate_action
 from .brain import Brain
 from .computer import Computer
 from .memory import FileMemory
@@ -28,9 +30,12 @@ class ConwayLoop:
     def run(self) -> None:
         state = self.memory.load_state()
         state.status = "running"
+        if not state.started_at:
+            state.started_at = datetime.now(timezone.utc).isoformat()
         self.memory.save_state(state)
 
         completed = 0
+        consecutive_errors = 0
         try:
             while self.max_steps <= 0 or completed < self.max_steps:
                 state.cycle += 1
@@ -40,15 +45,17 @@ class ConwayLoop:
 
                 try:
                     decision = self.brain.decide(constitution, recalled, observation)
-                    action = decision.action
+                    action = validate_action(decision.action, observation.width, observation.height)
                     if self.dry_run:
-                        result = f"dry-run: would execute {action}"
+                        result = f"observation-only: would execute {action}"
                     else:
-                        result = self.computer.execute(action)
+                        result = self.computer.execute(action, observation.width, observation.height)
 
+                    consecutive_errors = 0
                     state.last_action = str(action)
                     state.last_result = result
                     self.memory.append_memory(decision.memory_note)
+                    self.memory.compact_if_needed()
                     self.memory.journal(
                         {
                             "cycle": state.cycle,
@@ -60,6 +67,7 @@ class ConwayLoop:
                         }
                     )
                 except Exception as exc:
+                    consecutive_errors += 1
                     state.last_result = f"error: {type(exc).__name__}: {exc}"
                     self.memory.journal(
                         {
@@ -68,8 +76,11 @@ class ConwayLoop:
                             "error": state.last_result,
                         }
                     )
-                    time.sleep(max(1.0, self.interval))
+                    # Back off after repeated model/server/desktop failures instead of
+                    # hot-looping and burning compute.
+                    time.sleep(min(15.0, max(1.0, self.interval) * consecutive_errors))
 
+                self.computer.prune_screenshots()
                 self.memory.save_state(state)
                 completed += 1
                 if self.interval:
