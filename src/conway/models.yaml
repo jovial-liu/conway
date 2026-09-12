@@ -1,0 +1,26 @@
+profiles:
+  small:
+    description: "Low-memory multimodal default"
+    backend: llama_cpp
+    repo: mradermacher/Qwen3-VL-4B-Instruct-abliterated-GGUF
+    quant: Q4_K_M
+    min_effective_memory_gb: 8
+
+  standard:
+    description: "Higher-capacity multimodal default"
+    backend: llama_cpp
+    repo: mradermacher/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF
+    quant: Q4_K_M
+    min_effective_memory_gb: 16
+
+  computer-use:
+    description: "Computer-use-specialized VLM; serve separately with a compatible backend"
+    backend: external_openai
+    repo: xlangai/OpenCUA-7B
+    quant: null
+    min_effective_memory_gb: 16
+
+selection:
+  default_order:
+    - standard
+    - small
