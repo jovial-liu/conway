@@ -27,6 +27,37 @@ class ConwayLoop:
         self.interval = max(0.0, interval)
         self.max_steps = max_steps
 
+    def _compact_memory(self, constitution: str, state) -> None:
+        if not self.memory.needs_compaction():
+            return
+        try:
+            summary = self.brain.compact_memory(constitution, self.memory.compaction_source())
+            if summary:
+                before = self.memory.memory_bytes()
+                self.memory.replace_memory(summary)
+                after = self.memory.memory_bytes()
+                state.compactions += 1
+                self.memory.journal(
+                    {
+                        "cycle": state.cycle,
+                        "event": "memory_compaction",
+                        "before_bytes": before,
+                        "after_bytes": after,
+                    }
+                )
+                return
+        except Exception as exc:
+            self.memory.journal(
+                {
+                    "cycle": state.cycle,
+                    "event": "memory_compaction_error",
+                    "error": f"{type(exc).__name__}: {exc}",
+                }
+            )
+
+        # Keep an absolute upper bound even if the model cannot summarize memory.
+        self.memory.compact_if_needed(max_bytes=256_000, keep_lines=500)
+
     def run(self) -> None:
         state = self.memory.load_state()
         state.status = "running"
@@ -49,13 +80,13 @@ class ConwayLoop:
                     if self.dry_run:
                         result = f"observation-only: would execute {action}"
                     else:
-                        result = self.computer.execute(action, observation.width, observation.height)
+                        result = self.computer.execute(action, observation)
 
                     consecutive_errors = 0
                     state.last_action = str(action)
                     state.last_result = result
+                    state.last_rationale = decision.rationale
                     self.memory.append_memory(decision.memory_note)
-                    self.memory.compact_if_needed()
                     self.memory.journal(
                         {
                             "cycle": state.cycle,
@@ -66,8 +97,10 @@ class ConwayLoop:
                             "dry_run": self.dry_run,
                         }
                     )
+                    self._compact_memory(constitution, state)
                 except Exception as exc:
                     consecutive_errors += 1
+                    state.error_count += 1
                     state.last_result = f"error: {type(exc).__name__}: {exc}"
                     self.memory.journal(
                         {

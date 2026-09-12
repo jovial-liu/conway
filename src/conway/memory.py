@@ -16,8 +16,11 @@ class RuntimeState:
     status: str = "idle"
     last_action: str | None = None
     last_result: str | None = None
+    last_rationale: str | None = None
     profile: str | None = None
     model: str | None = None
+    error_count: int = 0
+    compactions: int = 0
     started_at: str | None = None
     updated_at: str | None = None
 
@@ -68,6 +71,12 @@ class FileMemory:
             return text
         return "# Conway Context (recent excerpt)\n\n" + text[-max_chars:]
 
+    def compaction_source(self, max_chars: int = 48000) -> str:
+        durable = self.memory_path.read_text(encoding="utf-8")
+        recent = self.recent_events(limit=30, max_chars=16000)
+        text = f"{durable}\n\n# Recent trajectory\n{recent}" if recent else durable
+        return text[-max_chars:]
+
     def append_memory(self, note: str | None) -> None:
         if not note or not note.strip():
             return
@@ -79,14 +88,32 @@ class FileMemory:
         with self.memory_path.open("a", encoding="utf-8") as f:
             f.write(f"\n- [{timestamp}] {clean}\n")
 
+    def memory_bytes(self) -> int:
+        try:
+            return self.memory_path.stat().st_size
+        except OSError:
+            return 0
+
+    def needs_compaction(self, max_bytes: int = 64_000) -> bool:
+        return self.memory_bytes() > max_bytes
+
+    def replace_memory(self, summary: str) -> None:
+        clean = summary.strip()
+        if not clean:
+            return
+        if not clean.lstrip().startswith("#"):
+            clean = "# Conway Memory\n\n" + clean
+        self.memory_path.write_text(clean.rstrip() + "\n", encoding="utf-8")
+
     def compact_if_needed(self, max_bytes: int = 256_000, keep_lines: int = 500) -> None:
+        """Last-resort bounded compaction when model-driven summarization is unavailable."""
         try:
             if self.memory_path.stat().st_size <= max_bytes:
                 return
             lines = self.memory_path.read_text(encoding="utf-8").splitlines()
             kept = lines[-keep_lines:]
             self.memory_path.write_text(
-                "# Conway Memory (compacted)\n\n" + "\n".join(kept) + "\n",
+                "# Conway Memory (fallback compacted)\n\n" + "\n".join(kept) + "\n",
                 encoding="utf-8",
             )
         except OSError:

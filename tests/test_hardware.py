@@ -1,6 +1,13 @@
 from conway.hardware import HardwareProfile, choose_model_profile
 
 
+def test_model_selection_prefers_tiny_for_low_memory():
+    hardware = HardwareProfile("Linux", "x86_64", 8.0, "cpu", None, 6.0)
+    name, profile = choose_model_profile(hardware)
+    assert name == "tiny"
+    assert "Qwen3-VL-2B" in profile["repo"]
+
+
 def test_model_selection_prefers_small_for_limited_memory():
     hardware = HardwareProfile("Linux", "x86_64", 16.0, "cpu", None, 12.0)
     name, profile = choose_model_profile(hardware)

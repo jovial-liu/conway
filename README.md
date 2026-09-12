@@ -2,19 +2,22 @@
 
 Conway is a **local-first, headless autonomous computer-use agent harness**. It has no chat box in its control loop: after you start it, Conway repeatedly observes the desktop, asks a pluggable vision-language model for one next action, executes that action through a cross-platform GUI adapter, records the result, and observes again.
 
-> Status: early v0.2 MVP. The public APIs and model manifest may change.
+> Status: early v0.3 MVP. Public APIs and model manifests may still change.
 
-## What v0.2 contains
+## What v0.3 contains
 
 - Screenshot-first VLM observations.
+- HiDPI/Retina-aware coordinate mapping between screenshot pixels and OS mouse coordinates.
+- Best-effort active application/window metadata for macOS, Windows, and Linux.
 - Mouse, keyboard, scrolling, dragging, and Unicode text paste support.
 - A continuous observe → decide → act → verify loop.
-- File-only state, memory, and JSONL trajectory logs; no SQL or vector database.
+- File-only state, rolling memory, and JSONL trajectory logs; no SQL or vector database.
+- VLM-driven rolling memory compaction with a bounded file fallback.
 - Model-output validation and bounded GUI actions before execution.
-- Automatic local model profile selection based on available memory.
+- Automatic local model profile selection, including a 2B low-memory fallback.
 - Local llama.cpp server integration plus any external OpenAI-compatible multimodal endpoint.
-- PyAutoGUI desktop backend for macOS, Windows, and Linux.
 - A mock brain for installation/loop testing without downloading a model.
+- `conway status` for inspecting a running or previous session without a chat UI.
 
 ## Architecture
 
@@ -22,15 +25,15 @@ Conway is a **local-first, headless autonomous computer-use agent harness**. It 
 constitution.md
       │
       ▼
-Autonomous Loop ───── File Context / Recent Journal
+Autonomous Loop ─── Rolling File Context / JSONL Journal
       │
-  ┌───┴─────────────┐
-  ▼                 ▼
-VLM Brain        Computer Adapter
-  │                 │
-  ▼                 ▼
-llama.cpp /      Screenshot / Mouse /
-external API     Keyboard / Scroll / Drag
+  ┌───┴────────────────┐
+  ▼                    ▼
+VLM Brain           Computer Adapter
+  │                    │
+  ▼                    ▼
+llama.cpp /         Screenshot / active window /
+external API        Mouse / Keyboard / Scroll / Drag
 ```
 
 Conway is the harness. The VLM is replaceable.
@@ -65,15 +68,18 @@ pip install -e .
 conway doctor
 ```
 
-Conway currently selects between bundled local VLM profiles using detected RAM/VRAM/unified memory. The local backend expects a current `llama-server`/llama.cpp installation; model files are then pulled by llama.cpp from Hugging Face on first launch.
+Conway selects a bundled local VLM profile from detected RAM/VRAM/unified memory. The local backend expects a current `llama-server`/llama.cpp installation; model files are pulled from Hugging Face by llama.cpp on first launch.
 
 Bundled profiles currently reference:
 
-- `mradermacher/Qwen3-VL-4B-Instruct-abliterated-GGUF` for lower-memory machines.
-- `mradermacher/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF` for stronger machines.
-- `xlangai/OpenCUA-7B` as an optional computer-use-specialized model served through a compatible external endpoint.
+| Profile | Model | Approx. minimum effective memory |
+| --- | --- | ---: |
+| `tiny` | `mradermacher/Qwen3-VL-2B-Instruct-abliterated-GGUF` | 5 GB |
+| `small` | `mradermacher/Qwen3-VL-4B-Instruct-abliterated-GGUF` | 8 GB |
+| `standard` | `mradermacher/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF` | 14 GB |
+| `computer-use` | `xlangai/OpenCUA-7B` | externally served |
 
-These model repositories are third-party/open model artifacts and are not part of Conway itself.
+The abliterated checkpoints are community-modified open model artifacts, not official Qwen safety-tuned releases. OpenCUA is a separate computer-use-specialized model. None of these weights are part of Conway itself.
 
 ## Run
 
@@ -104,9 +110,19 @@ conway start \
   --execute
 ```
 
+Inspect local state at any time:
+
+```bash
+conway status
+```
+
 `Ctrl+C` stops the loop. PyAutoGUI's corner-of-screen failsafe remains enabled.
 
-## Local state
+## HiDPI / scaled displays
+
+The VLM always returns coordinates in **screenshot pixels**. Conway stores the screenshot dimensions separately from the operating system's mouse/input coordinate space and maps between them before clicking or dragging. This avoids a common failure mode on Retina displays and Windows systems using display scaling.
+
+## Memory
 
 The default per-user state directory contains:
 
@@ -121,13 +137,15 @@ conway/
 └── screenshots/
 ```
 
-The journal is intentionally plain JSONL so later continual-learning work can transform successful trajectories into datasets without migrating a database first.
+`memory.md` is a rolling Markdown state. The VLM writes concise durable notes during normal cycles. When it becomes large, Conway asks the same model to compact it into a shorter state containing objectives, durable facts, unfinished work, and recurring failures. JSONL trajectories remain available separately for later continual-learning work.
 
 ## OS notes
 
-- **macOS:** grant the normal Accessibility and Screen Recording permissions when the OS requests them.
-- **Windows:** Conway runs with the permissions of the user who started it; it does not require administrator privileges for ordinary desktop control.
-- **Linux:** X11/XWayland is the easiest current path. Wayland behavior depends on compositor/session permissions and will get a native adapter later.
+- **macOS:** grant normal Accessibility and Screen Recording permissions when macOS requests them. Conway also makes a best-effort query to System Events for the foreground app/window.
+- **Windows:** Conway runs with the permissions of the user who started it and obtains foreground-window metadata through Win32 APIs.
+- **Linux:** X11/XWayland is currently the easiest path. If `xdotool` is installed Conway also records active-window metadata. Wayland behavior depends on compositor/session permissions.
+
+Screenshot perception remains the universal fallback when structured desktop metadata is unavailable.
 
 ## Security boundary
 
@@ -140,15 +158,15 @@ pip install -e ".[dev]"
 pytest
 ```
 
-GitHub is the primary source repository. `jnjnkj/conway` on Hugging Face is maintained as a mirror/distribution page.
+CI runs on Ubuntu, Windows, and macOS. GitHub is the primary source repository; `jnjnkj/conway` on Hugging Face is automatically mirrored from `main`.
 
 ## Next engineering targets
 
-1. Native accessibility/UI-tree adapters for macOS, Windows, and Linux.
-2. Better GUI grounding profiles and model-specific action adapters.
-3. Easier llama.cpp runtime bootstrap for users who do not know their hardware stack.
-4. Context compaction driven by the VLM rather than simple bounded file history.
-5. Optional continual-learning pipelines built from the JSONL trajectories.
+1. Native accessibility/UI-tree adapters beyond active-window metadata.
+2. Model-specific GUI action adapters, especially OpenCUA-style grounding outputs.
+3. Easier llama.cpp bootstrap for users who do not know their hardware stack.
+4. Better multi-monitor handling and platform-native screenshot backends.
+5. Optional continual-learning pipelines built from successful JSONL trajectories.
 
 ## License
 

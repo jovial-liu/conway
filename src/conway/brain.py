@@ -22,6 +22,10 @@ class Brain:
     def decide(self, constitution: str, memory: str, observation: Observation) -> Decision:
         raise NotImplementedError
 
+    def compact_memory(self, constitution: str, memory: str) -> str | None:
+        """Optionally rewrite accumulated file memory into a compact rolling summary."""
+        return None
+
 
 class OpenAICompatibleVLM(Brain):
     """Multimodal brain for local OpenAI-compatible servers such as llama.cpp/vLLM."""
@@ -78,13 +82,30 @@ class OpenAICompatibleVLM(Brain):
                 return parsed
             raise
 
+    def _chat(self, messages: list[dict[str, Any]], *, max_tokens: int, temperature: float) -> str:
+        payload = {
+            "model": self.model,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "messages": messages,
+        }
+        response = self.client.post(f"{self.base_url}/chat/completions", json=payload)
+        response.raise_for_status()
+        data = response.json()
+        return self._content_text(data["choices"][0]["message"]["content"])
+
     def decide(self, constitution: str, memory: str, observation: Observation) -> Decision:
+        active = observation.active_app or "unknown"
+        window = observation.active_window or "unknown"
         instruction = f"""You are Conway's decision core. There is no chat operator waiting to give you a next instruction.
 
 CURRENT CONTEXT:\n{memory}\n
 OBSERVATION METADATA:
-- screen: {observation.width}x{observation.height}
-- cursor: ({observation.cursor_x}, {observation.cursor_y})
+- screenshot pixels shown to you: {observation.width}x{observation.height}
+- OS input coordinate space: {observation.input_width}x{observation.input_height}
+- screenshot cursor: ({observation.cursor_x}, {observation.cursor_y})
+- active app: {active}
+- active window: {window}
 
 Inspect the screenshot and choose exactly one next GUI action that best advances the objectives in the constitution. Verify prior results from the context before retrying an action.
 
@@ -95,13 +116,10 @@ Return JSON only with this exact shape:
   "memory_note": "optional concise durable fact, or null"
 }}
 
-Coordinates are absolute screenshot pixels. click/double_click/move/drag use args.x and args.y. hotkey uses args.keys. press uses args.key. type uses args.text. scroll uses args.amount. wait may use args.seconds. If the state is ambiguous or no useful action is justified, choose wait. Do not output private chain-of-thought."""
+Coordinates MUST be absolute pixels in the screenshot you received, not OS logical coordinates. Conway will map screenshot pixels to the host input coordinate system. click/double_click/move/drag use args.x and args.y. hotkey uses args.keys. press uses args.key. type uses args.text. scroll uses args.amount. wait may use args.seconds. If the state is ambiguous or no useful action is justified, choose wait. Do not output private chain-of-thought."""
 
-        payload = {
-            "model": self.model,
-            "temperature": 0.1,
-            "max_tokens": 512,
-            "messages": [
+        raw = self._chat(
+            [
                 {"role": "system", "content": constitution},
                 {
                     "role": "user",
@@ -114,11 +132,9 @@ Coordinates are absolute screenshot pixels. click/double_click/move/drag use arg
                     ],
                 },
             ],
-        }
-        response = self.client.post(f"{self.base_url}/chat/completions", json=payload)
-        response.raise_for_status()
-        data = response.json()
-        raw = self._content_text(data["choices"][0]["message"]["content"])
+            max_tokens=512,
+            temperature=0.1,
+        )
         parsed = self._extract_json(raw)
         action = parsed.get("action") or {"type": "wait", "args": {"seconds": 1}}
         if not isinstance(action, dict):
@@ -131,6 +147,37 @@ Coordinates are absolute screenshot pixels. click/double_click/move/drag use arg
             rationale=str(parsed.get("rationale", "")).strip(),
             memory_note=memory_note,
         )
+
+    def compact_memory(self, constitution: str, memory: str) -> str | None:
+        prompt = f"""Rewrite Conway's accumulated memory into a compact rolling Markdown state.
+
+Preserve only information likely to matter in future cycles:
+- current or long-term objectives that are actually in progress;
+- durable environment facts and useful discoveries;
+- unfinished work and important dependencies;
+- recurring failure modes or strategies that should not be repeated;
+- concise state needed to continue a multi-step task.
+
+Drop transient cursor coordinates, old timestamps, duplicated facts, verbose rationales, and completed low-value steps. Do not invent facts. Keep it under roughly 1200 words.
+
+MEMORY TO COMPACT:\n{memory}
+"""
+        text = self._chat(
+            [
+                {"role": "system", "content": constitution},
+                {"role": "user", "content": prompt},
+            ],
+            max_tokens=1600,
+            temperature=0.0,
+        ).strip()
+        if text.startswith("```"):
+            lines = text.splitlines()
+            if lines and lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].strip() == "```":
+                lines = lines[:-1]
+            text = "\n".join(lines).strip()
+        return text or None
 
 
 class MockBrain(Brain):

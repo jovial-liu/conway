@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "conway-agent"
-version = "0.2.0"
+version = "0.3.0"
 description = "Local-first headless autonomous computer-use agent harness"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
 authors = [{ name = "Conway contributors" }]
-keywords = ["agent", "computer-use", "vlm", "local-ai", "automation"]
+keywords = ["agent", "computer-use", "vlm", "local-ai"]
 dependencies = [
   "httpx>=0.27,<1",
   "platformdirs>=4,<5",
