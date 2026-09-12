@@ -6,16 +6,18 @@ Conway continuously observes the current computer state, reasons with a pluggabl
 
 > Status: early v0.1 scaffold. APIs and model manifests will change.
 
-## Design goals
+## What v0.1 contains
 
-- **Headless autonomous loop** — no chat box is required.
-- **VLM-first** — screenshots are a first-class observation.
-- **Computer use** — mouse, keyboard, scrolling, screenshots, and app-level interaction.
-- **Cross-platform** — macOS, Windows, and Linux adapters behind one interface.
-- **Hardware-aware** — model/backend selection is designed to adapt to available RAM, VRAM, Apple unified memory, and CPU-only machines.
-- **Model-agnostic** — Conway is the harness; the model is replaceable.
-- **File-based context** — Markdown/JSONL instead of a database in v0.1.
-- **OS-native security boundary** — Conway does not add per-action approval dialogs, but it does not bypass OS permissions, UAC, TCC, sudo, sandboxing, or other platform security controls.
+- **Headless loop** — observe → decide → act → record → repeat.
+- **VLM-first perception** — the current screenshot is sent to a multimodal model each cycle.
+- **Computer use** — mouse, keyboard, hotkeys, scrolling, dragging, and screenshots.
+- **Cross-platform base layer** — PyAutoGUI-backed input/screenshot adapter for macOS, Windows, and Linux desktop sessions.
+- **Hardware detection** — RAM, Apple unified-memory/Metal, NVIDIA VRAM/CUDA, and CPU fallback.
+- **Automatic model profile selection** — local 4B/8B multimodal GGUF profiles selected from detected effective memory.
+- **OpenAI-compatible model adapter** — works with local llama.cpp-style and compatible multimodal servers.
+- **File-based context** — `constitution.md`, `memory.md`, `state.json`, and JSONL journals; no SQL/vector DB.
+- **No per-action Conway approval dialogs** once GUI execution is explicitly enabled at startup.
+- **OS-native security boundary** — Conway does not bypass OS permissions, UAC, TCC, sudo, sandboxing, or other platform security controls.
 
 ## Architecture
 
@@ -32,7 +34,7 @@ Brain         Computer
   │              │
   ▼              ▼
 Model       Screen / Mouse /
-Backend     Keyboard / UI
+Backend     Keyboard / GUI
 ```
 
 ## Install
@@ -45,54 +47,87 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e .
 ```
 
-Optional local inference integrations will be added behind adapters. The initial scaffold includes a mock brain so the loop can be exercised without downloading a model.
+For automatic local model startup, install a current `llama.cpp` build so either `llama-server` or `llama` is available on `PATH`.
 
 ## Run
 
+Inspect the machine and see which profile Conway would select:
+
 ```bash
 conway doctor
-conway start --dry-run
 ```
 
-`--dry-run` observes and plans without executing computer actions.
-
-To allow GUI actions:
+Observation-only mode (the model can inspect and plan, but Conway does not execute GUI actions):
 
 ```bash
 conway start
 ```
 
-Your OS may require normal user-granted permissions such as Accessibility / Screen Recording on macOS. Conway does not attempt to bypass those controls.
+Enable GUI execution for the running Conway process:
+
+```bash
+conway start --execute
+```
+
+Run a bounded session:
+
+```bash
+conway start --execute --max-steps 100
+```
+
+Exercise the loop without downloading/loading a VLM:
+
+```bash
+conway start --mock --max-steps 5
+```
+
+Connect to an already-running OpenAI-compatible multimodal server:
+
+```bash
+conway start --endpoint http://127.0.0.1:8000/v1 --model your-model --execute
+```
+
+Your OS may require normal user-granted permissions such as Accessibility and Screen Recording on macOS. Conway does not attempt to bypass those controls.
+
+## Model profiles
+
+The current manifest lives at `src/conway/models.yaml`.
+
+| Profile | Model | Runtime |
+| --- | --- | --- |
+| `small` | `mradermacher/Qwen3-VL-4B-Instruct-abliterated-GGUF` (`Q4_K_M`) | auto-start via llama.cpp |
+| `standard` | `mradermacher/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF` (`Q4_K_M`) | auto-start via llama.cpp |
+| `computer-use` | `xlangai/OpenCUA-7B` | external compatible server |
+
+The first two are community-modified low-refusal variants, not official Qwen safety-tuned releases. The model layer is deliberately replaceable; Conway is the harness, not a particular checkpoint.
 
 ## Local state
 
-Conway stores lightweight runtime state under the platform-standard user data directory:
+Conway stores runtime state under the platform-standard user data directory:
 
 ```text
 conway/
 ├── constitution.md
 ├── memory.md
 ├── state.json
+├── llama-runtime.log
+├── screenshots/
 └── journal/
     └── YYYY-MM-DD.jsonl
 ```
 
 No SQL database or vector database is required for v0.1.
 
-## Model strategy
+## Current limitations
 
-The model layer is intentionally pluggable. Planned profiles include:
+- The v0.1 computer adapter uses screenshot + coordinate interaction; native accessibility-tree adapters are the next major computer-use improvement.
+- Wayland environments may restrict screenshot/input automation depending on compositor policy.
+- Model selection is hardware-aware but intentionally conservative; users can override it with `--profile` or provide `--endpoint`.
+- This repository is an early scaffold and has not yet been packaged as a signed desktop application.
 
-- lightweight multimodal model for low-memory machines;
-- standard local VLM for general reasoning + screenshots;
-- computer-use-specialized VLM for stronger GUI grounding;
-- optional OpenAI-compatible local server adapters (for llama.cpp, vLLM, MLX-backed servers, etc.).
+## Security boundary
 
-Conway should select the best compatible profile automatically, while allowing advanced users to override it in configuration.
-
-## Safety boundary
-
-Conway is intended to operate with the permissions already granted to the current user account. It deliberately does **not** implement privilege escalation, permission bypass, credential harvesting, stealth/persistence mechanisms, or security-control evasion.
+Conway operates with permissions already granted to the current user account. It deliberately does **not** implement privilege escalation, permission bypass, credential harvesting, stealth/persistence mechanisms, or security-control evasion.
 
 ## License
 
