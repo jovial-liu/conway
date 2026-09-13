@@ -1,0 +1,5 @@
+status,dataset_model,n_images,switch_count,switch_rate,switch_reference_frozen,delta_margin_improvement_count,delta_margin_improvement_fraction_among_switched,sign_repair_count,sign_repair_fraction_among_switched,margin_improvement_definition,sign_repair_definition
+local_rerun,coco_openai_b16,27708,663,0.023928107405803378,663,611,0.9215686274509803,42,0.06334841628959276,WF normalized aggregate worst-foil margin > CCI normalized aggregate worst-foil margin,CCI margin < 0 and WF margin >= 0
+local_rerun,coco_openai_b32,27708,614,0.02215966507867764,613,532,0.8664495114006515,48,0.0781758957654723,WF normalized aggregate worst-foil margin > CCI normalized aggregate worst-foil margin,CCI margin < 0 and WF margin >= 0
+local_rerun,voc2007_openai_b16,1943,50,0.02573340195573855,50,46,0.92,11,0.22,WF normalized aggregate worst-foil margin > CCI normalized aggregate worst-foil margin,CCI margin < 0 and WF margin >= 0
+local_rerun,voc2007_openai_b32,1943,38,0.0195573854863613,38,35,0.9210526315789473,6,0.15789473684210525,WF normalized aggregate worst-foil margin > CCI normalized aggregate worst-foil margin,CCI margin < 0 and WF margin >= 0

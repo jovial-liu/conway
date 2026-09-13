@@ -1,0 +1,23 @@
+{
+  "status": "local_rerun",
+  "bootstrap_count": 10000,
+  "bootstrap_seed": 1701,
+  "settings": [
+    [
+      "coco",
+      "openai_b16"
+    ],
+    [
+      "coco",
+      "openai_b32"
+    ],
+    [
+      "voc2007",
+      "openai_b16"
+    ],
+    [
+      "voc2007",
+      "openai_b32"
+    ]
+  ]
+}

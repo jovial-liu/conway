@@ -1,0 +1,22 @@
+{
+  "status": "local_rerun",
+  "dataset": "voc2007",
+  "model": "openai_b16",
+  "openclip_name": "ViT-B-16",
+  "device_requested": "mps",
+  "device_last": "mps",
+  "samples_available": 4,
+  "completed_before": 0,
+  "completed_this_run": 2,
+  "completed_total": 2,
+  "elapsed_seconds_this_run": 0.703775083,
+  "images_per_second_this_run": 2.8418170070394493,
+  "torch_version": "2.8.0",
+  "python_version": "3.9.6",
+  "mps_available": true,
+  "mps_built": true,
+  "command": "rerun_workspace/scripts/run_local_rerun.py --dataset voc2007 --data-root rerun_workspace/data/voc2007 --model openai_b16 --weights-dir rerun_workspace/model_weights --out-dir rerun_workspace/runs/voc2007_openai_b16_smoke_mps --samples 4 --batch-size 2 --workers 0 --device mps --smoke-only",
+  "epsilon": 0.02,
+  "clusters": 8,
+  "bootstrap_count": 10000
+}

@@ -1,0 +1,9 @@
+check,dataset_model,passed,n_rows,expected_rows,unique_indices,max_metric_abs_difference,note
+full_run,coco_openai_b16,True,27708,27708,27708,,"expected row count, unique indices, finite numeric values"
+mps_cpu_smoke,coco_openai_b16,True,1,1,1,1.0967254638671875e-05,same images; regions_equal=True
+full_run,coco_openai_b32,True,27708,27708,27708,,"expected row count, unique indices, finite numeric values"
+mps_cpu_smoke,coco_openai_b32,True,2,2,2,1.9431114196777344e-05,same images; regions_equal=True
+full_run,voc2007_openai_b16,True,1943,1943,1943,,"expected row count, unique indices, finite numeric values"
+mps_cpu_smoke,voc2007_openai_b16,True,2,2,2,2.0503997802734375e-05,same images; regions_equal=True
+full_run,voc2007_openai_b32,True,1943,1943,1943,,"expected row count, unique indices, finite numeric values"
+mps_cpu_smoke,voc2007_openai_b32,True,2,2,2,3.218650817871094e-05,same images; regions_equal=True

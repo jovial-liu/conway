@@ -1,0 +1,52 @@
+{
+  "status": "local_rerun",
+  "datasets": {
+    "coco": {
+      "split": "val2014",
+      "selection_rule": "sorted eligible image ids, then numpy.default_rng(1701).shuffle",
+      "eligibility": "non-crowd annotations; largest annotation is target; at least one different-category distractor; target area fraction in [0.02, 0.8]"
+    },
+    "voc2007": {
+      "split": "test",
+      "selection_rule": "sorted test image ids, then numpy.default_rng(1701).shuffle",
+      "eligibility": "largest object is target; at least one different-category distractor; target area fraction in [0.02, 0.8]"
+    }
+  },
+  "models": {
+    "openai_b16": {"open_clip_model": "ViT-B-16", "pretrained": "openai", "patch_grid": 14},
+    "openai_b32": {"open_clip_model": "ViT-B-32", "pretrained": "openai", "patch_grid": 7}
+  },
+  "regions": {
+    "clusters": 8,
+    "kmeans_n_init": 3,
+    "kmeans_max_iter": 50,
+    "kmeans_seed": "1701 + sample_index"
+  },
+  "prompts": {
+    "selection": "a photo of a {category}",
+    "evaluation": [
+      "a picture of the {category}",
+      "an image containing a {category}",
+      "the {category}"
+    ]
+  },
+  "intervention": {
+    "type": "attention_block",
+    "layers": "all",
+    "heads": "all",
+    "attention_logit_columns": "selected patch key/value columns set to -inf for every query; CLS retained"
+  },
+  "selection": {
+    "epsilon": 0.02,
+    "cci": "argmax selection target drop",
+    "wf": "argmax over epsilon-feasible candidates of selection target drop minus max non-target foil drop",
+    "mean": "argmax over epsilon-feasible candidates of selection target drop minus mean non-target foil drop",
+    "max_0_1": "argmax over epsilon-feasible candidates of selection target drop minus 0.1 times max non-target foil drop"
+  },
+  "bootstrap": {
+    "count": 10000,
+    "unit": "image",
+    "interval": "percentile 2.5/97.5",
+    "paired_difference": "candidate minus CCI on the same image before resampling"
+  }
+}

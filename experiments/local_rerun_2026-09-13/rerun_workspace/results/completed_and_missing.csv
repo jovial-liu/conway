@@ -1,0 +1,5 @@
+status,dataset_model,path,n_images,rerun_status
+completed,coco_openai_b16,rerun_workspace/runs/coco_openai_b16/per_image.csv,27708,local_rerun
+completed,coco_openai_b32,rerun_workspace/runs/coco_openai_b32/per_image.csv,27708,local_rerun
+completed,voc2007_openai_b16,rerun_workspace/runs/voc2007_openai_b16/per_image.csv,1943,local_rerun
+completed,voc2007_openai_b32,rerun_workspace/runs/voc2007_openai_b32/per_image.csv,1943,local_rerun

@@ -1,0 +1,17 @@
+kind,label,path,exists,sha256,source_url,notes
+script,local inference runner,/Users/von/Projects/cci-local-recovery/rerun_workspace/scripts/run_local_rerun.py,True,01e5700030ec77e382f29ebdcb9e7372719630b6e1f67ffd39ea74fd35d1e4d9,,
+script,local statistical analysis,/Users/von/Projects/cci-local-recovery/rerun_workspace/scripts/analyze_local_rerun.py,True,9b31bcc1d5a3325d4f9def59338014222596cfae13bfc81442388df6918f4df7,,
+script,output validation/provenance writer,/Users/von/Projects/cci-local-recovery/rerun_workspace/scripts/write_provenance.py,True,5ccb5470f84e49cd5d5bfd4161c252cbd269e8babe45b2e33b105192d1dc2daa,,
+script,output validation,/Users/von/Projects/cci-local-recovery/rerun_workspace/scripts/validate_outputs.py,True,ca3fe2c9b9caa390d151c22ff585717a16a71540418d5b1201fb6fae9e66dda7,,
+config,local rerun configuration,/Users/von/Projects/cci-local-recovery/rerun_workspace/config/local_rerun_config.json,True,b37ac4820e0cef4f4ddc642771ccfdcde35beb1eebb26ddc1e6b879cfb15ad02,,
+protocol,archived protocol,/Users/von/Projects/cci-local-recovery/paper_evidence_complete_2026-09-12/evidence/recovered/16_PROTOCOL_FOR_MANUSCRIPT.md,True,c5609148f5df742c501270763ba553bd3d10715de5682e955037097b07dd1107,,
+source,archived selector definitions,/Users/von/Projects/cci-local-recovery/recovery_work/source/run_reviewer_identification_round2.py,True,1826135abc9b9b3d1689eeab04023eb463e95fb28e442d3a1ee124a48a4be5b6,,
+source,archived multisetting recovery,/Users/von/Projects/cci-local-recovery/recovery_work/source/run_cci_preserving_multisetting.py,True,50d39bc1c1f29dd3bea2cd3192bd9d48040bbfc57ad0be48e037d92a755621d9,,
+frozen,accepted frozen experiment package,/Users/von/Projects/cci-local-recovery/experiment_results.zip,True,186fd4df9f5b650c0c2d971841a2c7a38382b833527aa118761f454879ec9494,,Read-only reference; not overwritten
+model,OpenAI CLIP ViT-B/16,/Users/von/Projects/cci-local-recovery/rerun_workspace/model_weights/ViT-B-16.pt,True,5806e77cd80f8b59890b7e101eabd078d9fb84e6937f9e85e4ecb61988df416f,https://openaipublic.azureedge.net/clip/models/5806e77cd80f8b59890b7e101eabd078d9fb84e6937f9e85e4ecb61988df416f/ViT-B-16.pt,
+model,OpenAI CLIP ViT-B/32,/Users/von/Projects/cci-local-recovery/rerun_workspace/model_weights/ViT-B-32.pt,True,40d365715913c9da98579312b702a82c18be219cc2a73407c4526f58eba950af,https://openaipublic.azureedge.net/clip/models/40d365715913c9da98579312b702a82c18be219cc2a73407c4526f58eba950af/ViT-B-32.pt,
+dataset_archive,COCO val2014 images,/tmp/coco_val2014.zip,True,fe9be816052049c34717e077d9e34aa60814a55679f804cd043e3cbee3b9fde0,http://images.cocodataset.org/zips/val2014.zip,
+dataset_archive,COCO trainval annotations,/tmp/annotations_trainval2014.zip,False,,https://images.cocodataset.org/annotations/annotations_trainval2014.zip,
+dataset_file,COCO validation annotations used,/Users/von/Projects/cci-local-recovery/rerun_workspace/data/coco/annotations/instances_val2014.json,True,e1b4d1bc54906827b1a029981b1c77f2088bd4462569b7615db7929070c3ab47,https://images.cocodataset.org/annotations/annotations_trainval2014.zip,Extracted input; archive may not be retained
+dataset_archive,VOC2007 trainval,/tmp/VOCtrainval_06-Nov-2007.tar,True,7d8cd951101b0957ddfd7a530bdc8a94f06121cfc1e511bb5937e973020c7508,https://www.robots.ox.ac.uk/~vgg/projects/pascal/VOC/voc2007/VOCtrainval_06-Nov-2007.tar,
+dataset_archive,VOC2007 test,/tmp/VOCtest_06-Nov-2007.tar,True,6836888e2e01dca84577a849d339fa4f73e1e4f135d312430c4856b5609b4892,https://www.robots.ox.ac.uk/~vgg/projects/pascal/VOC/voc2007/VOCtest_06-Nov-2007.tar,

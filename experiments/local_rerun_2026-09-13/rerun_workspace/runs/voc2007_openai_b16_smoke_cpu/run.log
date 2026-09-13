@@ -1,0 +1,10 @@
+2026-09-13 11:51:30,465 INFO Parsing model identifier. Schema: None, Identifier: ViT-B-16
+2026-09-13 11:51:30,465 INFO Loaded built-in ViT-B-16 model config.
+2026-09-13 11:51:30,466 INFO `pretrained` specifies file path: rerun_workspace/model_weights/ViT-B-16.pt
+2026-09-13 11:51:30,466 INFO Instantiating model architecture: CLIP
+2026-09-13 11:51:31,289 INFO Loading full pretrained weights from: rerun_workspace/model_weights/ViT-B-16.pt
+2026-09-13 11:51:31,516 INFO Final image preprocessing configuration set: {'size': (224, 224), 'mode': 'RGB', 'mean': (0.48145466, 0.4578275, 0.40821073), 'std': (0.26862954, 0.26130258, 0.27577711), 'interpolation': 'bicubic', 'resize_mode': 'shortest', 'fill_color': 0}
+2026-09-13 11:51:31,516 INFO Model ViT-B-16 creation process complete.
+2026-09-13 11:51:31,516 INFO Parsing tokenizer identifier. Schema: None, Identifier: ViT-B-16
+2026-09-13 11:51:31,516 INFO Attempting to load config from built-in: ViT-B-16
+2026-09-13 11:51:31,516 INFO Using default SimpleTokenizer.

@@ -1,0 +1,22 @@
+{
+  "status": "local_rerun",
+  "dataset": "coco",
+  "model": "openai_b16",
+  "openclip_name": "ViT-B-16",
+  "device_requested": "mps",
+  "device_last": "mps",
+  "samples_available": 2,
+  "completed_before": 0,
+  "completed_this_run": 1,
+  "completed_total": 1,
+  "elapsed_seconds_this_run": 0.8935832499999998,
+  "images_per_second_this_run": 1.119089911320518,
+  "torch_version": "2.8.0",
+  "python_version": "3.9.6",
+  "mps_available": true,
+  "mps_built": true,
+  "command": "rerun_workspace/scripts/run_local_rerun.py --dataset coco --data-root rerun_workspace/data/coco --model openai_b16 --weights-dir rerun_workspace/model_weights --out-dir rerun_workspace/runs/coco_openai_b16_smoke_mps --samples 2 --batch-size 1 --workers 0 --device mps --smoke-only",
+  "epsilon": 0.02,
+  "clusters": 8,
+  "bootstrap_count": 10000
+}
