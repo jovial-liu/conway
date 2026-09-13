@@ -1,6 +1,6 @@
 {
-  "status": "automated_checks_passed_visual_review_pending",
-  "visual_review": "pending",
+  "status": "passed",
+  "visual_review": "passed: reviewed rendered pages match",
   "documents": {
     "source": {
       "compiled": true,
@@ -90,5 +90,11 @@
     }
   },
   "source_files_identical": true,
-  "rendered_pages_identical": true
+  "rendered_pages_identical": true,
+  "release_files_sha256": {
+    "paper_final.pdf": "48a6983583028da3e6aa6357abdb7553577f711ab75054bd47124d283952dee7",
+    "arxiv_preview.pdf": "903cd46b4e7cb24f93966ba1b1e52efb316c9337f95f0936c561818b5f137db3",
+    "arxiv_source.zip": "62c83d2edf260fb112dcfd883cad61a2da3e94ea81c9d01118107c34a7fe4b9b",
+    "paper_complete.zip": "4997930ad93d59eca9db5222a91418393e73bf5d262e1918fd8f89dee8e5c957"
+  }
 }
