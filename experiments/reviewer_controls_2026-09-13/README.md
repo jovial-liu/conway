@@ -28,8 +28,10 @@ rates from a newly screened restricted dataset.
 `responses/<setting>/<setting>_cci_full_class_responses.npz` stores, for every
 image and all eight candidates, raw and class-normalized aggregate responses for
 every dataset class. The three held-out prompts are averaged before class
-normalization. The NPZ also stores target/annotation IDs and the newly generated
-CCI selection metadata. The NPZ is generated from the pinned OpenAI CLIP
+normalization. Target/annotation IDs and the per-image CCI selection metadata
+are also retained in the adjacent `metadata.csv`; the analysis joins that file
+when an older NPZ archive omits duplicate metadata fields. The response arrays
+are generated from the pinned OpenAI CLIP
 ViT-B/16 or ViT-B/32 runner, with the original preprocessing, center crop,
 K=8, KMeans `n_init=3`, `max_iter=50`, seed `1701 + sample_index`, attention
 key/value masking, and epsilon `.02`.
