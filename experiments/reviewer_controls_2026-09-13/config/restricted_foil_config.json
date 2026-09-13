@@ -1,0 +1,69 @@
+{
+  "status": "reviewer_controls_local_rerun",
+  "fixed_protocol_commit": "1817e1666161fa902869affe61b55f7c98c45668",
+  "settings": [
+    "coco_openai_b16",
+    "coco_openai_b32",
+    "voc2007_openai_b16",
+    "voc2007_openai_b32"
+  ],
+  "models": {
+    "openai_b16": "OpenAI CLIP ViT-B/16",
+    "openai_b32": "OpenAI CLIP ViT-B/32"
+  },
+  "regions": {
+    "clusters": 8,
+    "kmeans_n_init": 3,
+    "kmeans_max_iter": 50,
+    "kmeans_seed": "1701 + sample_index"
+  },
+  "prompts": {
+    "selection": "a photo of a {category}",
+    "held_out": [
+      "a picture of the {category}",
+      "an image containing a {category}",
+      "the {category}"
+    ]
+  },
+  "intervention": {
+    "type": "attention_block",
+    "layers": "all",
+    "heads": "all",
+    "attention_logit_columns": "selected patch key/value columns set to -inf for every query; CLS retained"
+  },
+  "epsilon": 0.02,
+  "full_foil": "all dataset classes except target",
+  "annotation_absent_foil": "all dataset classes except target and the source loader's annotated non-target categories; COCO retains non-crowd grouping and VOC uses the existing VOC loader",
+  "A": "cci_bbox_precision >= 0.5 AND full_foil_cci_pmean_norm > 0",
+  "Aplus": "A AND cci_target_drop_norm > 0",
+  "failure": "target normalized aggregate response - worst foil normalized aggregate response < 0",
+  "matched_cardinality": {
+    "q": "1 - comb(N - m, K) / comb(N, K)",
+    "N": "number of full non-target foils",
+    "K": "number of annotation-absent foils",
+    "m": "number of full foils whose response is greater than the target response",
+    "sampling": "uniform without replacement; exact expectation is primary"
+  },
+  "bootstrap": {
+    "unit": "image",
+    "draws": 10000,
+    "interval": "percentile 2.5/97.5",
+    "seed_base": 1701,
+    "seed_assignments": {
+      "full_rate": 1701,
+      "absent_rate": 1702,
+      "absent_minus_full": 1703,
+      "matched_random_rate": 1704,
+      "absent_minus_matched_random": 1705
+    },
+    "multiplicity_correction": "none; pointwise intervals"
+  },
+  "monte_carlo_sanity": {
+    "seed_count": 100,
+    "seed_rule": "np.random.default_rng(np.random.SeedSequence([seed, sample_index]))"
+  },
+  "source_data": {
+    "fixed_per_image_root": "experiments/local_rerun_2026-09-13/rerun_workspace/runs/<setting>/per_image.csv",
+    "response_root": "experiments/reviewer_controls_2026-09-13/responses/<setting>/"
+  }
+}

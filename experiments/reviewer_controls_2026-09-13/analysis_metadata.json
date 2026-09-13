@@ -1,0 +1,11 @@
+{
+  "analysis": "fixed full-foil CCI-top1 region and A; restricted annotation-absent foils",
+  "bootstrap_count": 10000,
+  "bootstrap_seed_base": 1701,
+  "bootstrap_interval": "percentile 2.5/97.5",
+  "bootstrap_unit": "image",
+  "mc_seed_count": 100,
+  "mc_seed_rule": "np.random.default_rng(np.random.SeedSequence([seed, sample_index]))",
+  "generated_on": "macOS-27.0-arm64-arm-64bit",
+  "git_head": "846de6075b4517100356dd334feef85583cb5c1f"
+}

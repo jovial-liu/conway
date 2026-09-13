@@ -1,0 +1,3 @@
+responses/*/*.npz
+responses/*/response_raw.npy
+responses/*/response_norm.npy
