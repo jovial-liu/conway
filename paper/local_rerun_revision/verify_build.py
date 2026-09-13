@@ -10,6 +10,8 @@ import fitz
 root = Path(__file__).resolve().parent
 out = root / "generated"
 out.mkdir(exist_ok=True)
+for stale in out.glob('page_*.png'):
+    stale.unlink()
 report = {"status": "not_verified", "visual_review": "pending", "documents": {}}
 docs = {}
 for name in ("source", "arxiv_source"):
@@ -58,6 +60,42 @@ passed = report["source_files_identical"] and report["rendered_pages_identical"]
     r["compiled"] and r.get("pages") == 5 and r.get("references_on_page_five") and not r["warnings"] and not r.get("out_of_page_text")
     for r in report["documents"].values()
 )
-report["status"] = "automated_checks_passed_visual_review_pending" if passed else "needs_revision"
+review = json.loads((root / "visual_review.json").read_text())
+review_matches = passed and report["documents"]["source"]["render_hashes"] == review["render_hashes"]
+report["visual_review"] = "passed: reviewed rendered pages match" if review_matches else "pending: render changed"
+report["status"] = "passed" if review_matches else "needs_revision"
+if review_matches:
+    import zipfile
+    shutil.copyfile(out / "source_preview.pdf", out / "paper_final.pdf")
+    shutil.copyfile(out / "arxiv_source_preview.pdf", out / "arxiv_preview.pdf")
+    allowed = {".tex", ".bib", ".bbl", ".bst", ".sty", ".pdf"}
+    with zipfile.ZipFile(out / "arxiv_source.zip", "w", zipfile.ZIP_DEFLATED) as bundle:
+        for item in sorted((root / "arxiv_source").rglob("*")):
+            if item.is_file() and item.suffix in allowed and item.name != "main.pdf":
+                bundle.write(item, item.relative_to(root / "arxiv_source"))
+    with zipfile.ZipFile(out / "paper_complete.zip", "w", zipfile.ZIP_DEFLATED) as bundle:
+        for item in sorted((root / "source").rglob("*")):
+            if item.is_file() and (item.suffix in allowed or item.suffix in {".svg", ".png", ".sh", ".py"}) and item.name != "main.pdf":
+                bundle.write(item, "source/" + str(item.relative_to(root / "source")))
+        bundle.write(out / "paper_final.pdf", "paper_final.pdf")
+        bundle.write(out / "arxiv_preview.pdf", "arxiv_preview.pdf")
+        bundle.write(out / "arxiv_source.zip", "arxiv_source.zip")
+        for name in ["README.md", "BUILD.md", "visual_review.json", "verify_build.py"]:
+            bundle.write(root / name, name)
+        evidence = root.parent.parent / "experiments/verification_2026-09-13"
+        for item in sorted((evidence / "results").glob("corrected_*.csv")):
+            bundle.write(item, "evidence/" + item.name)
+        for sub in ["verification_report.md", "scripts/verify_local_rerun.py"]:
+            bundle.write(evidence / sub, "evidence/" + Path(sub).name)
+    for archive in ["arxiv_source.zip", "paper_complete.zip"]:
+        with zipfile.ZipFile(out / archive) as bundle:
+            assert bundle.testzip() is None
+    report["release_files_sha256"] = {
+        name: hashlib.sha256((out / name).read_bytes()).hexdigest()
+        for name in ["paper_final.pdf", "arxiv_preview.pdf", "arxiv_source.zip", "paper_complete.zip"]
+    }
 (out / "build_report.json").write_text(json.dumps(report, indent=2) + "\n")
 print(json.dumps(report, indent=2))
+
+if report['status'] != 'passed':
+    raise SystemExit(1)

@@ -1,0 +1,19 @@
+{
+  "reviewed_commit": "5d89f2f3ad97057a383cfb66609b074ab06e9b5f",
+  "render_hashes": [
+    "a5ed08707aefbb550ab4c941768ab2955d0589518d8e8476d083a8a97bae74d2",
+    "ace8794aa55c10a350cfc2a8168ee2d0fc256c3a773a0d567e8ab6da72e2d29c",
+    "d22c7b2590faab05760fc12050c6749ed488d9a2ba9aa651d373225d5b20acb4",
+    "8aebd0615ac35e01531bda003037175aaf1b30a26973a7d1abd65bd698c3fa87",
+    "94d843898a17798f662931b82eb882bea94676b626e32d789321dd0307ff6b69"
+  ],
+  "pages_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "findings": "Rendered pages inspected: no visible clipping, overlapping text or tables; six authors and three retained figures visible; references on fifth page. Figure assets unchanged from base.",
+  "review_scope": "Layout review, not external validation of citations or experiments."
+}

@@ -1,41 +1,44 @@
-# Verified local-rerun manuscript integration — source draft
+# Completed manuscript integration
 
-Status: edited source, NOT compiled or submission-ready. No new PDF is included.
-The five-page constraint remains a required release gate; page count, overflow,
-visual layout and PDF equivalence have NOT been checked in this session.
+Revised five-page paper: four pages of manuscript plus one references page.
+Both source/ and arxiv_source/ were compiled with pdfLaTeX + BibTeX and compared
+by rendered-page hashes. Five rendered pages were reviewed. See generated/build_report.json
+for the actual current build and release status; only status=passed denotes a completed build.
 
-## Provenance
-- Untouched manuscript base: 17c6ca5fb254e2eea0c98d479509aaf38af558c5, paper/evidence_base/source.
-- Experiment run: 59fc00e3948015379c8dcc563283a5bdda7f1226.
-- Statistical verification: 1cdffa7abdca1f84c1120362fbaf04d9fb52d13b, experiments/verification_2026-09-13.
-- Verification report and corrected CSVs remain at that immutable commit.
+## Downloads in generated/
+- paper_final.pdf: revised complete paper
+- arxiv_preview.pdf: PDF from arxiv_source/
+- arxiv_source.zip: compilation inputs only; not submitted to arXiv
+- paper_complete.zip: source, final PDFs, arXiv package, corrected statistical summaries and provenance/verification notes
+- build_report.json: compile, page count, warning, rendered-equivalence and release-file hashes
+
+## Scientific provenance
+Original source and figures: 17c6ca5fb254e2eea0c98d479509aaf38af558c5.
+Local model rerun: 59fc00e3948015379c8dcc563283a5bdda7f1226.
+Statistical verification: 1cdffa7abdca1f84c1120362fbaf04d9fb52d13b.
+Full per-image records remain under experiments/local_rerun_2026-09-13/rerun_workspace
+at the immutable experiment commit; the complete paper bundle includes corrected
+summary evidence and verification code, not a duplicate of the large response CSVs.
 
 ## Changes
-- Table 2 now gives all four local-rerun CCI screening pass, joint failure and conditional failure rates; conditional 95% intervals are shown.
-- Table 3 now reports direct paired WF-minus-Mean and WF-minus-Max-.1 normalized margin differences and pointwise intervals, scaled by 1000.
-- Table 6 now reports local switch counts and raw target/bbox changes with switch-subset intervals. Bbox is expressed in percentage points.
-- Added local feasible-set distributions, distinct improvement/sign-repair counts, resampling definitions, multiple-comparison limitation, and observed frozen/rerun differences.
-- Updated abstract and conclusion to distinguish positive margin gains from loss-free superiority.
-- Original Table 1, foil/tolerance controls and figure data remain frozen-archive evidence. New CIs are never combined with frozen point estimates.
-- Original descriptive baseline table remains recoverable in evidence_base.
-- All six authors, bibliography (including IDEA), equations and three figure assets are retained. Captions add source labels as needed.
-- source/ contains the complete editable project; arxiv_source/ contains matching main.tex and required compilation inputs.
-- Original source/main.pdf was deliberately excluded from this draft to avoid presenting an old PDF as the revised manuscript.
+Tables 2, 3 and 6 now report local-rerun screening, direct paired margin differences
+and switch-conditioned target/locality changes with CIs.
+Feasible-set distributions and separate margin-improvement/sign-repair counts
+were added. Frozen Table 1 and foil/tolerance controls retain their original
+provenance. All three figures, six-author file, bibliography including IDEA,
+and mathematical definitions were preserved.
+Introduction and repeated archived-result prose were condensed to meet five pages;
+font sizes and figure assets were not reduced.
 
-## Remaining scientific limits
-COCO B/16 screen-state changes involve images 135671, 185335 and 213809; ten CCI
-region labels change. Some score differences exceed rounding. Missing frozen
-candidate arrays prevent causal attribution. Region labels alone do not identify
-matching masks across runs. COCO B/32 switches 614 versus frozen 613; missing
-frozen per-image fields prevent identifying the changed samples. These are not
-claimed to be MPS-only effects or exact reproduction.
-
+## Limits retained in the paper
+COCO B/16 has three changed screen/failure-status images and ten changed CCI
+region labels. COCO B/32 has 614 local switches versus frozen 613. Missing
+frozen candidate/per-image data prevent causal explanation. These are separate
+runs, not exact reproduction or demonstrated MPS-only errors.
+Direct margin intervals are pointwise, without multiplicity correction;
+gains over Max-.1 are small and locality is not uniformly preserved.
 Restricted-foil conditional failure rates and new K/intervention robustness
-experiments remain outside the completed local-rerun evidence.
+are not supplied by the local run.
 
-## Verification performed here
-Read the uploaded base main.tex, checked references and citation keys, checked
-matching LaTeX begin/end environments, and generated table values from the
-corrected CSVs. Source/arXiv main.tex contents are identical by construction.
-Figures, author file and bibliography are reused by their existing Git blob IDs.
-This is source-level checking only; it does not establish successful compilation.
+No manuscript was edited by the local experimental Codex for this release.
+Nothing has been merged into main or submitted to arXiv.

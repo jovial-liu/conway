@@ -1,20 +1,22 @@
-# Build and release gates — pending
+# Compilation and validation
 
-No LaTeX compiler or local command executor is available in the editing session.
-No compilation has been attempted here; no new PDF, five-page claim, or arXiv
-platform compatibility claim is made.
+The paper is compiled on the isolated paper/verified-rerun-integration branch
+using .github/workflows/verify-paper.yml. No local Mac TeX installation is required.
 
-In an environment with pdfLaTeX, BibTeX and the package dependencies:
-1. Run `sh build.sh` from source/.
-2. In arxiv_source/, run pdfLaTeX, BibTeX, pdfLaTeX, pdfLaTeX on main.tex.
-3. Check both logs for undefined references/citations and overfull boxes.
-4. Confirm five total pages with references on page five; adjust prose/float
-   placement if needed while retaining the agreed font sizes and figures.
-5. Render and inspect all pages for clipping, figure placement, table width,
-   overlapping text and six-author information.
-6. Compare the two rendered PDFs page by page.
-7. Only after these checks, export paper_final.pdf and arxiv_preview.pdf and
-   prepare an arXiv source archive. Do not submit automatically.
+Commands for each source directory:
+    pdflatex -interaction=nonstopmode -halt-on-error main.tex
+    bibtex main
+    pdflatex -interaction=nonstopmode -halt-on-error main.tex
+    pdflatex -interaction=nonstopmode -halt-on-error main.tex
 
-The existing main.bbl and references.bib are retained because citation keys and
-order are unchanged. Rebuild the bibliography as part of verification.
+Dependencies: TeX Live latex-extra, fonts-recommended, science; PyMuPDF for
+rendering checks. See verify_build.py and the Actions logs for actual execution.
+
+The release gate requires successful builds, five pages with references on page
+five, no undefined-reference/citation or overfull warnings, no text outside page
+bounds, matching rendered pages, and exact matches to reviewed page hashes.
+Five pages have been visually reviewed; visual_review.json records those hashes.
+Final bundles are made only when all gates pass. ZIP integrity is also checked.
+
+pdfLaTeX compatibility was tested in this GitHub environment. This is not an arXiv
+server-side compilation or a submission; inspect arXiv's generated PDF when uploading.
