@@ -1,0 +1,146 @@
+{
+  "N": 27708,
+  "cells_A_F": [
+    11411,
+    6314,
+    9105,
+    878
+  ],
+  "screen_pass_count": 17725,
+  "failure_count": 20516,
+  "joint_count": 11411,
+  "screen_pass": [
+    0.6397069438429335,
+    [
+      0.6341128915836581,
+      0.6453009961022087
+    ]
+  ],
+  "failure": [
+    0.7404359751696261,
+    [
+      0.7353471921466724,
+      0.7456339324382849
+    ]
+  ],
+  "joint": [
+    0.41183051826187383,
+    [
+      0.406164284683124,
+      0.4175689331600982
+    ]
+  ],
+  "failure_given_pass": [
+    0.6437799717912552,
+    [
+      0.6366518581505157,
+      0.6507188383205422
+    ]
+  ],
+  "switched": {
+    "n": 663,
+    "sign_repairs": 42,
+    "feasible_mean": 1.0504908329724267,
+    "multiple_feasible_count": 1303,
+    "switch_given_multiple": 0.508825786646201,
+    "delta_pmax_agg": {
+      "mean": 0.6256239282433576,
+      "ci": [
+        0.5619585826963183,
+        0.6928306108910111
+      ],
+      "q10_q25_median_q75_q90": [
+        0.030137036530692773,
+        0.1549420045847301,
+        0.4063149033264882,
+        0.783621038374911,
+        1.346450041432826
+      ]
+    },
+    "delta_eval_target": {
+      "mean": 0.0021808353187028643,
+      "ci": [
+        -0.013641028923627452,
+        0.017827398251500724
+      ],
+      "q10_q25_median_q75_q90": [
+        -0.23161469599999998,
+        -0.106773855,
+        0.0039929003,
+        0.109374257,
+        0.23719355400000025
+      ]
+    },
+    "delta_bbox": {
+      "mean": -0.04949580150159759,
+      "ci": [
+        -0.08419384930648151,
+        -0.015686956674809877
+      ],
+      "q10_q25_median_q75_q90": [
+        -0.6893840579710144,
+        -0.32417582417582413,
+        0.0,
+        0.1136938089905615,
+        0.6164102564102565
+      ]
+    },
+    "gain_and_bbox_loss_count": 284
+  },
+  "feasible_histogram": {
+    "1": 26405,
+    "2": 1215,
+    "3": 80,
+    "4": 8
+  },
+  "failure_subset": {
+    "target_raw_mean": 0.4808877440533521,
+    "target_raw_positive_rate": 0.9039773835055567
+  },
+  "four_setting_conditional": [
+    {
+      "dataset": "coco",
+      "model": "openai_b16",
+      "n_images": 27708,
+      "switch_count": 663,
+      "switched_mean_delta_bbox": -0.04949580150159561,
+      "switched_mean_delta_target_raw": 0.00218083533926971,
+      "gain_fraction": 0.9215686274509804,
+      "sign_repair_fraction": 0.0633484162895927,
+      "note": "Conditional means algebraically derived from unrounded archived full-sample means and exact switch counts; no conditional CI available except separately computed COCO B/16."
+    },
+    {
+      "dataset": "coco",
+      "model": "openai_b32",
+      "n_images": 27708,
+      "switch_count": 613,
+      "switched_mean_delta_bbox": -0.03619089823268493,
+      "switched_mean_delta_target_raw": -0.004572695176620817,
+      "gain_fraction": 0.866231647634584,
+      "sign_repair_fraction": 0.0783034257748776,
+      "note": "Conditional means algebraically derived from unrounded archived full-sample means and exact switch counts; no conditional CI available except separately computed COCO B/16."
+    },
+    {
+      "dataset": "voc2007",
+      "model": "openai_b16",
+      "n_images": 1943,
+      "switch_count": 50,
+      "switched_mean_delta_bbox": -0.13198956784182503,
+      "switched_mean_delta_target_raw": -0.032283114636859865,
+      "gain_fraction": 0.92,
+      "sign_repair_fraction": 0.22,
+      "note": "Conditional means algebraically derived from unrounded archived full-sample means and exact switch counts; no conditional CI available except separately computed COCO B/16."
+    },
+    {
+      "dataset": "voc2007",
+      "model": "openai_b32",
+      "n_images": 1943,
+      "switch_count": 38,
+      "switched_mean_delta_bbox": 0.011625216888374618,
+      "switched_mean_delta_target_raw": -0.03486422650166623,
+      "gain_fraction": 0.9210526315789472,
+      "sign_repair_fraction": 0.1578947368421052,
+      "note": "Conditional means algebraically derived from unrounded archived full-sample means and exact switch counts; no conditional CI available except separately computed COCO B/16."
+    }
+  ]
+}

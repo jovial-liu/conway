@@ -1,0 +1,4 @@
+case,target,foil_before,foil_after,delta_pagg,bbox_before,bbox_after
+clean_locality_gain,dining table,apple,kite,4.57649,0.45833,1.00000
+specificity_gain_locality_loss,person,snowboard,umbrella,0.78303,0.80952,0.11111
+counterexample,person,potted plant,backpack,-0.97714,0.02128,0.88235

@@ -1,0 +1,2 @@
+dataset,model,n_images,bootstrap_unit,p0_eq_p1,p0_eq_p2,p1_eq_p2,mean_pairwise_exact,all_three_exact,all_three_family
+coco,openai_b16,27708,unique_image,0.5924642702468601,0.66821856503536881,0.53320340695827917,0.59796208074683599,0.46358452432510461,0.53688465425147969
