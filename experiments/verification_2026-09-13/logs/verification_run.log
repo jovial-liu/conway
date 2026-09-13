@@ -1,0 +1,37 @@
+{
+  "status": "completed",
+  "output": "/Users/von/Projects/cci-local-recovery/verification_2026-09-13/output",
+  "settings": {
+    "coco_openai_b16": 27708,
+    "coco_openai_b32": 27708,
+    "voc2007_openai_b16": 1943,
+    "voc2007_openai_b32": 1943
+  },
+  "strategy_failures": 0,
+  "summary_statistical_mismatches": 0,
+  "summary_definition_corrections": 36,
+  "frozen_local_changed_image_ids": [
+    135671,
+    185335,
+    213809
+  ],
+  "frozen_local_details": {
+    "n_aligned": 27708,
+    "same_image_id_order": true,
+    "screen_frozen": 17725,
+    "screen_local": 17726,
+    "failure_frozen": 20516,
+    "failure_local": 20514,
+    "joint_frozen": 11411,
+    "joint_local": 11410,
+    "screen_changed": 1,
+    "failure_changed": 2,
+    "joint_changed": 3,
+    "cci_region_changed": 10,
+    "changed_image_ids": [
+      135671,
+      185335,
+      213809
+    ]
+  }
+}

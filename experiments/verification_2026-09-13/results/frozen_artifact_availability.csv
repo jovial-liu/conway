@@ -1,0 +1,5 @@
+dataset_model,frozen_per_image_file,per_image_available,candidate_arrays_available,regions_available,aggregate_switch_count_available,frozen_switch_count,limitation
+coco_openai_b16,/Users/von/Projects/cci-local-recovery/verification_2026-09-13/frozen/derived/reviewer_cci_preserving_v1/01_original_cci_per_sample.csv,True,False,True,True,663,per-image aggregate/selected-region fields exist; candidate response arrays are absent
+coco_openai_b32,not found in frozen package,False,False,False,True,613,only sufficient_statistics.npz/replay_summary.json are available; no image_id-aligned region or candidate fields
+voc2007_openai_b16,not found in frozen package,False,False,False,True,50,no frozen per-image fields available for alignment
+voc2007_openai_b32,not found in frozen package,False,False,False,True,38,no frozen per-image fields available for alignment

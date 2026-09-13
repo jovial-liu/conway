@@ -1,0 +1,153 @@
+{
+  "verification_status": "completed",
+  "baseline_commit": "59fc00e3948015379c8dcc563283a5bdda7f1226",
+  "project_root": "/Users/von/Projects/cci-local-recovery",
+  "verification_output": "/Users/von/Projects/cci-local-recovery/verification_2026-09-13/output",
+  "bootstrap": {
+    "count": 10000,
+    "base_seed": 1701,
+    "interval": "percentile_2.5_97.5",
+    "rng": "numpy.default_rng (PCG64)",
+    "unit": "image"
+  },
+  "protocol_constants": {
+    "epsilon": 0.02,
+    "clusters": 8
+  },
+  "git_revisions": {
+    "conway_upload": "59fc00e3948015379c8dcc563283a5bdda7f1226",
+    "cci_archive": "b70a6e18d7db52af3750635e76a5b457693eb546"
+  },
+  "python": "3.9.6 (default, May 22 2026, 11:13:45) \n[Clang 21.0.0 (clang-2100.1.1.101)]",
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "packages": {
+    "numpy": "2.0.2",
+    "pandas": "2.3.3",
+    "torch": "2.8.0"
+  },
+  "input_sha256": [
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/config/local_rerun_config.json",
+      "sha256": "b37ac4820e0cef4f4ddc642771ccfdcde35beb1eebb26ddc1e6b879cfb15ad02",
+      "bytes": 1953
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/scripts/run_local_rerun.py",
+      "sha256": "01e5700030ec77e382f29ebdcb9e7372719630b6e1f67ffd39ea74fd35d1e4d9",
+      "bytes": 21535
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/scripts/analyze_local_rerun.py",
+      "sha256": "9b31bcc1d5a3325d4f9def59338014222596cfae13bfc81442388df6918f4df7",
+      "bytes": 11294
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/verification_2026-09-13/frozen/derived/reviewer_cci_preserving_v1/01_original_cci_per_sample.csv",
+      "sha256": "01c44ce13e915ca1726b16ecc2d465050a08a4ee56059cd11f83db17b1549f74",
+      "bytes": 23716630
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/verification_2026-09-13/frozen/derived/reviewer_cci_preserving_v1/03_target_preserving_per_sample.csv",
+      "sha256": "4d78ec83022d985670a444863925102ca859eac645b0eced5cf52bcebee97bbc",
+      "bytes": 62663672
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/verification_2026-09-13/frozen/results/disjoint_foil_v17_2_clean/replay_current_1/coco_openai_b32_n27708/sufficient_statistics.npz",
+      "sha256": "c35fca77c2b067c23e55be71d7c9fa3e0aff357bda97934b637846264ba67d34",
+      "bytes": 1714824
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/results/paired_difference_ci_10000.csv",
+      "sha256": "f84b5f2163c133029d3e33386df2b6fc6340bf48c922d67261b071f9f989a15b",
+      "bytes": 6921
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/results/screening_failure_rates.csv",
+      "sha256": "cd5a473d5f6852619629cf7635faa52bc2d8f783f74fa96549dd60026437cf6b",
+      "bytes": 4287
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/results/feasible_set_size_distribution.csv",
+      "sha256": "cf53eff60b1d86e25dbef8558504a7e29ab7bc417a962f037928d625b2b47ce6",
+      "bytes": 1519
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/results/switch_subset_changes_ci.csv",
+      "sha256": "1835e5f16a7f9dc12c6c3cefb2e51f3d84607f3c0b65b07ae5d16d1987a43717",
+      "bytes": 4465
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/results/switch_margin_improvement_vs_sign_repair.csv",
+      "sha256": "17a4747cfff987c0b2759abc03f07bfe4ee958409437aa4277486d0d30cbf81e",
+      "bytes": 1149
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/runs/coco_openai_b16/per_image.csv",
+      "sha256": "bece4e746855dea84bb9135c6bec41edbfbe9b8dcbb26afdcc66e59ebf2ca07f",
+      "bytes": 49338958
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/runs/coco_openai_b16/run_metadata.json",
+      "sha256": "e041f8b3da47820bf787a0dba361867e8e75724b999d31081f79d0d3a8e0196b",
+      "bytes": 811
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/runs/coco_openai_b32/per_image.csv",
+      "sha256": "674a6fb2a83e229bc0bebe9029967f48db960268d880cad9613911d08d6634e3",
+      "bytes": 47876646
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/runs/coco_openai_b32/run_metadata.json",
+      "sha256": "7c5f42f459fd517e1b1ae52ea5fecb0a9520fcf067e755029e9467c0b8a9247e",
+      "bytes": 810
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/runs/voc2007_openai_b16/per_image.csv",
+      "sha256": "85832f21c935f736256b0bb9ef1f42d29f4cd91b118a375230aaeb4eb35a877a",
+      "bytes": 3504239
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/runs/voc2007_openai_b16/run_metadata.json",
+      "sha256": "cfe81941909b054fcb02737a9134ecc73221a921218007619f3b87910b1b236a",
+      "bytes": 823
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/runs/voc2007_openai_b32/per_image.csv",
+      "sha256": "d6ba22e6912f57093dcf733a59e16c77d116e7a99ee1d284ab034dfca352fef1",
+      "bytes": 3399748
+    },
+    {
+      "path": "/Users/von/Projects/cci-local-recovery/rerun_workspace/runs/voc2007_openai_b32/run_metadata.json",
+      "sha256": "380a12725534223f078ec6487a59543aab59b357957f143da10ac8ea04ee047e",
+      "bytes": 823
+    }
+  ],
+  "verifier_script_sha256": {
+    "path": "/Users/von/Projects/cci-local-recovery/verification_2026-09-13/scripts/verify_local_rerun.py",
+    "sha256": "ea42d019e72e1a64785dc1757fe87e16eb62afe978ba3e3997bca919dc8ec9be",
+    "bytes": 45811
+  },
+  "frozen_local_details": {
+    "n_aligned": 27708,
+    "same_image_id_order": true,
+    "screen_frozen": 17725,
+    "screen_local": 17726,
+    "failure_frozen": 20516,
+    "failure_local": 20514,
+    "joint_frozen": 11411,
+    "joint_local": 11410,
+    "screen_changed": 1,
+    "failure_changed": 2,
+    "joint_changed": 3,
+    "cci_region_changed": 10,
+    "changed_image_ids": [
+      135671,
+      185335,
+      213809
+    ]
+  },
+  "notes": [
+    "Independent recomputation; existing frozen and local-rerun files were not overwritten.",
+    "No full model rerun performed in verification pass."
+  ]
+}

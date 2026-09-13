@@ -1,0 +1,5 @@
+dataset_model,device,elapsed_seconds_reported,images_per_second_reported,completed_before,completed_this_run,completed_total,time_scope,source_metadata
+coco_openai_b16,mps,8435.140570708,3.2810360145162383,32,27676,27708,resumed portion only; not complete experiment elapsed time,/Users/von/Projects/cci-local-recovery/rerun_workspace/runs/coco_openai_b16/run_metadata.json
+coco_openai_b32,mps,565.149457667,5.54897462512971,24572,3136,27708,resumed portion only; not complete experiment elapsed time,/Users/von/Projects/cci-local-recovery/rerun_workspace/runs/coco_openai_b32/run_metadata.json
+voc2007_openai_b16,mps,430.09177474999996,4.5176404527368845,0,1943,1943,full local run,/Users/von/Projects/cci-local-recovery/rerun_workspace/runs/voc2007_openai_b16/run_metadata.json
+voc2007_openai_b32,mps,190.30335912500001,10.210014205391657,0,1943,1943,full local run,/Users/von/Projects/cci-local-recovery/rerun_workspace/runs/voc2007_openai_b32/run_metadata.json

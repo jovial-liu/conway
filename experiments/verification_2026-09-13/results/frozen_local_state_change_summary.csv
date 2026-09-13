@@ -1,0 +1,5 @@
+state,frozen_count,local_count,local_minus_frozen,changed_images
+screen_pass,17725.0,17726.0,1.0,1
+failure,20516.0,20514.0,-2.0,2
+joint_failure,11411.0,11410.0,-1.0,3
+cci_region_label,,,,10
