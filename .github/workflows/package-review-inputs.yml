@@ -1,0 +1,45 @@
+name: Package pinned review inputs
+on:
+  push:
+    branches: [paper/verified-rerun-integration]
+    paths: ['.github/workflows/package-review-inputs.yml']
+permissions:
+  contents: read
+jobs:
+  inputs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 1817e1666161fa902869affe61b55f7c98c45668
+      - name: Verify pinned data and prepare read-only inputs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, shutil
+          root=Path('experiments/local_rerun_2026-09-13/rerun_workspace')
+          expected={
+            'coco_openai_b16':'bece4e746855dea84bb9135c6bec41edbfbe9b8dcbb26afdcc66e59ebf2ca07f',
+            'coco_openai_b32':'674a6fb2a83e229bc0bebe9029967f48db960268d880cad9613911d08d6634e3',
+            'voc2007_openai_b16':'85832f21c935f736256b0bb9ef1f42d29f4cd91b118a375230aaeb4eb35a877a',
+            'voc2007_openai_b32':'d6ba22e6912f57093dcf733a59e16c77d116e7a99ee1d284ab034dfca352fef1'}
+          out=Path('review-inputs'); out.mkdir()
+          report={'source_commit':'1817e1666161fa902869affe61b55f7c98c45668','inputs':{}}
+          for setting,digest in expected.items():
+            src=root/'runs'/setting/'per_image.csv'
+            actual=hashlib.sha256(src.read_bytes()).hexdigest()
+            assert actual==digest,(setting,actual)
+            shutil.copyfile(src,out/(setting+'.csv'))
+            report['inputs'][setting]={'sha256':actual,'bytes':src.stat().st_size}
+          shutil.copytree(root/'scripts',out/'original_scripts')
+          shutil.copytree(Path('experiments/verification_2026-09-13'),out/'verification')
+          (out/'manifest.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ccf0-pinned-review-inputs
+          path: review-inputs/
+          retention-days: 7
+          compression-level: 9
