@@ -7,5 +7,5 @@
   "mc_seed_count": 100,
   "mc_seed_rule": "np.random.default_rng(np.random.SeedSequence([seed, sample_index]))",
   "generated_on": "macOS-27.0-arm64-arm-64bit",
-  "git_head": "846de6075b4517100356dd334feef85583cb5c1f"
+  "git_head": "efc94a4f8c6c11ab4b3d236424ad0775f04648f3"
 }
