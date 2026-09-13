@@ -1,4 +1,5 @@
 \documentclass[10pt]{article}
+\pdfminorversion=7
 \usepackage{icassp2027_paperkit}
 \usepackage{amsmath,amssymb,booktabs,graphicx,microtype}
 \usepackage{url}
@@ -289,7 +290,7 @@ All eight pointwise margin CIs exceed zero, but gains over Max-.1 are small.
 Relative to Mean, bbox declines on COCO B/16, COCO B/32 and VOC B/16 with
 CIs below zero. Relative to Max-.1, bbox CIs include zero in all settings,
 while COCO B/16 raw target response decreases by $.000099$
-[-0.000192,{-.000010}$]. These results do not establish loss-free superiority.
+$[-.000192,-.000010]$. These results do not establish loss-free superiority.
 
 \paragraph{Why switching is sparse.}
 In the local rerun, singleton feasible sets account for 95.29/95.60/95.21/95.27\%
@@ -410,8 +411,8 @@ $\epsilon$ & Sw. & $\Delta P$ & $\Delta P\mid\mathrm{sw}$ & $\Pr(+)$\\
 
 \paragraph{Switch-conditioned outcomes.}
 Table~\ref{tab:repair_accounting} uses rerun switched-image vectors directly.
-VOC B/16 loses 13.20 bbox percentage points [-24.62,{-1.80}$].
-COCO B/16 loses 4.95 points [-8.33,{-1.45}$], with median zero and
+VOC B/16 loses 13.20 bbox percentage points $[-24.62,-1.80]$.
+COCO B/16 loses 4.95 points $[-8.33,-1.45]$, with median zero and
 quartiles $-.3242,+.1137$. Raw target-response intervals include zero in all
 four switch subsets; this is not an equivalence result. Margin improvement
 occurs in 611/663, 532/614, 46/50 and 35/38 switches, whereas sign repair
