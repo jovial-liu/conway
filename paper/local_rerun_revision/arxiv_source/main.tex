@@ -34,57 +34,45 @@
 \begin{abstract}
 A frozen CLIP region can pass locality and mean-foil screens while responding
 more strongly to a non-target foil. We audit the maximum-target-drop single
-region from CCI candidates using matched prompt-mean and aggregate worst-foil
-margins. In the frozen archive, on COCO/OpenAI B/16, 41.18\% of eligible images pass both screens yet
-have negative worst-foil margin; 64.38\% [63.67,65.07]\% of screen-passers fail.
-Selection-stage target-tolerant reranking at
-$\epsilon=.02$ switches 2.0--2.6\% of images and improves normalized aggregate
-margin by $.0150/.0108/.0118/.0087$ across COCO/VOC and B/16/B/32.
-All specificity-gain 10,000-resample paired confidence intervals exceed zero;
-held-out target-response intervals include zero. Gains persist with
-category-disjoint and annotation-absent foils. Margin improvement differs from
-sign repair: COCO B/16 negative-margin prevalence falls only from 74.04\% to
-73.89\%, while switched-image bbox precision falls by 4.95 percentage points
-on average. An independent four-setting MPS rerun provides direct paired margin gains over Mean and Max-.1, with small gains over the latter and locality trade-offs. Reranking demonstrates sparse local margin improvement within
-frozen candidates, not broad failure elimination or loss-free explanations.
+CCI region using matched prompt-mean and aggregate worst-foil margins.
+In the frozen COCO B/16 archive, 41.18\% of eligible images pass both screens
+yet fail the worst-foil audit; 64.38\% [63.67,65.07]\% of screen-passers fail.
+Target-tolerant reranking at $\epsilon=.02$ switches 2.0--2.6\% of images;
+paired margin gains persist under category-disjoint and annotation-absent foils.
+Independent four-setting MPS reruns add direct paired gains over Mean and
+Max-.1, but gains over Max-.1 are small. Switched-image bbox precision drops
+by 4.95 and 13.20 percentage points on COCO and VOC B/16.
+Margin improvement is sparse, differs from sign repair, and does not imply
+loss-free explanations.
+
 \end{abstract}
 \begin{keywords}
 CLIP, explainability, interventions, model auditing, worst-foil specificity
 \end{keywords}
 
 \section{Introduction}
-Frozen vision-language models such as CLIP~\cite{radford2021clip} are often interpreted by ranking image regions
-according to the change in image--text similarity after an intervention.
-CCI~\cite{agarwal2025cci}, for example, clusters CLIP patch tokens into regions
-and combines cluster importance into a heatmap. We audit only its candidate
-region with maximum target-score drop (CCI-top1), not the complete heatmap. A large drop says
-that a region matters for the target; it does not establish that the effect is
-\emph{specific} to the target. Removing generic object evidence can reduce a
-competing semantic foil even more, while bounding-box overlap remains high.
-Likewise, averaging over many easy foils can hide one high-impact confounder.
-In the frozen archive, on COCO B/16, 41.18\% of eligible images have bbox precision $\ge .5$ and
-positive aggregate mean-class margin, yet negative worst-foil margin.
-Among the 17,725 screen-passers, 11,411 (64.38\%) fail the worst-foil audit.
+Frozen vision-language models such as CLIP~\cite{radford2021clip} are often
+interpreted through intervention-induced image--text score changes.
+CCI~\cite{agarwal2025cci} clusters patch tokens and combines cluster importance
+into a heatmap. We audit only its maximum-target-drop region (CCI-top1).
+A large target drop need not be target-specific: generic object evidence can
+support another class more strongly, despite high box overlap. Averaging easy
+foils can hide this failure. In the frozen COCO B/16 archive, 11,411 of 17,725
+locality/mean-class screen-passers (64.38\%) have negative worst-foil margin.
 
-We audit the declared foil-response vector of the \emph{selected} frozen
-region and report target response, worst-foil specificity, and spatial locality
-separately. The contribution is the post-selection audit and controlled evidence
-of local margin improvement, not the max/CVaR operator itself~\cite{rockafellar2000cvar}.
-COCOA~\cite{lin2023cocoa} defines a corpus-versus-foil attribution objective;
+Our contribution is the selected-region response-vector audit and controlled
+evidence of local improvement, not the max/CVaR operator~\cite{rockafellar2000cvar}.
+COCOA~\cite{lin2023cocoa} defines corpus-versus-foil attribution;
 CASE~\cite{williamson2025case} diagnoses class-insensitive saliency and builds
-contrastive explanations. Here the object is a fixed selected region's
-intervention-response vector: we test what locality and mean-class screens miss,
-then probe improvement with selection separated from held-out audit.
+contrastive explanations. We test what locality and mean-class screens miss,
+then separate region selection from held-out audit.
 Related CLIP attribution~\cite{wang2023m2ib,li2023clipsurgery,dreyer2025cliplatent},
-class/concept contrasts~\cite{li2026cdaclip,cheng2026mgaclip,visser2026contrastiveconcept},
+class/concept contrasts~\cite{li2026cdaclip,cheng2026mgaclip,visser2026contrastiveconcept}
 and caption foils~\cite{yuksekgonul2023aro} motivate this distinction.
 Image Description Enhanced CLIP-Adapter (IDEA)~\cite{ye2026idea} combines visual
-features with image descriptions for few-shot classification. Our audit instead
-examines target specificity of selected regions with the model held fixed.
-
-Reranking is a controlled probe of local improvement, not the principal
-algorithmic claim. Negative relative specificity does not imply that the region
-provides no faithful evidence for the target: evidence may support several classes.
+features and descriptions for few-shot classification; our audit keeps the
+model fixed. Reranking probes local improvement. Negative relative specificity
+does not imply absent target evidence: one region may support several classes.
 
 % Declare the full-width method figure early so it appears beside the method.
 \begin{figure*}[t]
@@ -253,34 +241,26 @@ VOC B/32 & 63.15 & 25.99 & \estci{41.16}{[38.40,43.91]}\\
 \end{tabular*}
 \end{table}
 \paragraph{Worst-foil debt.}
-In the frozen archive, COCO/OpenAI B/16 CCI-top1 has normalized
-$P_{\max}^{\rm agg}=-.342$ [--.357,--.327], and 74.04\% [73.56,74.61]\% of
-selected regions have negative aggregate margin. Its held-out raw target
-response is $.939$ [.924,.953] and bbox precision $.679$ [.674,.683].
-These are full-sample means, not estimates within the negative-margin subset.
-In that archive's negative-margin subset, mean raw target drop is $.481$
-and 90.40\% have positive target drop. Table~\ref{tab:screens} adds the independent
-four-setting screen audit. Rerun COCO B/16 has 11,410 failures among 17,726
-screen-passers; the frozen counts remain 11,411/17,725.
+Frozen COCO B/16 CCI-top1 has $P_{\max}^{\rm agg}=-.342$ [--.357,--.327],
+raw target response $.939$ [.924,.953] and bbox precision $.679$ [.674,.683].
+These are full-sample means. Within its negative-margin subset, mean target
+drop is $.481$ and 90.40\% have positive drop. The independent four-setting
+audit (Table~\ref{tab:screens}) finds COCO B/16 failures in 11,410/17,726
+screen-passers, versus frozen 11,411/17,725.
 
 \paragraph{Sparse margin improvement.}
-Table~\ref{tab:main} gives the direct baseline comparison. Normalized aggregate
-and prompt-mean deltas are positive with CIs above zero in all four settings;
-the corresponding prompt-mean deltas are +.0150, +.0108, +.0119, and +.00867.
-Held-out target-response intervals include zero in all four; this does not
-establish equivalence or a no-loss guarantee. Locality is not
-uniformly preserved: B/16 on COCO and VOC shows small bbox decreases, while B/32
-intervals include zero.
+Frozen Table~\ref{tab:main} shows positive aggregate margin gains in all
+settings. Prompt-mean gains are $+.0150,+.0108,+.0119,+.00867$, also with
+CIs above zero. All raw target-response CIs include zero, without establishing
+equivalence. B/16 bbox declines on COCO and VOC; B/32 intervals include zero.
 
 \paragraph{The gain is not merely selector--endpoint reuse.}
-Figure~\ref{fig:ident} shows that the gain persists under category-disjoint
-cross-foil and annotation-absent evaluation. Pooled normalized aggregate gains
-are +.01052 [+.00901,+.01198], +.00728 [+.00629,+.00846], +.00705
-[+.00296,+.01140], and +.00438 [+.00131,+.00784] for COCO B/16, COCO B/32,
-VOC B/16, and VOC B/32. Restricting evaluation further to annotation-absent
-foils remains positive on the full eligible image population: +.00939, +.00697,
-+.00809, and +.00443, with all paired CIs above zero. These controls support
-gain persistence, not baseline failure-rate persistence under the same restrictions.
+Frozen cross-foil controls (Figure~\ref{fig:ident}) retain positive normalized
+aggregate gains: $.01052/.00728/.00705/.00438$ across COCO B/16, COCO B/32,
+VOC B/16 and VOC B/32. Annotation-absent evaluation gives
+$.00939/.00697/.00809/.00443$. All paired 95\% CIs exceed zero.
+These controls establish gain persistence, not restricted-foil baseline
+conditional failure rates.
 
 \paragraph{Direct same-feasible-set comparisons.}
 Table~\ref{tab:baselines} reports direct rerun WF-minus-alternative differences.
@@ -375,19 +355,14 @@ COCO B/32 & 45.0\% & 62.8\% & 73.9\% & +.00841 & +.00947\\
 \end{table}
 
 \paragraph{Cross-template consistency.}
-Across the three held-out phrasings, mean pairwise hardest-foil identity agreement is
-59.80\%. All three agree on the exact category in 46.36\% of images and on its
-stored semantic family in 53.69\%; the latter two
-use the same all-three criterion, not the pairwise criterion.
-Families follow the frozen metadata mapping, e.g., vehicle and animal.
-
+Frozen mean pairwise hardest-foil agreement is 59.80\%.
+All three templates agree on category in 46.36\% of images and on the stored
+semantic family in 53.69\%; the latter two use the all-three criterion.
 
 \paragraph{Tolerance sensitivity.}
-Table~\ref{tab:frontier} uses the same frozen candidates and selection tensors;
-$\epsilon=.02$ was fixed rather than selected from it. As tolerance grows, switches
-increase while $\Delta P\mid\mathrm{sw}$ stays stable. Full-sample target/bbox deltas
-are $(+.00005,-.00118)$ at $.02$, $(-.00049,-.00223)$ at $.05$, and
-$(-.01396,-.01627)$ at $.20$, exposing the target--specificity trade-off.
+The frozen frontier (Table~\ref{tab:frontier}) increases switches with tolerance;
+$\epsilon=.02$ was fixed independently. At $.20$, full-sample target/bbox deltas
+are $(-.01396,-.01627)$, exposing the target--specificity trade-off.
 
 \begin{table}[!t]
 \centering
@@ -439,10 +414,9 @@ VOC B/32 & 38 & \estci{-0.035}{[-0.091,0.021]} & \estci{1.16}{[-15.00,17.26]}\\
 \end{table}
 
 \paragraph{Cases and uncertainty.}
-Figure~\ref{fig:cases} retains archived rule-selected cases and does not
-estimate frequencies. Rerun outputs pass strategy/candidate-array consistency
-checks for all 59,302 image--model records. Small CPU/MPS checks cover only
-1--2 images per setting; they do not establish full-run backend equivalence.
+Figure~\ref{fig:cases} retains archived selected cases, not frequencies.
+All 59,302 rerun image--model records pass strategy/array checks.
+CPU/MPS smoke checks cover only 1--2 images per setting.
 
 \paragraph{Interpretation and scope.}
 Rerun and archive are separate evidence sets. COCO B/16 image IDs align,
