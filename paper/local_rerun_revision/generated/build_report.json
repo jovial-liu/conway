@@ -1,18 +1,17 @@
 {
-  "status": "needs_revision",
+  "status": "automated_checks_passed_visual_review_pending",
   "visual_review": "pending",
   "documents": {
     "source": {
       "compiled": true,
       "warnings": [],
-      "pages": 6,
-      "references_on_page_five": false,
+      "pages": 5,
+      "references_on_page_five": true,
       "page_text_lengths": [
-        4751,
-        8310,
-        4605,
-        3750,
-        1521,
+        4425,
+        8306,
+        3980,
+        3963,
         4529
       ],
       "page_sizes": [
@@ -35,18 +34,13 @@
         [
           612.0,
           792.0
-        ],
-        [
-          612.0,
-          792.0
         ]
       ],
       "render_hashes": [
-        "f97e635413fd083556970739ce4c5b2de2e3f83d00bf6920535c3327cd7d7b4d",
-        "b00d7de7486ccd9c21b221e973f7e8a2f639c99373ba96cf1cbc0a58a5b2df6d",
-        "20c6827e7eb9bd114d6b0270abf1f23454aa87398e7edf5b781a60ececb558fc",
-        "77defb7659dff8827df29c4ba5eec0267f3f66b715ca5851b2e6c280a670837b",
-        "680516cf7b210ffba7b14dbcbcde8dc98b9abe8c2cded8fa9df5eff8a4caed44",
+        "a5ed08707aefbb550ab4c941768ab2955d0589518d8e8476d083a8a97bae74d2",
+        "ace8794aa55c10a350cfc2a8168ee2d0fc256c3a773a0d567e8ab6da72e2d29c",
+        "d22c7b2590faab05760fc12050c6749ed488d9a2ba9aa651d373225d5b20acb4",
+        "8aebd0615ac35e01531bda003037175aaf1b30a26973a7d1abd65bd698c3fa87",
         "94d843898a17798f662931b82eb882bea94676b626e32d789321dd0307ff6b69"
       ],
       "out_of_page_text": []
@@ -54,14 +48,13 @@
     "arxiv_source": {
       "compiled": true,
       "warnings": [],
-      "pages": 6,
-      "references_on_page_five": false,
+      "pages": 5,
+      "references_on_page_five": true,
       "page_text_lengths": [
-        4751,
-        8310,
-        4605,
-        3750,
-        1521,
+        4425,
+        8306,
+        3980,
+        3963,
         4529
       ],
       "page_sizes": [
@@ -84,18 +77,13 @@
         [
           612.0,
           792.0
-        ],
-        [
-          612.0,
-          792.0
         ]
       ],
       "render_hashes": [
-        "f97e635413fd083556970739ce4c5b2de2e3f83d00bf6920535c3327cd7d7b4d",
-        "b00d7de7486ccd9c21b221e973f7e8a2f639c99373ba96cf1cbc0a58a5b2df6d",
-        "20c6827e7eb9bd114d6b0270abf1f23454aa87398e7edf5b781a60ececb558fc",
-        "77defb7659dff8827df29c4ba5eec0267f3f66b715ca5851b2e6c280a670837b",
-        "680516cf7b210ffba7b14dbcbcde8dc98b9abe8c2cded8fa9df5eff8a4caed44",
+        "a5ed08707aefbb550ab4c941768ab2955d0589518d8e8476d083a8a97bae74d2",
+        "ace8794aa55c10a350cfc2a8168ee2d0fc256c3a773a0d567e8ab6da72e2d29c",
+        "d22c7b2590faab05760fc12050c6749ed488d9a2ba9aa651d373225d5b20acb4",
+        "8aebd0615ac35e01531bda003037175aaf1b30a26973a7d1abd65bd698c3fa87",
         "94d843898a17798f662931b82eb882bea94676b626e32d789321dd0307ff6b69"
       ],
       "out_of_page_text": []
