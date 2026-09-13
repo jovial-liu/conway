@@ -1,0 +1,818 @@
+BEYOND MEAN FOILS: AUDITING WORST-FOIL SPECIFICITY IN FROZEN CLIP REGION
+EXPLANATIONS
+Kaixin Liu1,∗, Zhipeng Ye1,∗,†, Feng Jiang1, Qiufeng Wang2, Hao Li3, Xihang Zhou4
+1Taizhou Institute of Science and Technology, Nanjing University of Science and Technology,
+Taizhou 225300, Jiangsu, China
+2Department of Intelligence Science, Xi’an Jiaotong-Liverpool University, Suzhou 215123, Jiangsu, China
+3School of Computer Science and Technology, University of Arizona, Tucson, AZ 85705, USA
+4Department of Statistical Sciences, University of Toronto, Toronto, Ontario M5S 1A1, Canada
+24107880127@nustti.edu.cn, zhipengye@nustti.edu.cn, jf@nustti.edu.cn,
+qiufeng.wang@xjtlu.edu.cn, lihao@arizona.edu, xihang.zhou@mail.utoronto.ca
+∗Equal contribution. †Corresponding author: Zhipeng Ye.
+ABSTRACT
+A frozen CLIP region can pass locality and mean-foil screens
+while responding more strongly to a non-target foil. We au-
+dit the maximum-target-drop single region from CCI candi-
+dates using matched prompt-mean and aggregate worst-foil
+margins.
+In the frozen archive, on COCO/OpenAI B/16,
+41.18% of eligible images pass both screens yet have negative
+worst-foil margin; 64.38% [63.67,65.07]% of screen-passers
+fail.
+Selection-stage target-tolerant reranking at ϵ = .02
+switches 2.0–2.6% of images and improves normalized aggre-
+gate margin by .0150/.0108/.0118/.0087 across COCO/VOC
+and B/16/B/32. All specificity-gain 10,000-resample paired
+confidence intervals exceed zero; held-out target-response in-
+tervals include zero. Gains persist with category-disjoint and
+annotation-absent foils. Margin improvement differs from
+sign repair: COCO B/16 negative-margin prevalence falls only
+from 74.04% to 73.89%, while switched-image bbox precision
+falls by 4.95 percentage points on average. An independent
+four-setting MPS rerun provides direct paired margin gains
+over Mean and Max-.1, with small gains over the latter and
+locality trade-offs. Reranking demonstrates sparse local mar-
+gin improvement within frozen candidates, not broad failure
+elimination or loss-free explanations.
+Index Terms— CLIP, explainability, interventions, model au-
+diting, worst-foil specificity
+1
+INTRODUCTION
+Frozen vision-language models such as CLIP [1] are often
+interpreted by ranking image regions according to the change
+in image–text similarity after an intervention. CCI [2], for
+example, clusters CLIP patch tokens into regions and combines
+cluster importance into a heatmap. We audit only its candidate
+region with maximum target-score drop (CCI-top1), not the
+complete heatmap. A large drop says that a region matters
+for the target; it does not establish that the effect is specific
+to the target. Removing generic object evidence can reduce
+a competing semantic foil even more, while bounding-box
+overlap remains high. Likewise, averaging over many easy
+foils can hide one high-impact confounder. In the frozen
+archive, on COCO B/16, 41.18% of eligible images have bbox
+precision ≥ .5 and positive aggregate mean-class margin, yet
+negative worst-foil margin. Among the 17,725 screen-passers,
+11,411 (64.38%) fail the worst-foil audit.
+We audit the declared foil-response vector of the selected
+frozen region and report target response, worst-foil specificity,
+and spatial locality separately. The contribution is the post-
+selection audit and controlled evidence of local margin im-
+provement, not the max/CVaR operator itself [3]. COCOA [4]
+defines a corpus-versus-foil attribution objective; CASE [5]
+diagnoses class-insensitive saliency and builds contrastive
+explanations. Here the object is a fixed selected region’s
+intervention-response vector: we test what locality and mean-
+class screens miss, then probe improvement with selection sep-
+arated from held-out audit. Related CLIP attribution [6, 7, 8],
+class/concept contrasts [9, 10, 11], and caption foils [12] mo-
+tivate this distinction. Image Description Enhanced CLIP-
+Adapter (IDEA) [13] combines visual features with image
+descriptions for few-shot classification. Our audit instead ex-
+amines target specificity of selected regions with the model
+held fixed.
+Reranking is a controlled probe of local improvement, not
+the principal algorithmic claim. Negative relative specificity
+does not imply that the region provides no faithful evidence
+for the target: evidence may support several classes.
+2
+WORST-FOIL AUDIT AND TARGET-TOLERANT
+RERANKING
+For checkpoint m, sm(x, c) = τm⟨zm(x), em(c)⟩ uses
+unit-normalized embeddings and the checkpoint’s learned
+τm = exp(logit_scalem), before softmax. For candidate re-
+gion R and concept prompt c, define
+dR(c) = sm(x, c) − sm(I(x, R), c),
+(1)
+where I is a frozen internal intervention. Our single-region
+CCI baseline selects
+RCCI = arg max
+R∈R(x) dsel
+R (t),
+(2)
+
+
+(a) Frozen candidates
+(b) Selection-stage reranking
+(c) Held-out audit
+Frozen CLIP + target
+Target tolerance + worst-foil margin
+3 held-out templates
+Partition
+1
+2
+3
+4
+5
+6
+7
+8
+K = 8
+Internal K/V masking
+Prefix retained
+Target drop dsel(t)
+Worst-foil drop
+ε
+CCI baseline
+Max. target drop
+WF rerank
+Within ε of CCI
+Feasible set · Eq. 5
+max [dsel
+R (t) − max
+f
+dsel
+R (f)]
+feasible set · Eq. 6
+Region
+fixed
+Fixed region × 3
+Specificity
+target − worst foil
+Target response
+held-out drop
+Locality
+box overlap
+Illustrative; not to scale.
+Figure 1: Selection and held-out audit. Frozen CCI candidates are selected or reranked only from selection-stage tensors. The
+region is fixed before held-out specificity, target-response, and locality evaluation. The candidate-response diagram is illustrative
+and not to scale.
+{category}”, “an image containing a {category}”, and “the
+{category}”. Let eh(c) denote the stored unit-norm text em-
+bedding for held-out prompt h, and nc = ∥H−1 �
+h eh(c)∥2.
+We normalize every class identically as �dh(c) = dh(c)/nc
+and define
+P pm
+max(R, t) = H−1�
+h
+[�dh(t) − max
+f
+�dh(f)],
+P agg
+max(R, t) = H−1�
+h
+�dh(t) − max
+f
+H−1�
+h
+�dh(f).
+(3)
+Now the pair differs only in max/mean ordering. The same
+paired comparisons in raw drop space have the same direction
+in all four settings. Pmax is ontology-relative, not human
+semantic ground truth or a stand-alone explanation quality
+score.
+Selection-stage target tolerance.
+For each candidate define
+M sel(R, t) = dsel
+R (t) − max
+f∈Ft dsel
+R (f).
+(4)
+Given tolerance ϵ, form
+Rϵ = {R : dsel
+R (t) ≥ dsel
+RCCI(t) − ϵ},
+(5)
+and rerank only this feasible set:
+RWF(ϵ) = arg max
+R∈Rϵ M sel(R, t).
+(6)
+Because RCCI ∈ Rϵ, the feasible set is nonempty; any switch
+loses at most ϵ of the selection-stage target drop. This is not
+a held-out target guarantee. Equation 6 reads only selection-
+stage tensors, and held-out prompts are used only after the
+region is fixed. We use ϵ = .02 as a fixed operating point, not
+an optimized value. Figure 1 summarizes the separation.
+3
+EXPERIMENTAL PROTOCOL
+Models, intervention, and endpoints.
+We use K = 8 frozen
+CCI regions on COCO val2014 [14] (27,708 eligible images)
+and VOC2007 test [15] (1,943), with OpenAI CLIP B/16
+and B/32. Reranking changes only which frozen candidate
+is selected. Each image has one target: the largest-area an-
+notated instance’s category (COCO annotation area; VOC
+box area). Eligibility requires another annotated category
+and target-instance area between 2% and 80% of the image;
+COCO crowd annotations are excluded. Full foils comprise
+every other dataset category (79 for COCO, 19 for VOC).
+The intervention blocks selected patch key/value columns in
+every visual-transformer block and head while retaining the
+prefix token. BBox precision is the fraction of selected patch
+centers inside transformed target boxes and is reported sepa-
+rately because perturbation metrics depend on the intervention
+operator [16]. Ties use the first exact NumPy argmax.
+Held-out controls and uncertainty.
+Selection uses one tem-
+plate and evaluation uses the three held-out templates in Eq. 3.
+Cross-foil controls use ten fixed seeds 1701, 2701, . . . , 10701
+to permute categories into equal alternating folds. Each direc-
+tion selects using one fold and audits on the other, excluding
+the target from both. The 20 seed–direction deltas are averaged
+within each image before paired unique-image resampling;
+annotation-absent evaluation removes categories annotated as
+present without claiming semantic absence. Fixed 5/19-foil
+subsets isolate foil-cardinality effects. Intervals use 10,000
+paired unique-image bootstrap resamples; the archive fixes
+the base seed at 1701 and records deterministic setting/metric-
+specific seeds. Only four provenance-valid OpenAI settings
+enter the direct reranking analysis; two historical LAION set-
+tings are excluded because their text-normalization provenance
+is unresolved.
+4
+RESULTS
+Worst-foil debt.
+On COCO/OpenAI B/16, single-region CCI
+has normalized P agg
+max = −.342 [–.357,–.327], and 74.04%
+[73.56,74.61]% of selected regions have negative aggregate
+margin. Its held-out raw target response is .939 [.924,.953] and
+bbox precision .679 [.674,.683], so the failure is not equivalent
+to weak target response or poor localization.
+Figure 1: Selection and held-out audit. Frozen CCI candidates are selected or reranked only from selection-stage tensors. The
+region is fixed before held-out specificity, target-response, and locality evaluation. The candidate-response diagram is illustrative
+and not to scale.
+using only the selection prompt. CCI-top1 denotes this base-
+line; the CCI subscripts and figure labels retain this shorthand.
+For non-target foils Ft, a worst-foil margin compares the target
+response with the strongest foil response.
+Matched held-out estimands. Selection uses “a photo of a
+{category}”. Held-out evaluation uses “a picture of the {cate-
+gory}”, “an image containing a {category}”, and “the {cate-
+gory}”. Let eh(c) denote the stored unit-norm text embedding
+for held-out prompt h, and nc = ∥H−1 �
+h eh(c)∥2. We apply
+the same class-specific normalization rule, �dh(c) = dh(c)/nc
+and define
+P pm
+max(R, t) = H−1�
+h
+[�dh(t) − max
+f
+�dh(f)],
+P agg
+max(R, t) = H−1�
+h
+�dh(t) − max
+f
+H−1�
+h
+�dh(f).
+(3)
+Thus P pm
+max ≤ P agg
+max: the former permits a different hardest
+foil per template. Both are ontology-relative specificity mea-
+sures. For the mean-class screen, write ¯dc = H−1 �
+h �dh(c).
+The archived screen uses Pmean,all = ¯dt − |C|−1 �
+c∈C ¯dc
+over all dataset classes, equally weighted, on these same held-
+out responses. Excluding the target gives Pmean,foil, with
+Pmean,all = (|C| − 1)Pmean,foil/|C|; their positive screens co-
+incide. This class average differs from prompt-mean.
+Selection-stage target tolerance.
+For each candidate define
+M sel(R, t) = dsel
+R (t) − max
+f∈Ft dsel
+R (f).
+(4)
+Given tolerance ϵ, form
+Rϵ = {R : dsel
+R (t) ≥ dsel
+RCCI(t) − ϵ},
+(5)
+and rerank only this feasible set:
+RWF(ϵ) = arg max
+R∈Rϵ M sel(R, t).
+(6)
+Because RCCI ∈ Rϵ, the feasible set is nonempty; any switch
+loses at most ϵ of the selection-stage target drop. This is not
+a held-out target guarantee. Equation 6 reads only selection-
+stage tensors, and held-out prompts are used only after the
+region is fixed. We use ϵ = .02 as a fixed operating point, not
+an optimized value. Its cosine-scale tolerance is .02/τm, not
+necessarily equal across checkpoints. Figure 1 summarizes the
+separation.
+3
+EXPERIMENTAL PROTOCOL
+Models, intervention, and endpoints.
+We use K = 8 frozen
+CCI regions on COCO val2014 [14] (27,708 eligible images)
+and VOC2007 test [15] (1,943), with OpenAI CLIP B/16
+and B/32. Reranking changes only which frozen candidate
+is selected. Each image has one target: the largest-area an-
+notated instance’s category (COCO annotation area; VOC
+box area). Eligibility requires another annotated category
+and target-instance area between 2% and 80% of the image;
+COCO crowd annotations are excluded. Full foils comprise
+every other dataset category (79 for COCO, 19 for VOC). The
+intervention blocks selected patch key/value columns in every
+visual-transformer block and head by adding −∞ before atten-
+tion softmax, while retaining the prefix token. Cached patch
+features are clustered by K-means (ninit = 3, 50 iterations,
+seed 1701+i for cache index i). BBox precision is the fraction
+of selected patch centers in the union of transformed boxes
+of the target category, not only its largest instance, and is re-
+ported separately because perturbation metrics depend on the
+intervention operator [16]. Ties select the first exact argmax.
+Held-out controls and uncertainty.
+Selection uses one tem-
+plate and evaluation uses the three held-out templates in Eq. 3.
+Cross-foil controls use ten fixed seeds 1701, 2701, . . . , 10701
+to permute categories into equal alternating folds. Each direc-
+tion selects using one fold and audits on the other, excluding
+the target from both. The 20 seed–direction deltas are averaged
+within each image before paired unique-image resampling;
+annotation-absent evaluation removes categories annotated
+as present without claiming semantic absence. Fixed 5/19-
+foil subsets probe cardinality and composition jointly. Inter-
+vals use 10,000 paired unique-image bootstrap resamples; the
+
+
+Table 1: Frozen archive: CCI-top1 vs. WF at ϵ = .02. P = P agg
+max; brackets are paired 95% CIs; “Neg.” is baseline→WF
+negative-margin rate.
+Setting
+PCCI
+∆P
+∆dt
+∆bbox
+Sw.
+Neg.
+COCO B/16
+-.342
++.0150
+[+.0131,+.0169]
++.00005
+[-.00034,+.00044]
+-.00118
+[-.00199,-.00036]
+2.39%
+74.04→73.89%
+COCO B/32
+-.304
++.0108
+[+.00945,+.0122]
+-.00010
+[-.00046,+.00027]
+-.00080
+[-.00162,+.00002]
+2.21%
+73.91→73.75%
+VOC B/16
++.168
++.0118
+[+.00677,+.0183]
+-.00085
+[-.00227,+.00059]
+-.00340
+[-.00652,-.00034]
+2.57%
+58.16→57.59%
+VOC B/32
++.186
++.00867
+[+.00441,+.0143]
+-.00069
+[-.00184,+.00040]
++.00023
+[-.00288,+.00341]
+1.96%
+55.89→55.58%
+Table 2: Local rerun CCI-top1 screen audit. A: bbox ≥ .5 and
+mean-foil margin > 0; F: worst-foil margin < 0. Rates and
+conditional 95% CIs in %.
+Setting
+Pr(A)
+Pr(A ∩ F)
+Pr(F | A)
+COCO B/16
+63.97
+41.18
+64.37
+[63.67,65.05]
+COCO B/32
+64.41
+41.72
+64.78
+[64.07,65.47]
+VOC B/16
+62.22
+26.30
+42.27
+[39.45,45.05]
+VOC B/32
+63.15
+25.99
+41.16
+[38.40,43.91]
+archive fixes the base seed at 1701 and records deterministic
+setting/metric-specific seeds. Only four provenance-valid Ope-
+nAI settings enter the direct reranking analysis; two historical
+LAION settings are excluded because their text-normalization
+provenance is unresolved.
+Independent local rerun. We regenerated candidates and
+responses on a MacBook M4 Pro using PyTorch 2.8.0 MPS,
+the same declared OpenAI models, splits, templates, K = 8
+and ϵ = .02. Tables 2, 3 and 6 report this rerun; Table 1,
+foil/tolerance controls and Figures 2–3 retain frozen-archive
+results. Rerun intervals are 10,000-draw percentile image boot-
+straps with recorded metric-specific seeds. Direct comparisons
+resample same-image differences; conditional failure jointly
+resamples numerator and denominator, and switch intervals
+resample switched images. Intervals are pointwise, without
+multiple-comparison adjustment.
+4
+RESULTS
+Worst-foil debt.
+In the frozen archive, COCO/OpenAI B/16
+CCI-top1 has normalized P agg
+max = −.342 [–.357,–.327], and
+74.04% [73.56,74.61]% of selected regions have negative
+aggregate margin. Its held-out raw target response is .939
+[.924,.953] and bbox precision .679 [.674,.683]. These are
+full-sample means, not estimates within the negative-margin
+subset. In that archive’s negative-margin subset, mean raw tar-
+get drop is .481 and 90.40% have positive target drop. Table 2
+adds the independent four-setting screen audit. Rerun COCO
+B/16 has 11,410 failures among 17,726 screen-passers; the
+frozen counts remain 11,411/17,725.
+Sparse margin improvement.
+Table 1 gives the direct base-
+line comparison. Normalized aggregate and prompt-mean
+deltas are positive with CIs above zero in all four settings;
+the corresponding prompt-mean deltas are +.0150, +.0108,
++.0119, and +.00867. Held-out target-response intervals in-
+clude zero in all four; this does not establish equivalence or a
+no-loss guarantee. Locality is not uniformly preserved: B/16
+on COCO and VOC shows small bbox decreases, while B/32
+intervals include zero.
+The gain is not merely selector–endpoint reuse. Figure 2
+shows that the gain persists under category-disjoint cross-
+foil and annotation-absent evaluation. Pooled normalized
+aggregate gains are +.01052 [+.00901,+.01198], +.00728
+[+.00629,+.00846], +.00705 [+.00296,+.01140], and +.00438
+[+.00131,+.00784] for COCO B/16, COCO B/32, VOC B/16,
+and VOC B/32. Restricting evaluation further to annotation-
+absent foils remains positive on the full eligible image popula-
+tion: +.00939, +.00697, +.00809, and +.00443, with all paired
+CIs above zero. These controls support gain persistence, not
+baseline failure-rate persistence under the same restrictions.
+Direct same-feasible-set comparisons. Table 3 reports di-
+rect rerun WF-minus-alternative differences. Mean maximizes
+dsel
+t
+− meanfdsel
+f
+and Max-.1 maximizes dsel
+t
+− .1 maxf dsel
+f
+over the same Rϵ. All eight pointwise margin CIs exceed
+zero, but gains over Max-.1 are small. Relative to Mean, bbox
+declines on COCO B/16, COCO B/32 and VOC B/16 with CIs
+below zero. Relative to Max-.1, bbox CIs include zero in all
+settings, while COCO B/16 raw target response decreases by
+.000099 [−.000192, −.000010]. These results do not establish
+loss-free superiority.
+Why switching is sparse.
+In the local rerun, singleton feasi-
+ble sets account for 95.29/95.60/95.21/95.27% of COCO B/16,
+COCO B/32, VOC B/16 and VOC B/32 images. The counts
+with 2/3/4 candidates are 1215/81/8, 1174/43/2, 88/5/0 and
+89/3/0; none have more than four. COCO B/16 permits an
+alternative in 1,304/27,708 images, and 663/1,304 (50.84%)
+switch. The frozen counterpart is 1,303.
+
+
+COCO B/16
+COCO B/32
+0
+.010
+.020
+VOC B/16
+0
+.010
+.020
+VOC B/32
+Normalized aggregate gain ΔP
+Full
+Cross-foil
+Absent-only
+Figure 2: Held-out normalized aggregate gains at ϵ = .02
+for full, category-disjoint cross-foil, and annotation-absent
+evaluation; bars are paired 95% CIs.
+Table 3: Local rerun direct paired ∆P agg
+max, multiplied by 103;
+pointwise 95% CIs. Each column subtracts the named alterna-
+tive from WF.
+Setting
+WF−Mean
+WF−Max-.1
+COCO B/16
+12.461
+[10.838,14.193]
+0.245
+[0.131,0.372]
+COCO B/32
+9.343
+[7.970,10.807]
+0.241
+[0.088,0.418]
+VOC B/16
+4.480
+[2.332,7.019]
+0.507
+[0.025,1.114]
+VOC B/32
+3.184
+[1.450,5.126]
+0.418
+[0.044,0.907]
+Table 4: Frozen archive: COCO foil-count sensitivity. “Neg.”
+is baseline negative-margin rate; ∆P is normalized aggregate
+gain.
+Setting
+Neg.@5
+Neg.@19
+Neg.@all
+∆P5
+∆P19
+COCO B/16
+45.8%
+63.5%
+74.0%
++.00872
++.01074
+COCO B/32
+45.0%
+62.8%
+73.9%
++.00841
++.00947
+The effect also reduces the breadth of foil violations.
+As a
+secondary held-out diagnostic, let ¯d(c) = H−1 �
+h ˜dh(c) for
+the already fixed region. We report Vrate, the fraction of foils
+with ¯d(f) > ¯d(t), and Vmass = |Ft|−1 �
+f∈Ft[ ¯d(f) − ¯d(t)]+,
+averaging over all foils, including zeros. On COCO/OpenAI
+B/16, reranking at ϵ = .02 changes Vrate from .18973 to
+.18751 and Vmass from .05878 to .05708. Violation breadth
+therefore also decreases descriptively.
+Foil-cardinality sensitivity. Adding foils can increase the
+maximum response, but the fixed subsets in Table 4 vary car-
+dinality and composition jointly. The reranking gain stays
+positive at both matched counts, so the effect is not created
+solely by evaluating against a larger foil set.
+Cross-template consistency.
+Across the three held-out phras-
+ings, mean pairwise hardest-foil identity agreement is 59.80%.
+All three agree on the exact category in 46.36% of images and
+on its stored semantic family in 53.69%; the latter two use the
+(a)
+(b)
+(c)
+CCI
+WF
+Figure 3: Archived rule-selected COCO/OpenAI B/16 cases
+at ϵ = .02 (top/bottom: CCI/WF); ∆P is normalized ag-
+gregate gain: (a) locality gain, dining table, ∆P = +4.58;
+(b) specificity–locality trade-off, person, ∆P = +0.78; (c)
+counterexample, person, ∆P = −0.98.
+Bbox precision:
+.46→1.00, .81→.11, and .02→.88, respectively.
+Table 5: Frozen archive: COCO/B16 tolerance sensitivity; ∆P
+is full-sample gain, while ∆P | sw and Pr(+) condition on
+switches.
+ϵ
+Sw.
+∆P
+∆P | sw
+Pr(+)
+.01
+1.23%
++.00791
++.642
+90.9%
+.02
+2.39%
++.01497
++.626
+92.2%
+.05
+6.24%
++.03906
++.626
+91.6%
+.10
+11.68%
++.07643
++.654
+92.0%
+.20
+21.87%
++.14479
++.662
+92.9%
+same all-three criterion, not the pairwise criterion. Families
+follow the frozen metadata mapping, e.g., vehicle and animal.
+Tolerance sensitivity. Table 5 uses the same frozen candi-
+dates and selection tensors; ϵ = .02 was fixed rather than
+selected from it. As tolerance grows, switches increase while
+∆P | sw stays stable. Full-sample target/bbox deltas are
+(+.00005, −.00118) at .02, (−.00049, −.00223) at .05, and
+(−.01396, −.01627) at .20, exposing the target–specificity
+trade-off.
+Switch-conditioned outcomes.
+Table 6 uses rerun switched-
+image vectors directly.
+VOC B/16 loses 13.20 bbox per-
+centage points [−24.62, −1.80].
+COCO B/16 loses 4.95
+points [−8.33, −1.45], with median zero and quartiles
+−.3242, +.1137. Raw target-response intervals include zero
+in all four switch subsets; this is not an equivalence result.
+Margin improvement occurs in 611/663, 532/614, 46/50 and
+35/38 switches, whereas sign repair occurs in only 42/663,
+48/614, 11/50 and 6/38.
+Cases and uncertainty. Figure 3 retains archived rule-
+selected cases and does not estimate frequencies.
+Rerun
+outputs pass strategy/candidate-array consistency checks for
+all 59,302 image–model records. Small CPU/MPS checks
+
+
+Table 6: Local rerun switch-conditioned WF−CCI outcomes
+at ϵ = .02. Raw target and bbox means with 95% switched-
+image CIs; bbox multiplied by 100 (percentage points).
+Setting
+nsw
+∆dt
+100∆bbox
+COCO B/16
+663
+0.002
+[-0.013,0.018]
+-4.95
+[-8.33,-1.45]
+COCO B/32
+614
+-0.004
+[-0.021,0.012]
+-3.61
+[-7.45,0.05]
+VOC B/16
+50
+-0.032
+[-0.086,0.020]
+-13.20
+[-24.62,-1.80]
+VOC B/32
+38
+-0.035
+[-0.091,0.021]
+1.16
+[-15.00,17.26]
+cover only 1–2 images per setting; they do not establish
+full-run backend equivalence.
+Interpretation and scope. Rerun and archive are separate
+evidence sets. COCO B/16 image IDs align, but three im-
+ages change screen/failure status and ten change CCI region
+labels. Some response changes exceed threshold rounding;
+frozen candidate tensors are unavailable for causal attribution.
+COCO B/32 switches 614 times versus 613 in the archive,
+whose missing per-image fields prevent localization. These
+differences are not attributed to MPS or treated as exact repro-
+duction. Inference is conditional on eligible images, templates,
+foils, candidates and intervention. Restricted-foil conditional
+failure rates and robustness to new candidate or intervention
+configurations remain untested.
+Conclusion. CCI-top1 auditing exposes specificity failures
+and sparse margin improvement. Independent reruns support
+positive paired margin gains over Mean and Max-.1 under the
+tested protocol, with small gains over Max-.1 and measurable
+locality costs. Target response, locality and sign repair remain
+distinct endpoints.
+
+
+REFERENCES
+[1] A. Radford, J. W. Kim, C. Hallacy, A. Ramesh, G. Goh,
+S. Agarwal, G. Sastry, A. Askell, P. Mishkin, J. Clark,
+G. Krueger, and I. Sutskever, “Learning transferable vi-
+sual models from natural language supervision,” in Pro-
+ceedings of the 38th International Conference on Ma-
+chine Learning, ser. Proceedings of Machine Learning
+Research, vol. 139.
+PMLR, 2021, pp. 8748–8763,
+[Online]. Available: https://proceedings.mlr.press/v139/
+radford21a.html.
+[2] A. Agarwal, S. Karanam, and V. Gandhi, “Concept re-
+gions matter: Benchmarking CLIP with a new cluster-
+importance approach,” in Proceedings of the IEEE/CVF
+Conference on Computer Vision and Pattern Recognition
+(CVPR), June 2026, pp. 2864–2874,
+[Online]. Available: https://arxiv.org/abs/2511.12978.
+[3] R. T. Rockafellar and S. Uryasev, “Optimization of con-
+ditional value-at-risk,” The Journal of Risk, vol. 2, no. 3,
+pp. 21–41, 2000,
+[Online]. Available: https://doi.org/10.21314/JOR.2000.
+038.
+[4] C. Lin, H. Chen, C. Kim, and S.-I. Lee, “Contrastive cor-
+pus attribution for explaining representations,” in Interna-
+tional Conference on Learning Representations (ICLR),
+2023,
+[Online]. Available: https://arxiv.org/abs/2210.00107.
+[5] D. Williamson, Y. Ji, and M. Dwyer, “CASE: Con-
+trastive activation for saliency estimation,” arXiv preprint
+arXiv:2506.07327, 2025,
+[Online]. Available: https://arxiv.org/abs/2506.07327.
+[6] Y. Wang, T. G. J. Rudner, and A. G. Wilson, “Visual
+explanations of image-text representations via multi-
+modal information bottleneck attribution,” in Advances
+in Neural Information Processing Systems, vol. 36, 2023,
+pp. 16 009–16 027,
+[Online].
+Available:
+https://doi.org/10.52202/
+075280-0704.
+[7] Y. Li, H. Wang, Y. Duan, J. Zhang, and X. Li, “A closer
+look at the explainability of contrastive language-image
+pre-training,” Pattern Recognition, vol. 162, p. 111409,
+2025,
+[Online]. Available:
+https://doi.org/10.1016/j.patcog.
+2025.111409.
+[8] M. Dreyer, L. Hufe, J. Berend, T. Wiegand, S. La-
+puschkin, and W. Samek, “From what to how: Attribut-
+ing CLIP’s latent components reveals unexpected seman-
+tic reliance,” arXiv preprint arXiv:2505.20229, 2025,
+[Online]. Available: https://arxiv.org/abs/2505.20229.
+[9] F. Li, Z. Meng, C. Tan, and Y. Yin, “Class-disentangled
+attribution with gradient guidance for CLIP,” Journal
+of King Saud University Computer and Information
+Sciences, vol. 38, p. 376, 2026,
+[Online].
+Available:
+https://doi.org/10.1007/
+s44443-026-00779-3.
+[10] X. Cheng, T. Zhou, S. Yin, H. Zhang, W. Xiong,
+and W. Ding, “MGA-CLIP: A multigranularity attribu-
+tion framework for cross-modal explainability in CLIP,”
+IEEE Transactions on Neural Networks and Learning
+Systems, 2026,
+[Online]. Available:
+https://doi.org/10.1109/TNNLS.
+2026.3696329.
+[11] R. Visser, I. Roberts, and B. Hammer, “Contrastive con-
+cept importance: Explaining pairwise class decisions
+through automatically extracted concept representations,”
+arXiv preprint arXiv:2607.27904, 2026,
+[Online]. Available: https://arxiv.org/abs/2607.27904.
+[12] M. Yuksekgonul, F. Bianchi, P. Kalluri, D. Jurafsky, and
+J. Zou, “When and why vision-language models behave
+like bags-of-words, and what to do about it?” in Interna-
+tional Conference on Learning Representations (ICLR),
+2023,
+[Online]. Available: https://openreview.net/forum?id=
+KRLUvxh8uaX.
+[13] Z. Ye, F. Jiang, Q. Wang, K. Huang, and J. Huang,
+“IDEA: Image description enhanced CLIP-adapter
+for image classification,” Pattern Recognition, vol.
+171, p. 112224, 2026. [Online]. Available:
+https:
+//doi.org/10.1016/j.patcog.2025.112224
+[14] T.-Y. Lin, M. Maire, S. Belongie, J. Hays, P. Perona,
+D. Ramanan, P. Dollar, and C. L. Zitnick, “Microsoft
+COCO: Common objects in context,” in Computer
+Vision–ECCV 2014, ser. Lecture Notes in Computer
+Science, vol. 8693.
+Springer, 2014, pp. 740–755,
+[Online].
+Available:
+https://doi.org/10.1007/
+978-3-319-10602-1_48.
+[15] M. Everingham, L. Van Gool, C. K. I. Williams, J. Winn,
+and A. Zisserman, “The PASCAL visual object classes
+(VOC) challenge,” International Journal of Computer
+Vision, vol. 88, no. 2, pp. 303–338, 2010,
+[Online].
+Available:
+https://doi.org/10.1007/
+s11263-009-0275-4.
+[16] T. Gomez, T. Freour, and H. Mouchere, “Metrics for
+saliency map evaluation of deep learning explanation
+methods,” in Pattern Recognition and Artificial Intelli-
+gence: Third International Conference, ICPRAI 2022,
+ser. Lecture Notes in Computer Science.
+Springer,
+2022, pp. 84–95,
+[Online].
+Available:
+https://doi.org/10.1007/
+978-3-031-09037-0_8.
