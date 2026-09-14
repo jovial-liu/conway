@@ -1,0 +1,48 @@
+name: Materialize round-4 handoff release
+on:
+  push:
+    branches: [paper/verified-rerun-integration]
+    paths:
+      - 'handoff/round4/ccf0_round4_release_bundle_compact.zip'
+      - '.github/workflows/materialize-round4-handoff.yml'
+permissions:
+  contents: write
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract verified round-4 bundle
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/round4
+          mkdir -p /tmp/round4
+          unzip -q handoff/round4/ccf0_round4_release_bundle_compact.zip -d /tmp/round4
+          root=/tmp/round4/ccf0-round4-20260914
+          test -f "$root/ccf0_round4_20260914.pdf"
+          test -f "$root/ccf0_round4_20260914_arxiv.zip"
+          test -f "$root/source/main.tex"
+          test -f "$root/build_report.json"
+          mkdir -p paper/review_round4_20260914/generated
+          cp "$root/ccf0_round4_20260914.pdf" paper/review_round4_20260914/generated/
+          cp "$root/ccf0_round4_20260914_arxiv.zip" paper/review_round4_20260914/generated/
+          rm -rf paper/review_round4_20260914/source paper/review_round4_20260914/arxiv_source paper/review_round4_20260914/results
+          cp -a "$root/source" paper/review_round4_20260914/source
+          cp -a "$root/arxiv_source" paper/review_round4_20260914/arxiv_source
+          cp -a "$root/results" paper/review_round4_20260914/results
+          for f in README.md CHANGES_zh.md ENDPOINT_SUPPLEMENT.md VERIFICATION_NOTES.md build_report.json release_manifest.json SHA256SUMS.txt; do
+            cp "$root/$f" "paper/review_round4_20260914/$f"
+          done
+          sha256sum paper/review_round4_20260914/generated/ccf0_round4_20260914.pdf
+          sha256sum paper/review_round4_20260914/generated/ccf0_round4_20260914_arxiv.zip
+      - name: Commit materialized handoff files
+        run: |
+          set -euo pipefail
+          git config user.name 'Paper handoff'
+          git config user.email 'paper-handoff@users.noreply.github.com'
+          git add paper/review_round4_20260914/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Materialize round-4 paper handoff release'
+            git push origin HEAD:paper/verified-rerun-integration
+          fi
