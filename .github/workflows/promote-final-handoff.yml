@@ -1,0 +1,68 @@
+name: Promote final ccf0 handoff
+
+on:
+  push:
+    branches: [paper/verified-rerun-integration]
+    paths:
+      - 'HANDOFF_FINAL.md'
+      - '.github/workflows/promote-final-handoff.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Promote root handoff and build final portable package
+        run: |
+          set -euo pipefail
+          materialized_parent="$(git rev-parse HEAD^)"
+          sed "s/__MATERIALIZED_COMMIT__/${materialized_parent}/g" HANDOFF_FINAL.md > HANDOFF.md
+          mkdir -p handoff
+          cat > handoff/ROUND4_RELEASE_INDEX.md <<EOF
+          # ccf0 Round-4 release index
+
+          Branch: \`paper/verified-rerun-integration\`
+          Materialized paper parent commit: \`${materialized_parent}\`
+
+          Final manuscript directory: \`paper/review_round4_20260914/\`
+
+          - PDF: \`paper/review_round4_20260914/generated/ccf0_round4_20260914.pdf\`
+          - Editable source: \`paper/review_round4_20260914/source/main.tex\`
+          - Source package: \`paper/review_round4_20260914/generated/ccf0_round4_20260914_source.zip\`
+          - arXiv package: \`paper/review_round4_20260914/generated/ccf0_round4_20260914_arxiv.zip\`
+          - Checksums: \`paper/review_round4_20260914/generated/SHA256SUMS.txt\`
+          - Round-4 package: \`handoff/round4/ccf0_round4_github_handoff.zip\`
+
+          Evidence lineage:
+          - local rerun: \`1817e1666161fa902869affe61b55f7c98c45668\`
+          - restricted-foil controls: \`6a52e8f3d39f343d8483390882dcb5e57003d904\`
+
+          The root \`HANDOFF.md\` is the authoritative handoff document.
+          EOF
+
+          printf '%s\n' 'paper/verified-rerun-integration' > handoff/LATEST_BRANCH.txt
+          printf '%s\n' 'paper/review_round4_20260914' > handoff/LATEST_PAPER_DIR.txt
+
+          rm -f handoff/ccf0_final_handoff.zip
+          zip -qr handoff/ccf0_final_handoff.zip \
+            HANDOFF.md handoff/ROUND4_RELEASE_INDEX.md \
+            handoff/LATEST_BRANCH.txt handoff/LATEST_PAPER_DIR.txt \
+            paper/review_round4_20260914 \
+            -x 'paper/review_round4_20260914/generated/ccf0_round4_20260914_source.zip'
+
+      - name: Commit final handoff
+        run: |
+          set -euo pipefail
+          git config user.name "Paper handoff"
+          git config user.email "paper-handoff@users.noreply.github.com"
+          git add HANDOFF.md handoff/ROUND4_RELEASE_INDEX.md handoff/LATEST_BRANCH.txt \
+            handoff/LATEST_PAPER_DIR.txt handoff/ccf0_final_handoff.zip
+          if ! git diff --cached --quiet; then
+            git commit -m "Finalize ccf0 round-4 handoff"
+            git push origin HEAD:paper/verified-rerun-integration
+          fi
