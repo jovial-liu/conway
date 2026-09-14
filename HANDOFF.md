@@ -1,207 +1,290 @@
-# ccf0 论文与实验交接：新对话先读这里
+# ccf0 最终交接：ICASSP 2027 Round-4 定稿
 
-交接日期：2026-09-13。仓库：jovial-liu/conway。
-**工作分支：paper/verified-rerun-integration。不要只读 main。**
+交接日期：2026-09-14  
+仓库：`jovial-liu/conway`  
+**工作分支：`paper/verified-rerun-integration`。不要只读 main。**
 
-论文：Beyond Mean Foils: Auditing Worst-Foil Specificity in Frozen CLIP Region Explanations。
+论文：**Beyond Mean Foils: Auditing Worst-Foil Specificity in Frozen CLIP Region Explanations**
 
-## 1. 当前状态与唯一入口
+## 1. 当前唯一有效的论文入口
 
-已完成论文整合、pdfLaTeX/BibTeX 编译、五页检查、引用/溢出检查、逐页视觉检查、主稿/arXiv 渲染一致性检查、ZIP 完整性检查。
-**尚未向 arXiv 提交，尚未合并 main。**
+当前定稿为 Round-4 endpoint-aligned finalization。GitHub 物化前的父提交：`2698b71079266a66c280fdd73f89b4efff9fafde`。
 
-最终论文与实验快照：**1817e1666161fa902869affe61b55f7c98c45668**。
-本交接是该提交之后的文档更新，不改变论文或实验数据。
+以后不要再把以下旧文件当作当前定稿：
+
+- `paper/local_rerun_revision/generated/paper_final.pdf`
+- `paper/review_round2_20260913/` 对应的旧对话交付物
+- `paper/review_round3_20260913/` 对应的旧对话交付物
+- 用户早期上传的 `liu_submission_compliance_final(1).pdf`
+
+当前定稿目录：
 
 | 内容 | 仓库相对路径 |
 |---|---|
-| 最新可编辑主稿 | paper/local_rerun_revision/source/main.tex |
-| 六作者 | paper/local_rerun_revision/source/authors.tex |
-| 定稿图件 | paper/local_rerun_revision/source/figures/ |
-| 最终论文 PDF | paper/local_rerun_revision/generated/paper_final.pdf |
-| 完整论文 ZIP | paper/local_rerun_revision/generated/paper_complete.zip |
-| arXiv 展开源码 | paper/local_rerun_revision/arxiv_source/ |
-| arXiv 上传 ZIP | paper/local_rerun_revision/generated/arxiv_source.zip |
-| arXiv 预览 PDF | paper/local_rerun_revision/generated/arxiv_preview.pdf |
-| 实际发布校验 | paper/local_rerun_revision/generated/build_report.json |
-| 逐页 PNG、编译日志 | paper/local_rerun_revision/generated/ |
-| 修改/编译说明 | paper/local_rerun_revision/README.md、BUILD.md |
-| 原始底稿，仅供对照 | paper/evidence_base/ |
+| 最终 PDF | `paper/review_round4_20260914/generated/ccf0_round4_20260914.pdf` |
+| 可编辑主稿 | `paper/review_round4_20260914/source/main.tex` |
+| 作者文件 | `paper/review_round4_20260914/source/authors.tex` |
+| 当前图件 | `paper/review_round4_20260914/source/figures/` |
+| 当前表格片段 | `paper/review_round4_20260914/source/tables/` |
+| arXiv 展开源码 | `paper/review_round4_20260914/arxiv_source/` |
+| GitHub 构建的源码包 | `paper/review_round4_20260914/generated/ccf0_round4_20260914_source.zip` |
+| GitHub 构建的 arXiv 包 | `paper/review_round4_20260914/generated/ccf0_round4_20260914_arxiv.zip` |
+| 生成文件校验 | `paper/review_round4_20260914/generated/SHA256SUMS.txt` |
+| PDF 字体检查 | `paper/review_round4_20260914/generated/pdffonts.txt` |
+| PDF 页面信息 | `paper/review_round4_20260914/generated/pdfinfo.txt` |
+| Round-4 版本说明 | `paper/review_round4_20260914/README.md` |
+| Round-4 修改记录 | `paper/review_round4_20260914/CHANGELOG.md` |
+| Round-4 核验说明 | `paper/review_round4_20260914/VERIFICATION_NOTES.md` |
+| endpoint 补充说明 | `paper/review_round4_20260914/ENDPOINT_SUPPLEMENT.md` |
+| GitHub handoff 包 | `handoff/round4/ccf0_round4_github_handoff.zip` |
+| 最终总交接包 | `handoff/ccf0_final_handoff.zip` |
 
-[最终 PDF](https://github.com/jovial-liu/conway/blob/1817e1666161fa902869affe61b55f7c98c45668/paper/local_rerun_revision/generated/paper_final.pdf)
-· [当前主稿](https://github.com/jovial-liu/conway/blob/1817e1666161fa902869affe61b55f7c98c45668/paper/local_rerun_revision/source/main.tex)
+**交付时以 `generated/SHA256SUMS.txt` 中的 GitHub 构建哈希为准。** PDF 的元数据可能导致不同环境构建的字节哈希与先前 ChatGPT 会话附件不同；内容和格式判断必须基于当前 GitHub 定稿目录与当前构建结果，不要拿旧附件哈希反向覆盖新构建。
 
-不要把 evidence_base/source/main.pdf、旧上传 liu_submission_compliance_final(1).pdf 或 Mac 未完成编辑副本当作当前定稿。
+## 2. 论文格式与作者约束
 
-## 2. 用户确认的分工和约束
+- 保持五页：前四页技术正文，第五页参考文献。
+- 六作者顺序固定：Kaixin Liu、Zhipeng Ye、Feng Jiang、Qiufeng Wang、Hao Li、Xihang Zhou。
+- 机构、共同一作、通讯作者以当前 `authors.tex` 为准。
+- 保留 IDEA 引用（`ye2026idea`）。
+- 不恢复已删除的 Acknowledgment。
+- 当前提交为单匿名作者信息保留版。
+- 最终 PDF 要求所有字体 `emb=yes` 且 `sub=yes`，不得出现 Type 3 字体。
+- Figure 1 旧版隐藏正文对象的问题已经修复；不要恢复裁剪整页旧稿的图件。
+- 不因切换对话重新回退到 evidence_base 或旧 round2/round3 排版。
 
-- 本地 MacBook M4 Pro Codex **只负责实验、统计核验和数据搬运**。不要再让它编辑论文、排版或安装 TeX。
-- 接手的云端助手负责论文修改、图表排版、编译和最终打包。
-- 保持五页：前四页论文，第五页参考文献。
-- 六作者顺序：Kaixin Liu、Zhipeng Ye、Feng Jiang、Qiufeng Wang、Hao Li、Xihang Zhou。机构、共同一作、通讯作者按 authors.tex。
-- 保留 IDEA 引用（ye2026idea）。
-- Figure 1 钢蓝、砖红、橄榄绿配色已定稿，标题下三条线已删。三张图件均保留原 Git blob，不擅自重画。
-- 不恢复已移除的 Acknowledgment，不因切换对话重做旧版。
-- Frozen 与 local_rerun 分别标明，不能混算、覆盖或为了匹配旧数调数据。
-- 实验已完成，无需默认追加全量模型推理。
-- 不自动提交 arXiv、不强推、不覆盖 main。不要反复确认已授权的工作。
+## 3. 科学证据版本链
 
-## 3. 版本链
+### 3.1 原始 local rerun
 
-| 版本 | 提交 |
-|---|---|
-| 实际 MPS 推理及原统计 | 59fc00e3948015379c8dcc563283a5bdda7f1226 |
-| 独立统计核验、定义与种子修正 | 1cdffa7abdca1f84c1120362fbaf04d9fb52d13b |
-| 原始展开论文包上传 | 17c6ca5fb254e2eea0c98d479509aaf38af558c5 |
-| 首轮未编译源码，已被取代 | 12cfab20e4fc533419b8ea68feae95719ffd1b68 |
-| 最终五页论文与生成文件快照 | 1817e1666161fa902869affe61b55f7c98c45668 |
+不可变基线提交：
 
-此前“无法编译”“六页”“尚无 PDF”均已过时；之后用 GitHub Actions 实际编译、修正数学符号、精简文字完成了五页版。
+`1817e1666161fa902869affe61b55f7c98c45668`
 
-## 4. 实验数据目录
+主要目录：
 
-前缀 R = experiments/local_rerun_2026-09-13/rerun_workspace/。
+`experiments/local_rerun_2026-09-13/rerun_workspace/`
 
-- R/runs/<setting>/per_image.csv：每图一行，image_id/sample_index、目标、CCI/WF/Mean/Max-.1 选择、可行集大小、候选 selection target/mean-foil/max-foil 数组、候选 held-out margin/mean/target/bbox 数组及选中指标。
-- R/runs/<setting>/run.log、run_metadata.json：实际命令、MPS 设备、进度、样本数、版本、耗时。
-- R/runs/*_smoke_cpu/、*_smoke_mps/：小样本设备对照。
-- R/scripts/run_local_rerun.py：推理；analyze_local_rerun.py：原统计。
-- R/scripts/validate_outputs.py、write_provenance.py：检查与溯源。
-- R/config/local_rerun_config.json：配置。
-- R/manifest/dependency_versions.txt、source_and_hashes.csv：依赖、输入来源、已记录哈希。
-- R/results/：原统计、八份逐图直接差值。最终报告优先用 corrected 统计。
+四个 setting：
 
-| setting | 记录数 | per_image.csv 字节数 | local WF 切换 | local sign repair |
+- `coco_openai_b16`：27,708 records
+- `coco_openai_b32`：27,708 records
+- `voc2007_openai_b16`：1,943 records
+- `voc2007_openai_b32`：1,943 records
+
+共 59,302 个 image-model records；同数据集两模型使用同一批图像，**不能称为 59,302 张独立图像**。
+
+### 3.2 restricted-foil reviewer controls
+
+最终实验提交：
+
+`6a52e8f3d39f343d8483390882dcb5e57003d904`
+
+目录：
+
+`experiments/reviewer_controls_2026-09-13/`
+
+该实验固定原始 CCI-top1 区域和 full-foil 下定义的筛选集合 `A`，不重新选区域、不重新定义 `A`，比较：
+
+1. full foils；
+2. annotation-absent foils；
+3. 每图 foil 数量匹配的 exact random subset expectation。
+
+四设置独立验证均 PASS。完整逐类别响应大张量因体积限制留在本地，SHA256 记录在：
+
+`experiments/reviewer_controls_2026-09-13/manifest/large_local_artifacts.csv`
+
+公开仓库包含可复查的统计、逐图诊断、脚本、metadata、日志和独立核验结果；不要把公开诊断文件描述成“包含全部逐类别原始张量”。
+
+## 4. 当前论文的主要实证结论
+
+### 4.1 固定原始筛选集合下的 worst-foil failure
+
+`A = (CCI bbox precision >= .5) AND (full-foil normalized aggregate mean-foil margin > 0)`。
+
+| Setting | Full F|A | Annotation-absent F|A | Exact matched-random | Absent - random, pp [95% CI] |
 |---|---:|---:|---:|---:|
-| coco_openai_b16 | 27,708 | 49,338,958 | 663 | 42 |
-| coco_openai_b32 | 27,708 | 47,876,646 | 614 | 48 |
-| voc2007_openai_b16 | 1,943 | 3,504,239 | 50 | 11 |
-| voc2007_openai_b32 | 1,943 | 3,399,748 | 38 | 6 |
+| COCO B/16 | 64.37% | 63.17% | 64.09% | -0.92 [-1.08,-0.77] |
+| COCO B/32 | 64.78% | 63.64% | 64.50% | -0.86 [-1.01,-0.72] |
+| VOC B/16 | 42.27% | 40.94% | 41.46% | -0.52 [-1.16,+0.06] |
+| VOC B/32 | 41.16% | 39.77% | 40.32% | -0.55 [-1.19,+0.04] |
 
-共 59,302 个图像—模型记录。同数据集两模型使用相同图像，不能称为 59,302 张独立图像。
-候选数组是当前策略所需的**汇总响应，不等于完整逐模板×逐类别张量或原始候选掩码**，不能据此宣称任意 foil 子集实验都可直接重算。
+解释边界：
 
-## 5. 最终统计与核验
+- 高失败率在排除“已标注存在”的非目标类别后仍基本保留，因此已标注共现类别不能单独解释主现象。
+- COCO 上定向排除相对 matched-random 的差值区间低于零；VOC 对应区间包含零。
+- `annotation-absent` 仅指未被数据集标注为存在，**不等于人工验证的语义缺席**。
+- 不能把这一结果写成“共现不重要”或“所有语义共现都被排除”。
 
-前缀 V = experiments/verification_2026-09-13/。
+### 4.2 正目标贡献检查
 
-必读 V/verification_report.md 和：
-- results/corrected_paired_difference_ci_10000.csv
-- results/corrected_screening_failure_rates.csv
-- results/corrected_switch_subset_changes_ci.csv
-- results/corrected_switch_margin_improvement_vs_sign_repair.csv
-- results/corrected_feasible_set_size_distribution.csv
-- results/corrected_runtime_summary.csv
-- results/recomputed_vs_existing_statistics.csv
-- results/strategy_choice_validation.csv
-- scripts/verify_local_rerun.py
-- manifest/verification_metadata.json
-- logs/verification_run.log
+`Aplus = A AND (CCI held-out normalized target drop > 0)`。
 
-记录：策略/候选数组校验失败 0；768 项比较中统计数值不一致 0（报告阈值 1e-5），36 项为定义文字修正；screening 各项实际种子已列出。
-独立脚本直接读逐图数据，不导入原分析模块。完整重算在本地完成；云端核对报告、代码并复算八份逐图差值均值，不要误称云端又跑了模型。
+Full-foil failure rates：
 
-算法：10,000 次 NumPy default_rng 图像 bootstrap，percentile 2.5/97.5，base seed 1701 加记录的 metric-specific seeds。
-直接比较先同图相减再重采样；条件失败率联合重采样分子/分母；切换 CI 从子集向量计算，不能将总体 CI 除以切换率。区间为逐项区间，未校正多重比较。
-旧 config 中 candidate−CCI 的泛称不是直接基线比较定义；看 V/corrected_config_notes.md 和 corrected 表实际列定义。
+- COCO B/16 62.64%
+- COCO B/32 63.79%
+- VOC B/16 41.40%
+- VOC B/32 40.74%
 
-## 6. 科学定义、结果和表格来源
+Annotation-absent failure rates：
 
-CCI-top1 = selection target drop 最大的单区域，不是完整 CCI heatmap。
-epsilon=.02 可行集：selection target >= CCI target−.02。
-WF 最大化 target−max(non-target foil)；Mean 最大化 target−mean(foil)；
-Max-.1 最大化 target−.1*max(foil)。WF−Max-.1 是比较，不是策略。
-K=8，K-means n_init=3、max_iter=50、seed=1701+sample_index。
-selection prompt 与三个 held-out prompts 分开；raw 和 normalized target 分开。
-筛查 A：bbox>=.5 且 normalized aggregate mean-foil margin>0；
-失败 F：normalized aggregate worst-foil margin<0。
-all-class mean 与 non-target mean 正号筛查数学等价，但数值不同。
+- COCO B/16 61.38%
+- COCO B/32 62.61%
+- VOC B/16 40.05%
+- VOC B/32 39.34%
 
-| CCI local rerun | 条件失败率 P(F|A) | 95% CI |
-|---|---:|---|
-| COCO B/16 | 64.37% | [63.67%,65.05%] |
-| COCO B/32 | 64.78% | [64.07%,65.47%] |
-| VOC B/16 | 42.27% | [39.45%,45.05%] |
-| VOC B/32 | 41.16% | [38.40%,43.91%] |
+因此“mean-foil screen 本身没有保证正目标贡献”已经通过本地 `Aplus` 稳健性检查处理；不要再用 frozen archive 的 90.40% 代替这套本地结果。
 
-- Table 1：frozen CCI→WF 全样本结果。
-- Table 2：local rerun 四设置筛查。
-- Table 3：local WF−Mean/WF−Max-.1 直接配对 margin，显示值乘 1000。
-- Table 4/5、Figure 2/3：frozen foil/tolerance/归档图证据。
-- Table 6：local 切换子集 raw target 和 bbox CI；bbox 乘 100，为百分点。
-- Figure 1 为定稿方法图，不含新实验测量。
+### 4.3 精确 repair oracle：固定原始 `B=A AND F`
 
-四设置两种直接 margin 比较的逐项 CI 均大于零；相对 Max-.1 增益很小，不应称全面/无代价优越。
-切换 bbox：COCO B/16 −4.95 个百分点 [−8.33,−1.45]；
-VOC B/16 −13.20 个百分点 [−24.62,−1.80]。
-Margin improvement、sign repair、target response、locality 是不同结局。
+在 epsilon=.02 下，互斥分解为：
 
-## 7. 差异及未解决项目
+- `C0`：全部 K=8 候选中没有任何 passing candidate；
+- `C1`：至少存在 passing candidate，但 **没有任何 passing candidate 满足目标预算**；
+- `C2`：存在 feasible passing candidate，但 WF 未选中；
+- `r`：WF 实际 sign repair。
 
-Frozen 切换 663/613/50/38；local 为 663/614/50/38。
-Frozen COCO B/16 通过 17,725、联合失败 11,411；local 为 17,726、11,410。
-状态变化图像 135671、185335、213809；CCI label 变化共 10 张。
-部分响应差异明显大于舍入；缺 frozen 候选数组/中间量，无法确定聚类、算术、预处理等原因。不能归因于已证实的 MPS 误差。
-同一 region 编号不保证候选掩码相同。
-B/32 frozen 缺对齐逐图字段，无法枚举 613→614 图像。
-local COCO B/16 多可行样本 1,304（frozen 1,303），不可混用。
-COCO 两模型耗时都是续跑部分，不是完整耗时。
-CPU/MPS 检查仅 1–2 图/设置，不证明全量后端等价。
-限制 foil 后的条件失败率、新 K/干预鲁棒性仍未补齐；不宣称全部历史实验完整复现。
+| Setting | B | C0 | C1 | C2 | r |
+|---|---:|---:|---:|---:|---:|
+| COCO B/16 | 11,410 | 10,697 | 695 | 0 | 18 |
+| COCO B/32 | 11,561 | 10,655 | 875 | 1 | 30 |
+| VOC B/16 | 511 | 371 | 135 | 0 | 5 |
+| VOC B/32 | 505 | 347 | 155 | 1 | 2 |
 
-## 8. Frozen 来源与未上传输入
+由此可见：
 
-本仓库 paper/evidence_base/evidence/ 有旧稿依赖的恢复 CSV、协议、代码及图件数据。
-更多历史归档位于 jovial-liu/cci：
-- reviewer-identification-round2-v1 分支的 derived/reviewer_cci_preserving_v1/：
-  01_original_cci_per_sample.csv、03_target_preserving_per_sample.csv。
-- 提交 0ec6831cca419d106ffe6ba6aef255819898b7a6 的 experiment_results.zip。
-这些是 frozen 来源，不是本次 local_rerun。
+- COCO 中约 92%–94% 的 `B` 在当前八个候选中完全没有 passing candidate；VOC 为约 69%–73%。
+- 即便全部候选中存在 passing candidate，epsilon=.02 的目标预算又排除了绝大多数机会。
+- 紧预算下 WF 漏掉的 feasible sign repair 很少：四设置 C2 为 0/1/0/1。
+- 这只针对当前 K=8 候选，不等于图像中不存在其他更合理区域。
 
-**COCO/VOC 原图、模型权重和本机完整缓存未上传 GitHub。**
-公开下载 URL 和已有 SHA256 在 R/manifest/source_and_hashes.csv。
-部分早期张量没有归档，不能保证从仓库恢复所有历史控制实验。
-本次逐图结果足够重算当前固定策略的主要统计。
-paper_complete.zip 是论文交付包，不含全部大 CSV；完整实验应克隆本分支。
+### 4.4 sign repair 与 endpoint retention 不等价
 
-## 9. 新会话启动与可复现命令
+Round-4 新增 `J`：WF 新区域同时满足：
 
-先读本文、当前 source/main.tex、corrected 统计、build_report.json。
-没有新增任务时不要默认重做论文/实验。
+- worst-foil margin >= 0；
+- bbox precision >= .5；
+- full mean-foil margin > 0；
+- held-out target contribution > 0。
 
-从独立目录克隆：
-    git clone --branch paper/verified-rerun-integration --single-branch https://github.com/jovial-liu/conway.git
+在原始 `B`、epsilon=.02 下：
 
-最终 release 精确快照可检出 1817e1666161fa902869affe61b55f7c98c45668；该快照本身早于本交接文件。
+| Setting | WF sign repairs | Repairs also satisfying J |
+|---|---:|---:|
+| COCO B/16 | 18 | 12 |
+| COCO B/32 | 30 | 25 |
+| VOC B/16 | 5 | 3 |
+| VOC B/32 | 2 | 1 |
 
-从仓库根目录重算原 local 统计到独立输出：
-    python experiments/local_rerun_2026-09-13/rerun_workspace/scripts/analyze_local_rerun.py --runs-root experiments/local_rerun_2026-09-13/rerun_workspace/runs --out-dir /tmp/cci-recomputed --bootstrap 10000 --seed 1701
+所以不要把“margin 转正”写成“解释全面修复”。对所有 baseline failures 的 sign repair 计数仍是 42/48/11/6；这是不同分母，不要与 `B` 内 18/30/5/2 混用。
 
-独立 verify_local_rerun.py 的 --project-root 采用原 Mac 布局
-（rerun_workspace、verification_2026-09-13/frozen 等）。仓库路径不同：
-先读脚本、显式映射，不盲目执行或伪造缺 frozen 输入。
-历史 /Users/von 路径是来源记录，不是云端可访问路径。
+### 4.5 tolerance frontier 与代价
 
-handoff/FILE_INDEX.json 和 CSV 枚举 release 的全部论文/实验/编译流程文件。
-包含 Git blob SHA1、大小和部分已有 SHA256；两类哈希不混称。
-运行 python handoff/verify_inventory.py --repo-root . 可检查 checkout 文件完整性。
-该脚本仅检查完整性，不重算统计或推理；本次未执行此新脚本。
+当前论文已经使用同一 stored-candidate 数据对 `.01/.02/.05/.10/.20` 五档 tolerance 进行重分析。
 
-## 10. 编译与后续编辑注意事项
+COCO B/16 的代表性结果：
 
-编译流程：.github/workflows/verify-paper.yml，限定修订分支。
-修改 source、arxiv_source 或 verify_build.py 会触发编译；新增本交接不触发。
-依赖 TeX Live + PyMuPDF，pdfLaTeX/BibTeX 四步。
-两处 main.tex 必须同步，五页图件和作者约束保持。
+- epsilon=.02：多候选比例约 4.71%，`B` 内 exact feasible oracle repair 约 0.16%。
+- epsilon=.20：多候选比例约 35.78%，`B` 内 oracle repair 约 1.57%。
+- epsilon=.20 时全样本 held-out raw target response 约 -0.01397，bbox precision 约 -1.63 percentage points，报告区间均低于零。
 
-verify_build.py 检查编译、五页、引用、溢出、页面边界、主稿/arXiv
-渲染及 visual_review.json 的已审阅哈希。内容变化后必须实际看新 PNG
-再更新审阅哈希，不自动把新哈希标为“已审阅”。
-失败时 generated 中可能留旧 PDF，应对齐当前 report/Actions commit，
-不能只看 PDF 文件名。当前 release report.status=passed。
-两 PDF SHA256 可以不同（元数据），已验证页面一致。
+因此正确表述是：放宽目标预算增加修复机会，但会产生可测目标/locality 代价；不要声称低修复率在所有 tolerance 下不变。
 
-成功构建：https://github.com/jovial-liu/conway/actions/runs/34744468616
+### 4.6 WF vs Max-.1
 
-本次环境无本地 shell，但已通过 GitHub 读写、Actions 编译和 base64
-页面 PNG 完成审阅。新会话无 shell 时优先沿用，不转交论文给 Mac Codex。
+WF 与 Max-.1 仅在 84/89/5/5 个 image-model records 上选择不同区域。全样本均值差很小，主要因为绝大多数样本选择相同；分歧子集上的差异更大且可能伴随 target/locality 代价。
+
+WF 在论文中的角色仍是**诊断性受约束 reranking probe**，不是新 SOTA explanation algorithm。
+
+## 5. 统计与复现约束
+
+- 主要 interval：10,000 image-level bootstrap draws。
+- NumPy `default_rng`。
+- percentile 2.5/97.5。
+- paired quantities 先在同一 image 上形成差异再重采样。
+- 条件比例按对应固定总体联合重采样。
+- intervals 为 pointwise，未做 multiplicity correction。
+- matched-cardinality random 主结果使用 exact combinatorial expectation，而不是只依赖 Monte Carlo。
+- Monte Carlo 仅作为 sanity check。
+
+不要把：
+
+- full-foil A；
+- Aplus；
+- original B=A AND F；
+- all baseline failures；
+- switched subset；
+- actual repaired subset
+
+混为同一个统计总体。
+
+## 6. 当前证据可以和不可以支持什么
+
+可以支持：
+
+- CCI-top1 的 ontology-relative worst-foil audit；
+- full / annotation-absent / exact matched-cardinality fixed-population comparison；
+- positive-target robustness；
+- current K=8 candidate set 下的 exact sign-repair capacity decomposition；
+- epsilon tolerance 下机会与代价的变化；
+- WF/Mean/Max-.1 的同可行集比较；
+- sign repair 与 target/locality/screen-retention 是不同 endpoint。
+
+不能支持：
+
+- 对完整 CCI heatmap 的普遍结论；
+- 对所有 CLIP explanation 方法的普遍结论；
+- annotation absence = 人工语义缺席；
+- 新 K、其他 intervention、其他模型的稳健性；
+- raw worst-foil / normalizer sensitivity 已完成；
+- segmentation/region-size sensitivity 已完成；
+- MPS 与 CPU 在全数据上严格等价；
+- 任意历史 frozen 中间张量均可恢复。
+
+## 7. Frozen 与 local rerun 仍须严格分开
+
+旧 frozen archive 和当前 local rerun 是不同证据集。此前已记录的差异包括：
+
+- frozen/local COCO B/16 screen/failure 状态有少量图像不同；
+- COCO B/32 frozen switches=613，local=614；
+- frozen candidate arrays / 中间量并不完整。
+
+不能把这些差异归因于“已经证实的 MPS 误差”。当前最终论文优先使用材料更完整的 local rerun 和 reviewer controls；历史 archive 仅在明确标注来源的位置作为补充证据。
+
+## 8. 分工与操作边界
+
+用户确认的分工：
+
+- 本地 MacBook M4 Pro Codex：**只负责实验、统计核验、数据搬运**。
+- 云端助手：负责论文修改、图表排版、编译、最终打包和交接。
+- 没有新任务时不要默认让 Mac Codex 修改论文。
+
+禁止默认执行：
+
+- 不自动提交 arXiv；
+- 不自动 merge main；
+- 不 force push；
+- 不覆盖 main；
+- 不为了匹配旧数字而改实验结果；
+- 不把 frozen 与 local 混算；
+- 不默认追加全量模型推理。
+
+## 9. GitHub 目录说明
+
+现有完整实验已经在本分支历史与当前树中，不需要在 `handoff/` 再复制一份几十/几百 MB 数据：
+
+- 原始 local rerun：`experiments/local_rerun_2026-09-13/`
+- 统计 verification：`experiments/verification_2026-09-13/`
+- restricted-foil controls：`experiments/reviewer_controls_2026-09-13/`
+- 当前论文：`paper/review_round4_20260914/`
+
+`handoff/round4/ccf0_round4_github_handoff.zip` 和 `handoff/ccf0_final_handoff.zip` 是便携交付包；**完整实验数据仍以仓库中的 experiment directories 为权威来源**。
+
+## 10. 新对话启动指令
+
+切换新对话后直接发：
+
+> 请先完整阅读仓库根目录 `HANDOFF.md`，接手 ccf0 项目。工作分支是 `paper/verified-rerun-integration`，不要只读 main。当前唯一有效定稿目录是 `paper/review_round4_20260914/`，不要使用旧 `paper/local_rerun_revision/generated/paper_final.pdf`、round2 或 round3 旧稿。本地 Codex 只负责实验，论文由你处理。先核对 `generated/SHA256SUMS.txt`、当前 PDF/source/arXiv 包和 `handoff/ccf0_final_handoff.zip`，再继续。
+
+如果没有新的实验或修改要求，**不要重新做已经完成的实验或从旧稿重新开始。**
