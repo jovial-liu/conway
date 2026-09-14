@@ -1,0 +1,168 @@
+name: Materialize round4 handoff v2
+
+on:
+  push:
+    branches: [paper/verified-rerun-integration]
+    paths:
+      - '.github/workflows/materialize-round4-handoff-v2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PAYLOAD_SHA256: ceff2ac90ce9c02f8ced82542028b1b46709e16d345d16046e1feda341623550
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install paper build tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-extra texlive-fonts-recommended texlive-science \
+            texlive-bibtex-extra ghostscript poppler-utils zip unzip jq
+
+      - name: Reconstruct pinned round-4 text payload and figures
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          repo="${GITHUB_REPOSITORY}"
+          fetch_blob() {
+            local sha="$1"
+            curl -fsSL \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${repo}/git/blobs/${sha}" \
+              | jq -r '.content' | tr -d '\n' | base64 -d
+          }
+
+          : > /tmp/round4_text_payload.zip
+          for sha in \
+            ba6cb4fa76455054b0637338607ae68624a40944 \
+            07e9ba499482321dc25c0dba92bffbbae4f0ae33 \
+            7a06780e2b963f8340c7280bb62c8d315f5b679e \
+            8c28a945112c721afa386bd9af8ed82ee6c6dbd5 \
+            eb55b793944e3f9d4b089ef17ad0b0b61046c7f0 \
+            e365b5f59bde55fe768612c928d2dfe36a4b64fe \
+            be4c3ddefb487cb6860cccbb93e2c4aae9318592 \
+            fe787236029ebf1d44eaf604c4a8a1ef2c8567a2 \
+            a40b6a58a1384914f719ffa686bd6f40f26fecfd \
+            1bbdc9ed7db24c28335485506b39c4f6f03cd36c
+          do
+            fetch_blob "$sha" >> /tmp/round4_text_payload.zip
+          done
+          echo "${PAYLOAD_SHA256}  /tmp/round4_text_payload.zip" | sha256sum -c -
+          unzip -t /tmp/round4_text_payload.zip
+
+          rm -rf /tmp/round4_payload
+          mkdir -p /tmp/round4_payload
+          unzip -q /tmp/round4_text_payload.zip -d /tmp/round4_payload
+          if [ -d /tmp/round4_payload/ccf0-round4-20260914 ]; then
+            payload_root=/tmp/round4_payload/ccf0-round4-20260914
+          else
+            payload_root=/tmp/round4_payload
+          fi
+
+          rm -rf paper/review_round4_20260914
+          mkdir -p paper/review_round4_20260914
+          cp -a "${payload_root}/." paper/review_round4_20260914/
+
+          mkdir -p /tmp/round4_figures
+          fetch_blob 1965d651091807d2a19a5dab5703479e0c5efe90 > /tmp/round4_figures/figure1_method_clean.pdf
+          fetch_blob 210e7feb275aef6eae2f1ba55ee30e45f5827953 > /tmp/round4_figures/figure2_identification_final.pdf
+          test "$(git hash-object /tmp/round4_figures/figure1_method_clean.pdf)" = "1965d651091807d2a19a5dab5703479e0c5efe90"
+          test "$(git hash-object /tmp/round4_figures/figure2_identification_final.pdf)" = "210e7feb275aef6eae2f1ba55ee30e45f5827953"
+          for d in source arxiv_source; do
+            mkdir -p "paper/review_round4_20260914/${d}/figures"
+            cp /tmp/round4_figures/figure1_method_clean.pdf "paper/review_round4_20260914/${d}/figures/"
+            cp /tmp/round4_figures/figure2_identification_final.pdf "paper/review_round4_20260914/${d}/figures/"
+          done
+
+      - name: Compile source and arXiv trees
+        run: |
+          set -euo pipefail
+          ROOT="$PWD"
+          compile_tex() {
+            local dir="$1"
+            cd "$ROOT/$dir"
+            pdflatex -interaction=nonstopmode -halt-on-error main.tex >/tmp/latex1.log
+            if grep -q '\\bibdata' main.aux 2>/dev/null; then
+              bibtex main >/tmp/bibtex.log
+            fi
+            pdflatex -interaction=nonstopmode -halt-on-error main.tex >/tmp/latex2.log
+            pdflatex -interaction=nonstopmode -halt-on-error main.tex >/tmp/latex3.log
+          }
+          compile_tex paper/review_round4_20260914/source
+          compile_tex paper/review_round4_20260914/arxiv_source
+
+      - name: Produce submission PDFs and packages
+        run: |
+          set -euo pipefail
+          root="$PWD/paper/review_round4_20260914"
+          mkdir -p "$root/generated"
+          gs -q -dSAFER -dBATCH -dNOPAUSE -sDEVICE=pdfwrite \
+            -dCompatibilityLevel=1.7 -dEmbedAllFonts=true -dSubsetFonts=true \
+            -dMaxSubsetPct=100 -dAutoRotatePages=/None \
+            -dDownsampleColorImages=false -dDownsampleGrayImages=false \
+            -dDownsampleMonoImages=false \
+            -sOutputFile="$root/generated/ccf0_round4_20260914.pdf" \
+            "$root/source/main.pdf"
+          gs -q -dSAFER -dBATCH -dNOPAUSE -sDEVICE=pdfwrite \
+            -dCompatibilityLevel=1.7 -dEmbedAllFonts=true -dSubsetFonts=true \
+            -dMaxSubsetPct=100 -dAutoRotatePages=/None \
+            -dDownsampleColorImages=false -dDownsampleGrayImages=false \
+            -dDownsampleMonoImages=false \
+            -sOutputFile="$root/generated/arxiv_preview.pdf" \
+            "$root/arxiv_source/main.pdf"
+
+          pages=$(pdfinfo "$root/generated/ccf0_round4_20260914.pdf" | awk '/^Pages:/ {print $2}')
+          test "$pages" = "5"
+          size=$(stat -c '%s' "$root/generated/ccf0_round4_20260914.pdf")
+          test "$size" -lt 5242880
+          if pdffonts "$root/generated/ccf0_round4_20260914.pdf" | tail -n +3 | awk 'NF && ($4 != "yes" || $5 != "yes") {bad=1} END {exit bad}'; then :; else
+            echo 'Non-embedded or non-subset font found' >&2
+            pdffonts "$root/generated/ccf0_round4_20260914.pdf" >&2
+            exit 1
+          fi
+
+          rm -f "$root/source/main.aux" "$root/source/main.log" "$root/source/main.out" "$root/source/main.pdf" "$root/source/main.bbl" "$root/source/main.blg"
+          rm -f "$root/arxiv_source/main.aux" "$root/arxiv_source/main.log" "$root/arxiv_source/main.out" "$root/arxiv_source/main.pdf" "$root/arxiv_source/main.blg"
+
+          (cd "$root/arxiv_source" && zip -qr "$root/generated/ccf0_round4_20260914_arxiv.zip" .)
+          (cd "$root" && zip -qr generated/ccf0_round4_20260914_source.zip \
+            source arxiv_source results README.md CHANGELOG.md CONTENT_MANIFEST.csv VERIFICATION_NOTES.md \
+            ENDPOINT_SUPPLEMENT.md build_report.json visual_review.json compilation_checks.txt \
+            requirements-analysis.txt 2>/dev/null || true)
+
+          sha256sum \
+            "$root/generated/ccf0_round4_20260914.pdf" \
+            "$root/generated/ccf0_round4_20260914_source.zip" \
+            "$root/generated/ccf0_round4_20260914_arxiv.zip" \
+            > "$root/generated/SHA256SUMS.txt"
+          pdffonts "$root/generated/ccf0_round4_20260914.pdf" > "$root/generated/pdffonts.txt"
+          pdfinfo "$root/generated/ccf0_round4_20260914.pdf" > "$root/generated/pdfinfo.txt"
+
+          mkdir -p "$PWD/handoff/round4"
+          rm -f "$PWD/handoff/round4/ccf0_round4_github_handoff.zip"
+          (cd "$PWD" && zip -qr handoff/round4/ccf0_round4_github_handoff.zip \
+            paper/review_round4_20260914 \
+            -x 'paper/review_round4_20260914/generated/ccf0_round4_20260914_source.zip')
+
+      - name: Save materialized handoff to branch
+        run: |
+          set -euo pipefail
+          git config user.name "Paper build"
+          git config user.email "paper-build@users.noreply.github.com"
+          git rm -f handoff/round4/ccf0_round4_release_bundle_compact.zip 2>/dev/null || true
+          git rm -f .github/workflows/materialize-round4-handoff.yml 2>/dev/null || true
+          git add paper/review_round4_20260914 handoff/round4/ccf0_round4_github_handoff.zip
+          if ! git diff --cached --quiet; then
+            git commit -m "Materialize round-4 paper handoff"
+            git push origin HEAD:paper/verified-rerun-integration
+          fi
