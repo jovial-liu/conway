@@ -88,4 +88,4 @@
 - 配置、依赖、输入来源和哈希：`config/`、`manifest/`
 - 全量运行记录：`runs/`、`verification/`
 
-上传提交 SHA 在 GitHub 推送完成后写入本报告的末尾；当前工作分支为 `paper/verified-rerun-integration`。
+完整实验内容上传提交为 `7ee2b6080aa6752790e17c910c5c8a3111235d4d`；当前工作分支为 `paper/verified-rerun-integration`。
