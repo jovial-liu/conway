@@ -57,10 +57,11 @@ CASE~\cite{williamson2025case} builds contrastive saliency maps.
 Related CLIP attribution~\cite{wang2023m2ib,li2023clipsurgery,dreyer2025cliplatent},
 class contrasts~\cite{li2026cdaclip},
 and caption foils~\cite{yuksekgonul2023aro} motivate our audit.
-Our contribution is a controlled empirical audit: we measure the
-mean--worst-foil gap within a declared screen, compare annotation exclusion
-against exact cardinality-matched removal, and decompose candidate, budget,
-and selector limits. Worst-foil (WF) reranking is a diagnostic probe;
+We ask whether locality and positive mean-foil contrast suffice for
+worst-foil specificity. Our controlled audit quantifies their mismatch,
+isolates annotation exclusion from foil-count reduction, and separates
+candidate, budget, and selector limits on sign repair. Worst-foil (WF)
+reranking serves as a diagnostic probe;
 unlike IDEA's few-shot adaptation~\cite{ye2026idea}, CLIP stays fixed.
 
 \begin{figure*}[t]
@@ -106,7 +107,7 @@ $A=\{\mathrm{bbox}\ge .5,\ \bar d_t-\mathrm{mean}_f\bar d_f>0\}$ and
 $F=\{P<0\}$. The diagnostic screen and $.5$ threshold are study-defined,
 not a standard of explanation validity. Because a positive mean-foil margin
 does not require positive target drop, we also audit
-$A^+=A\cap\{\bar d_t>0\}$. The primary repair population is
+$A^+=A\cap\{\bar d_t>0\}$. The primary sign-repair population is
 $B=A\cap F$, fixed before reranking. Here ``failure'' means failure of this declared criterion, not a semantic
 error or an invalid explanation.
 
@@ -134,7 +135,7 @@ Cosine budgets $\epsilon/\tau_m$ are not calibrated across checkpoints;
 unrestricted oracles remove the budget entirely.
 
 \paragraph{Exact diagnostic oracles.}
-For a baseline-failure population $B$, the feasible repair count is
+For the screened-failure population $B$, the feasible sign-repair count is
 \begin{equation}
 N_O(B,\epsilon)=\sum_{i\in B}\mathbf1\!\left\{
 \max_{R\in\regions_\epsilon(i)}P_i(R)\ge0\right\}.
@@ -213,19 +214,20 @@ Setting & Full & Absent & Random & $\Delta_A$\\
 \end{minipage}\par\vspace{8pt}
 
 \paragraph{Failure persists after annotation exclusion.}
-Screen sizes are 17,726, 17,847, 1,209, and 1,227 in table order.
-Exclusion resolves only 213, 203, 16, and 17 full-foil failures;
-96.63--98.24\% remain (failure counts in Table~\ref{tab:oracle}). The rate falls by 1.20/1.14/1.32/1.39 percentage
-points. Table~\ref{tab:screens} separates this change from foil-count reduction:
+The fixed screen $A$ contains 17,726, 17,847, 1,209, and 1,227 images
+in table order. Exclusion lowers failure by only 1.14--1.39 percentage
+points of $A$; 96.63--98.24\% of original failures $B$ remain
+(Table~\ref{tab:oracle}). Table~\ref{tab:screens} separates this change from foil-count reduction:
 COCO exclusion has a larger effect than random removal of the same number
 of categories, whereas VOC $\Delta_A$ intervals include zero.
 High failure is therefore not explained solely by explicitly annotated
 co-occurring classes under this protocol.
 
 \paragraph{Positive-target and scene-count checks.}
-Requiring positive target drop leaves 16,855/17,330/1,186/1,215 images.
-Full-foil failure in $A^+$ is 62.64/63.79/41.40/40.74\%; annotation-absent
-failure remains 61.38/62.61/40.05/39.34\%. Matched-random comparisons retain
+Positive-target filtering does not remove the mismatch. Among $A^+$,
+full-foil failure is 62.64--63.79\% on COCO and 40.74--41.40\% on VOC.
+After annotation exclusion, it remains 61.38--62.61\% and
+39.34--40.05\%, respectively. Matched-random comparisons retain
 the COCO/VOC interval pattern. Even scenes with exactly two annotated
 categories have COCO annotation-absent failure of 63.39/64.95\%.
 
@@ -247,13 +249,13 @@ Setting & $|B|$ & $C_0$ & $C_1$ & $C_2$ & $r$\\
 \end{minipage}\par\vspace{8pt}
 
 \paragraph{Candidate and budget bottlenecks differ by dataset.}
-No region among the eight candidates passes for 93.75/92.16\% of COCO
-screened failures, versus 72.60/68.71\% on VOC (Table~\ref{tab:oracle}).
-Removing the budget would therefore permit sign repair in only 6.25/7.84\%
-of COCO $B$, versus 27.40/31.29\% on VOC. Figure~\ref{fig:ident} summarizes capacity within these eight candidates. The $.02$ budget then excludes
-96.43--98.10\% of those unrestricted opportunities: for COCO B/16, 695 of
-713 are excluded, leaving 18. Across settings, feasible-oracle counts are
-18/31/5/3 (0.16/0.27/0.98/0.59\% of $B$), and WF finds 18/30/5/2.
+No candidate passes for 92.16--93.75\% of COCO screened failures $B$,
+versus 68.71--72.60\% on VOC (Table~\ref{tab:oracle}). Unrestricted
+sign-repair capacity is thus 6.25--7.84\% of COCO $B$ and
+27.40--31.29\% of VOC $B$ (Figure~\ref{fig:ident}). The $.02$ budget
+excludes 96.43--98.10\% of these opportunities, leaving feasible capacity
+of just 0.16--0.98\% of $B$. WF misses at most one feasible opportunity
+per setting ($C_2$ in Table~\ref{tab:oracle}).
 
 
 
@@ -273,7 +275,7 @@ confidence intervals.}
 \par\addvspace{6pt}
 \noindent\begin{minipage}{\columnwidth}
 \centering
-\captionof{table}{Budget endpoints (C: COCO; V: VOC). Multi: all-image percentage with multiple feasible candidates. $O_B,r_B$: oracle/actual repair percentages of fixed $B$. $\Delta d_t,\Delta b$: all-image raw-target and bbox changes (bbox in percentage points).}
+\captionof{table}{Budget endpoints (C: COCO; V: VOC). Multi: percentage of all eligible images with multiple feasible candidates. $O_B,r_B$: oracle/actual sign-repair percentages of screened failures $B$. $\Delta d_t,\Delta b$: all-image raw-target and bbox changes (bbox in percentage points).}
 \label{tab:frontier}
 \small\renewcommand{\arraystretch}{1.12}\setlength{\tabcolsep}{1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrrrr@{}}
@@ -288,7 +290,8 @@ Set & $\epsilon$ & Multi & $O_B$ & $r_B$ & $\Delta d_t$ & $\Delta b$\\
 \paragraph{Budget relaxation helps in every setting.}
 At $.02$, 95.21--95.60\% of images have only one feasible candidate
 (Table~\ref{tab:frontier}); WF has little room to change the region.
-At $.20$, oracle repair rises to 1.57/2.05/6.65/7.13\% of fixed $B$.
+At $.20$, oracle sign-repair capacity rises to 1.57--2.05\% of COCO
+$B$ and 6.65--7.13\% of VOC $B$.
 Raw-target changes become negative in all four settings, but bbox changes
 are negative on COCO and positive on VOC. Thus relaxation does not imply
 uniform locality loss. These post-hoc logit-budget comparisons are
@@ -320,7 +323,7 @@ Setting & WF$-$Mean & WF$-$Max-.1 & $D$\\
 \paragraph{Small baseline gains arise from few disagreements.}
 WF and Max-.1 differ on only 84/89/5/5 images
 (Table~\ref{tab:baselines}). Their agreement is over 99.6\% overall but
-93.56/92.70/94.62/94.57\% within multi-candidate sets.
+92.70--94.62\% among images with multiple feasible candidates.
 On the 84 COCO B/16 disagreements, WF gains $.0807$ margin
 $[.0443,.1171]$, while raw target drop changes by $-.0326$
 $[-.0628,-.0033]$. The whole-sample gain is $.000245$.
@@ -345,15 +348,14 @@ Setting & $r$ & $j$ & $\Delta d_t$ & $100\Delta$bbox\\
 \end{minipage}\par\vspace{8pt}
 
 \paragraph{Sign repair need not retain the other endpoints.}
-Only 12/25/3/1 of the 18/30/5/2 repairs in $B$ also retain the original
-screen and positive target contribution (Table~\ref{tab:costs}). The joint
+In every setting, some sign repairs fail to retain the locality/mean-foil
+screen and positive target contribution ($j<r$ in Table~\ref{tab:costs}). The joint
 feasible-oracle counts are 12/26/3/2. Small VOC repair subsets make their
 cost intervals descriptive, not evidence of stable population effects.
-Across \emph{all baseline failures}, WF sign-repairs 42/48/11/6 cases;
-0/4/0/0 opposite-sign regressions leave net reductions of 42/44/11/6.
-Across all 663/614/50/38 switches, 611/532/46/35 improve margin, with
-B/16 bbox changes of $-4.95/-13.20$ points on COCO/VOC.
-These are different populations from $B$ repairs. Raw-target intervals
+Outside the screened population, sign transitions can also regress:
+COCO B/32 has four opposite-sign regressions among all baseline passes.
+Counts over all failures or all switched regions have different
+denominators from the screened sign repairs reported here. Raw-target intervals
 containing zero do not establish equivalence.
 
 
@@ -362,7 +364,7 @@ containing zero do not establish equivalence.
 \noindent\begin{minipage}{\columnwidth}
 \centering
 \captionof{table}{Nonzero-threshold sensitivity on fixed original $A$.
-Entries are percentages with $P<-\delta$ using the normalized aggregate margin.
+Entries are percentages of screen-passers $A$ with $P<-\delta$ using the normalized aggregate margin.
 Thresholds are post-hoc diagnostics in logit units, not calibrated semantic cutoffs.}
 \label{tab:threshold}
 \small\renewcommand{\arraystretch}{1.12}
@@ -376,22 +378,23 @@ Setting & $\delta=0$ & $.01$ & $.10$ & $.50$\\
 \end{minipage}\par\vspace{8pt}
 
 \paragraph{Failure is not solely a near-zero effect.}
-At $\delta=.10$, 59.49/60.22\% of COCO and 36.23/34.47\% of VOC
-screen-passers still fail (Table~\ref{tab:threshold}). Rates fall further at
+At $\delta=.10$, 59.49--60.22\% of COCO and 34.47--36.23\% of VOC
+screen-passers $A$ still fail (Table~\ref{tab:threshold}). Rates fall further at
 $.50$, so the magnitude and threshold matter. This checks sign-boundary
 sensitivity within the existing normalized score, not sensitivity to
 class-dependent normalization or semantic validity.
 
 \section{Interpretation and Limitations}
-Matched-cardinality controls separate annotation exclusion from foil-count
-reduction within a setting. Missed labels and related concepts can remain
+\paragraph{Supported interpretation.}
+Matched-cardinality controls isolate annotation exclusion beyond foil-count
+reduction. Enumeration separates candidate, budget, and selector limits. Missed labels and related concepts can remain
 hard foils; negative margins do not establish semantic error. Hardest-foil
 inspection and human validation remain necessary.
 
+\paragraph{Scope and semantic validity.}
 The audit concerns CCI-top1, eight candidates, and one attention intervention.
-The COCO/VOC contrast also changes foil count (79 versus 19), target selection,
-and annotation conditions; it cannot isolate intrinsic dataset difficulty.
-Within-setting controls do not remove these differences. Other $K$, candidate constructions,
+COCO/VOC also differ in foil count, target selection, and annotations;
+these comparisons cannot isolate intrinsic dataset difficulty. Other $K$, candidate constructions,
 interventions, and area-matched controls remain untested. Bbox precision
 measures neither coverage nor segmentation quality.
 
@@ -409,7 +412,7 @@ Under a declared worst-foil criterion, substantial failure remains after
 annotation-based foil exclusion and after moving the failure threshold away
 from zero. This is evidence about the audit criterion, not semantic error.
 Eight-candidate enumeration separates missing candidates from budget and
-selector limits. Looser budgets increase repair opportunity in every setting,
+selector limits. Looser budgets increase sign-repair opportunity in every setting,
 with setting-dependent endpoint changes. Region identity, normalization,
 and foil-ontology controls are needed before broader claims about explanation
 reliability or cross-dataset differences.

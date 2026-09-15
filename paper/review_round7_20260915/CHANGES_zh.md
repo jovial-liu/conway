@@ -24,3 +24,7 @@
 ## ORCID 与致谢更新
 
 依据用户上传 DOCX 补齐三位作者 ORCID；五位作者编号齐全。按用户要求删除 ACKNOWLEDGMENTS 整节。原 Figure 1 及五位作者保留。
+
+## 表述优化
+
+原 Figure 1 仅修正 masking 与 class-token 标签，对应归档实验脚本 build_attention_mask；图形结构不变。引言明确审计问题和三项贡献；精简重复数值，明确 A、B 与全部 eligible images 的分母；统一 sign repair 的限定，分层组织局限性。所有表格数据与 Figure 2 均未改变。五位作者 ORCID 和无 ACKNOWLEDGMENTS 版本保留。

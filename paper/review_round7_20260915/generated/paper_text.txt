@@ -13,13 +13,13 @@ BEYOND MEAN FOILS: AUDITING WORST-FOIL SPECIFICITY IN FROZEN CLIP REGION
 
 
                          ABSTRACT                                    τm = exp(ℓm ). Region R has intervention response
-Spatial overlap and mean class contrast need not imply target-                    dR (c) = sm (x, c) − sm (I(x, R), c).            (1)
+Spatial overlap and mean class contrast need not imply target-                   dR (c) = sm (x, c) − sm (I(x, R), c).           (1)
 specific region responses. We audit CCI’s maximum-target-
 drop region in frozen CLIP, using separate prompts for selec-        For target category t, selection uses “a photo of a {category}”:
 tion and evaluation. Across COCO and VOC with two check-
-points, 41.16–64.78% of locality/mean-foil screen-passers fail                         RCCI = arg max dsel
-                                                                                                       R (t).                      (2)
-                                                                                                    R∈R(x)
+points, 41.16–64.78% of locality/mean-foil screen-passers fail                        RCCI = arg max dsel
+                                                                                                      R (t).                     (2)
+                                                                                                   R∈R(x)
 a worst-foil criterion. With original screening memberships re-
 tained, excluding annotated-present foils leaves 39.77–63.64%        Held-out margins and screens. Evaluation uses “a picture of
 failing. Exclusion reduces failure beyond exact cardinality-         the {category}”, “an image containing a {category}”, and “the
@@ -29,40 +29,42 @@ COCO; VOC intervals include zero. Positive-target filtering re-      nc = ∥H �
 tains high failure. Among screened failures, unrestricted eight-     Ft the non-target dataset categories, the aggregate worst-foil
 region oracles permit sign repair in 6.25–7.84% on COCO and          margin is
 27.40–31.29% on VOC. A target-drop tolerance of ϵ = .02                                P (R, t) = d¯t − max d¯f .               (3)
-                                                                                                          f ∈Ft
+                                                                                                         f ∈Ft
 reduces feasible repair to 0.16–0.98%; relaxing it increases
 opportunity with setting-dependent target and locality changes.      This equals using normalized mean text embeddings; class-
-                                                                     specific ncPcan change rankings. Tables report raw target
-Index Terms— CLIP, explanation auditing, class specificity,
-                                                                     drop H −1 h dh (t), whereas the positive-target screen uses
-constrained region selection
+Index Terms— CLIP, explanation auditing, class specificity,          specific ncPcan change rankings. Tables report raw target
+constrained region selection                                         drop H −1 h dh (t), whereas the positive-target screen uses
                                                                      d¯t . Evaluation templates are not used to select a region.
                     1 INTRODUCTION                                         For CCI-top1, define A = {bbox ≥ .5, d¯t − meanf d¯f >
     CLIP [1] region explanations use intervention-induced            0} and F = {P < 0}. The diagnostic screen and .5 thresh-
 image–text score changes. Cluster-based Concept Importance           old are study-defined, not a standard of explanation validity.
 (CCI) [2] combines cluster scores into a heatmap; we audit           Because a positive mean-foil margin does not require positive
 only its maximum-target-drop region, CCI-top1. Spatial over-         target drop, we also audit A+ = A ∩ {d¯t > 0}. The primary
-lap, positive target contribution, and target specificity are dis-   repair population is B = A ∩ F , fixed before reranking. Here
-tinct: a region may support multiple genuinely present classes.      “failure” means failure of this declared criterion, not a semantic
-    COCOA [3] studies corpus–foil attribution; CASE [4]              error or an invalid explanation.
+lap, positive target contribution, and target specificity are dis-   sign-repair population is B = A ∩ F , fixed before reranking.
+tinct: a region may support multiple genuinely present classes.      Here “failure” means failure of this declared criterion, not a
+    COCOA [3] studies corpus–foil attribution; CASE [4]              semantic error or an invalid explanation.
 builds contrastive saliency maps. Related CLIP attribution [5,       Target-constrained diagnostic probe. Define
 6, 7], class contrasts [8], and caption foils [9] motivate our
-audit. Our contribution is a controlled empirical audit: we mea-                  M sel (R, t) = dsel          sel
-                                                                                                  R (t) − max dR (f ),             (4)
-                                                                                                           f ∈Ft
-sure the mean–worst-foil gap within a declared screen, com-
-pare annotation exclusion against exact cardinality-matched                       Rϵ = {R : dsel      sel
-                                                                                             R (t) ≥ dRCCI (t) − ϵ},               (5)
-removal, and decompose candidate, budget, and selector limits.
-Worst-foil (WF) reranking is a diagnostic probe; unlike IDEA’s       and worst-foil (WF) reranking
-few-shot adaptation [10], CLIP stays fixed.                                          RWF = arg max M sel (R, t).                   (6)
-                                                                                                   R∈Rϵ
-       2 AUDIT AND REPAIR OPPORTUNITY
-    For checkpoint m, the pre-softmax score is sm (x, c) =           The baseline is feasible, so any switch loses at most ϵ of
-τm ⟨zm (x), em (c)⟩, with unit-norm embeddings and learned           selection-stage target drop; this gives no held-out guaran-
-                                                                     tee. Mean and Max-.1 instead maximize dsel t − meanf df
+audit. We ask whether locality and positive mean-foil con-                       M sel (R, t) = dsel          sel
+                                                                                                 R (t) − max dR (f ),            (4)
+                                                                                                          f ∈Ft
+trast suffice for worst-foil specificity. Our controlled audit
+quantifies their mismatch, isolates annotation exclusion from                    Rϵ = {R : dsel      sel
+                                                                                            R (t) ≥ dRCCI (t) − ϵ},              (5)
+foil-count reduction, and separates candidate, budget, and se-
+lector limits on sign repair. Worst-foil (WF) reranking serves       and worst-foil (WF) reranking
+as a diagnostic probe; unlike IDEA’s few-shot adaptation [10],
+                                                                                     RWF = arg max M sel (R, t).                 (6)
+CLIP stays fixed.                                                                                 R∈Rϵ
+
+       2 AUDIT AND REPAIR OPPORTUNITY                                The baseline is feasible, so any switch loses at most ϵ of
+    For checkpoint m, the pre-softmax score is sm (x, c) =           selection-stage target drop; this gives no held-out guaran-
+τm ⟨zm (x), em (c)⟩, with unit-norm embeddings and learned           tee. Mean and Max-.1 instead maximize dsel t − meanf df
                                                                                                                              sel
-Figure 1: Selection and held-out audit. A region is fixed using selection-stage responses before three-template evaluation of specificity, target
+Patch-key masking
+Class token retained
+
+Figure 1: Selection and held-out audit. A region is fixed using selection-stage responses before three-template evaluation of specificity, target
 response, and locality. The schematic depicts the protocol, not a measured response example.
 
 
@@ -72,11 +74,11 @@ budget is ϵ = .02 in logit units, not 2% relative loss. A                     C
 post-hoc .01/.02/.05/.10/.20 sweep selects no new optimum.                27,708/1,943 eligible images, each evaluated with OpenAI
 Cosine budgets ϵ/τm are not calibrated across checkpoints;                CLIP B/16 and B/32 (59,302 image–model records). The
 unrestricted oracles remove the budget entirely.                          target is the largest instance’s category, using annotation area
-Exact diagnostic oracles. For a baseline-failure population               on COCO and box area on VOC. We require another category
-B, the feasible repair count is                                           and 2–80% target area; COCO crowd annotations are excluded.
+Exact diagnostic oracles. For the screened-failure popula-                on COCO and box area on VOC. We require another category
+tion B, the feasible sign-repair count is                                 and 2–80% target area; COCO crowd annotations are excluded.
                                                                           Full foils are the other 79/19 classes.
                         X                       
-          NO (B, ϵ) =      1 max Pi (R) ≥ 0 .            (7)                  K-means clusters L2-normalized projected patch features:
+          NO (B, ϵ) =       1 max Pi (R) ≥ 0 .         (7)                    K-means clusters L2-normalized projected patch features:
                          i∈B
                                   R∈Rϵ (i)                                K = 8, three initializations, 50 iterations, seed 1701+i (sorted
                                                                           IDs shuffled with seed 1701 define i). Intervention I adds
@@ -133,63 +135,65 @@ VOC B/16          42.27        40.94          41.46                        VOC B
 VOC B/32          41.16        39.77          40.32
                                                        [-1.19,+0.04]                      0           10        20          30
                                                                                                  Sign-repair capacity (% of B)
-Failure persists after annotation exclusion. Screen sizes
-are 17,726, 17,847, 1,209, and 1,227 in table order. Exclusion          Figure 2: Budget-constrained sign-repair capacity among fixed
-resolves only 213, 203, 16, and 17 full-foil failures; 96.63–           screened failures B. Connected markers compare the same setting on
-98.24% remain (failure counts in Table 2). The rate falls               a shared linear scale. Unrestricted: at least one of all eight candidates
-by 1.20/1.14/1.32/1.39 percentage points. Table 1 separates             has P ≥ 0; feasible: at least one also meets ϵ = .02. Percentages use
-this change from foil-count reduction: COCO exclusion has               each setting’s own |B| (Table 2); these are exact counts, not margin
-a larger effect than random removal of the same number of               gains or confidence intervals.
-categories, whereas VOC ∆A intervals include zero. High
-failure is therefore not explained solely by explicitly annotated       Table 3: Budget endpoints (C: COCO; V: VOC). Multi: all-image
-co-occurring classes under this protocol.                               percentage with multiple feasible candidates. OB , rB : oracle/actual
-                                                                        repair percentages of fixed B. ∆dt , ∆b: all-image raw-target and
-Positive-target and scene-count checks. Requiring positive
-                                                                        bbox changes (bbox in percentage points).
-target drop leaves 16,855/17,330/1,186/1,215 images. Full-foil
-failure in A+ is 62.64/63.79/41.40/40.74%; annotation-absent            Set          ϵ        Multi      OB        rB           ∆dt          ∆b
-failure remains 61.38/62.61/40.05/39.34%. Matched-random
+Failure persists after annotation exclusion. The fixed
+screen A contains 17,726, 17,847, 1,209, and 1,227 images               Figure 2: Budget-constrained sign-repair capacity among fixed
+in table order. Exclusion lowers failure by only 1.14–1.39              screened failures B. Connected markers compare the same setting on
+percentage points of A; 96.63–98.24% of original failures B             a shared linear scale. Unrestricted: at least one of all eight candidates
+remain (Table 2). Table 1 separates this change from foil-count         has P ≥ 0; feasible: at least one also meets ϵ = .02. Percentages use
+reduction: COCO exclusion has a larger effect than random               each setting’s own |B| (Table 2); these are exact counts, not margin
+removal of the same number of categories, whereas VOC ∆A                gains or confidence intervals.
+intervals include zero. High failure is therefore not explained
+solely by explicitly annotated co-occurring classes under this          Table 3: Budget endpoints (C: COCO; V: VOC). Multi: percentage
+protocol.                                                               of all eligible images with multiple feasible candidates. OB , rB : ora-
+                                                                        cle/actual sign-repair percentages of screened failures B. ∆dt , ∆b:
+Positive-target and scene-count checks. Positive-target fil-
+                                                                        all-image raw-target and bbox changes (bbox in percentage points).
+tering does not remove the mismatch. Among A+ , full-foil
+failure is 62.64–63.79% on COCO and 40.74–41.40% on                     Set          ϵ        Multi      OB        rB           ∆dt          ∆b
+VOC. After annotation exclusion, it remains 61.38–62.61%
                                                                         C16       0.02         4.71      0.16     0.16      +0.0001       -0.12
-comparisons retain the COCO/VOC interval pattern. Even
+and 39.34–40.05%, respectively. Matched-random compar-
                                                                         C16       0.20        35.78      1.57     1.50      -0.0140       -1.63
-scenes with exactly two annotated categories have COCO
+isons retain the COCO/VOC interval pattern. Even scenes
                                                                         C32       0.02         4.40      0.27     0.26      -0.0001       -0.08
-annotation-absent failure of 63.39/64.95%.
+with exactly two annotated categories have COCO annotation-
                                                                         C32       0.20        34.96      2.05     2.00      -0.0143       -0.60
-Table 2: Exact local decomposition of screened failures B = A ∩ F       V16       0.02         4.79      0.98     0.98      -0.0008       -0.34
-at ϵ = .02. Counts in C0 , C1 , C2 , r are mutually exclusive; C2 + r
+absent failure of 63.39/64.95%.
+                                                                        V16       0.02         4.79      0.98     0.98      -0.0008       -0.34
+Table 2: Exact local decomposition of screened failures B = A ∩ F
                                                                         V16       0.20        34.48      6.65     6.07      -0.0223       +0.08
-is the feasible-oracle count.
+at ϵ = .02. Counts in C0 , C1 , C2 , r are mutually exclusive; C2 + r
                                                                         V32       0.02         4.73      0.59     0.40      -0.0007       +0.02
-Setting               |B|              C0       C1      C2         r    V32       0.20        34.59      7.13     6.73      -0.0164       +1.11
-COCO B/16          11,410        10,697        695        0       18
+is the feasible-oracle count.
+                                                                        V32       0.20        34.59      7.13     6.73      -0.0164       +1.11
+Setting               |B|              C0       C1      C2         r
                                                                         Budget relaxation helps in every setting. At .02, 95.21–
-COCO B/32          11,561        10,655        875        1       30
+COCO B/16          11,410        10,697        695        0       18
                                                                         95.60% of images have only one feasible candidate (Table 3);
+COCO B/32          11,561        10,655        875        1       30
+                                                                        WF has little room to change the region. At .20, oracle sign-
 VOC B/16              511           371        135        0        5
-                                                                        WF has little room to change the region. At .20, oracle repair
+                                                                        repair capacity rises to 1.57–2.05% of COCO B and 6.65–
 VOC B/32              505           347        155        1        2
-                                                                        rises to 1.57/2.05/6.65/7.13% of fixed B. Raw-target changes
-                                                                        become negative in all four settings, but bbox changes are neg-
+                                                                        7.13% of VOC B. Raw-target changes become negative in
+                                                                        all four settings, but bbox changes are negative on COCO
 Candidate and budget bottlenecks differ by dataset. No
-                                                                        ative on COCO and positive on VOC. Thus relaxation does not
-region among the eight candidates passes for 93.75/92.16%
-                                                                        imply uniform locality loss. These post-hoc logit-budget com-
-of COCO screened failures, versus 72.60/68.71% on VOC
-                                                                        parisons are within-setting diagnostics, not calibrated cross-
-(Table 2). Removing the budget would therefore permit sign
-                                                                        model rankings.
-repair in only 6.25/7.84% of COCO B, versus 27.40/31.29%
-on VOC. Figure 2 summarizes capacity within these eight                 Global impact is not the cost of repair. Table 3 includes
-candidates. The .02 budget then excludes 96.43–98.10% of                unchanged regions. In contrast, Table 5 conditions on actual
-those unrestricted opportunities: for COCO B/16, 695 of 713             sign repairs within B; these conditional changes are neither
-are excluded, leaving 18. Across settings, feasible-oracle              global nor causal effects.
-counts are 18/31/5/3 (0.16/0.27/0.98/0.59% of B), and WF
-finds 18/30/5/2.
+                                                                        and positive on VOC. Thus relaxation does not imply uniform
+candidate passes for 92.16–93.75% of COCO screened failures
+                                                                        locality loss. These post-hoc logit-budget comparisons are
+B, versus 68.71–72.60% on VOC (Table 2). Unrestricted sign-
+                                                                        within-setting diagnostics, not calibrated cross-model rank-
+repair capacity is thus 6.25–7.84% of COCO B and 27.40–
+                                                                        ings.
+31.29% of VOC B (Figure 2). The .02 budget excludes 96.43–
+98.10% of these opportunities, leaving feasible capacity of just        Global impact is not the cost of repair. Table 3 includes
+0.16–0.98% of B. WF misses at most one feasible opportunity             unchanged regions. In contrast, Table 5 conditions on actual
+per setting (C2 in Table 2).                                            sign repairs within B; these conditional changes are neither
+                                                                        global nor causal effects.
 Table 4: Mean aggregate-margin differences over all eligible im-       Table 6: Nonzero-threshold sensitivity on fixed original A. Entries
-ages, WF minus each alternative, with paired 95% CIs. Values are       are percentages with P < −δ using the normalized aggregate margin.
-multiplied by 103 ; D counts WF/Max-.1 selection disagreements at      Thresholds are post-hoc diagnostics in logit units, not calibrated
-ϵ = .02.                                                               semantic cutoffs.
+ages, WF minus each alternative, with paired 95% CIs. Values are       are percentages of screen-passers A with P < −δ using the normal-
+multiplied by 103 ; D counts WF/Max-.1 selection disagreements at      ized aggregate margin. Thresholds are post-hoc diagnostics in logit
+ϵ = .02.                                                               units, not calibrated semantic cutoffs.
 
 Setting                   WF−Mean            WF−Max-.1           D     Setting             δ=0             .01          .10           .50
                                12.461               0.245              COCO B/16           64.37         63.94        59.49         36.05
@@ -200,55 +204,61 @@ COCO B/32                                                        89
                        [7.986,10.801]       [0.083,0.414]              VOC B/32            41.16         40.34        34.47         11.98
                                 4.480               0.507
 VOC B/16                                                          5
-                        [2.318,7.054]       [0.031,1.111]              Failure is not solely a near-zero effect. At δ = .10,
-                                3.184               0.418              59.49/60.22% of COCO and 36.23/34.47% of VOC screen-
+                        [2.318,7.054]       [0.031,1.111]              Failure is not solely a near-zero effect. At δ = .10, 59.49–
+                                3.184               0.418              60.22% of COCO and 34.47–36.23% of VOC screen-passers
 VOC B/32                                                          5
-                        [1.467,5.133]       [0.058,0.927]              passers still fail (Table 6). Rates fall further at .50, so the
-                                                                       magnitude and threshold matter. This checks sign-boundary
-Small baseline gains arise from few disagreements. WF                  sensitivity within the existing normalized score, not sensitivity
-and Max-.1 differ on only 84/89/5/5 images (Table 4). Their            to class-dependent normalization or semantic validity.
-agreement is over 99.6% overall but 93.56/92.70/94.62/94.57%                  5 INTERPRETATION AND LIMITATIONS
-within multi-candidate sets. On the 84 COCO B/16 disagree-
-                                                                            Matched-cardinality controls separate annotation exclusion
-ments, WF gains .0807 margin [.0443, .1171], while raw tar-
-                                                                       from foil-count reduction within a setting. Missed labels and
-get drop changes by −.0326 [−.0628, −.0033]. The whole-
-                                                                       related concepts can remain hard foils; negative margins do not
-sample gain is .000245. The VOC disagreement subsets con-
-                                                                       establish semantic error. Hardest-foil inspection and human
-tain only five images each.
-                                                                       validation remain necessary.
-Table 5: Actual sign repairs within original B, ϵ = .02. r counts           The audit concerns CCI-top1, eight candidates, and one
-repairs; j counts those also satisfying J. WF−CCI means with repair-   attention intervention. The COCO/VOC contrast also changes
-subset 95% CIs. ∆dt is raw held-out target-score change; only bbox     foil count (79 versus 19), target selection, and annotation
-change is in percentage points.                                        conditions; it cannot isolate intrinsic dataset difficulty. Within-
-Setting           r         j               ∆dt         100∆bbox       setting controls do not remove these differences. Other K, can-
-                                                                       didate constructions, interventions, and area-matched controls
-                                            0.029            -19.53    remain untested. Bbox precision measures neither coverage
-COCO B/16        18       12
-                                   [-0.095,0.148]     [-38.61,-1.17]   nor segmentation quality.
+                        [1.467,5.133]       [0.058,0.927]              A still fail (Table 6). Rates fall further at .50, so the magnitude
+                                                                       and threshold matter. This checks sign-boundary sensitivity
+Small baseline gains arise from few disagreements. WF                  within the existing normalized score, not sensitivity to class-
+and Max-.1 differ on only 84/89/5/5 images (Table 4). Their            dependent normalization or semantic validity.
+agreement is over 99.6% overall but 92.70–94.62% among                        5 INTERPRETATION AND LIMITATIONS
+images with multiple feasible candidates. On the 84 COCO
+                                                                       Supported interpretation. Matched-cardinality controls iso-
+B/16 disagreements, WF gains .0807 margin [.0443, .1171],
+                                                                       late annotation exclusion beyond foil-count reduction. Enumer-
+while raw target drop changes by −.0326 [−.0628, −.0033].
+                                                                       ation separates candidate, budget, and selector limits. Missed
+The whole-sample gain is .000245. The VOC disagreement
+                                                                       labels and related concepts can remain hard foils; negative mar-
+subsets contain only five images each.
+                                                                       gins do not establish semantic error. Hardest-foil inspection
+Table 5: Actual sign repairs within original B, ϵ = .02. r counts      and human validation remain necessary.
+repairs; j counts those also satisfying J. WF−CCI means with repair-   Scope and semantic validity. The audit concerns CCI-top1,
+subset 95% CIs. ∆dt is raw held-out target-score change; only bbox
+                                                                       eight candidates, and one attention intervention. COCO/VOC
+change is in percentage points.
+                                                                       also differ in foil count, target selection, and annotations; these
+Setting           r         j               ∆dt         100∆bbox       comparisons cannot isolate intrinsic dataset difficulty. Other
+                                                                       K, candidate constructions, interventions, and area-matched
+                                            0.029            -19.53
+COCO B/16        18       12                                           controls remain untested. Bbox precision measures neither
+                                   [-0.095,0.148]     [-38.61,-1.17]
+                                                                       coverage nor segmentation quality.
                                             0.094            -14.04
 COCO B/32        30       25                                           Reproducibility and normalization. Stored candidate sum-
-                                    [0.037,0.149]     [-27.61,-1.48]   maries and analysis scripts support the reported threshold and
-                                           -0.021            -16.87    budget reanalyses. Original spatial masks and complete per-
-VOC B/16          5        3
-                                   [-0.170,0.182]     [-26.11,-7.00]   class responses are unavailable in these artifacts. Consequently,
-                                           -0.078            -28.17    summary agreement does not verify original region identity,
-VOC B/32          2        1
-                                  [-0.115,-0.042]    [-78.57,22.22]    and raw versus normalized worst-foil rankings cannot be re-
+                                    [0.037,0.149]     [-27.61,-1.48]
+                                                                       maries and analysis scripts support the reported threshold and
+                                           -0.021            -16.87
+VOC B/16          5        3                                           budget reanalyses. Original spatial masks and complete per-
+                                   [-0.170,0.182]     [-26.11,-7.00]
+                                                                       class responses are unavailable in these artifacts. Consequently,
+                                           -0.078            -28.17
+VOC B/32          2        1                                           summary agreement does not verify original region identity,
+                                  [-0.115,-0.042]    [-78.57,22.22]
+                                                                       and raw versus normalized worst-foil rankings cannot be re-
                                                                        constructed. Prompt holdout separates templates, not models
-Sign repair need not retain the other endpoints. Only                  or images. Exact candidate enumeration does not resolve these
-12/25/3/1 of the 18/30/5/2 repairs in B also retain the original       evidence gaps.
-screen and positive target contribution (Table 5). The joint
-feasible-oracle counts are 12/26/3/2. Small VOC repair subsets                              6 CONCLUSION
-make their cost intervals descriptive, not evidence of stable              Under a declared worst-foil criterion, substantial failure
-population effects. Across all baseline failures, WF sign-             remains after annotation-based foil exclusion and after mov-
-repairs 42/48/11/6 cases; 0/4/0/0 opposite-sign regressions            ing the failure threshold away from zero. This is evidence
-leave net reductions of 42/44/11/6. Across all 663/614/50/38           about the audit criterion, not semantic error. Eight-candidate
-switches, 611/532/46/35 improve margin, with B/16 bbox                 enumeration separates missing candidates from budget and
-changes of −4.95/ − 13.20 points on COCO/VOC. These are                selector limits. Looser budgets increase repair opportunity in
-different populations from B repairs. Raw-target intervals             every setting, with setting-dependent endpoint changes. Re-
-containing zero do not establish equivalence.                          gion identity, normalization, and foil-ontology controls are
+Sign repair need not retain the other endpoints. In every              or images. Exact candidate enumeration does not resolve these
+setting, some sign repairs fail to retain the locality/mean-foil       evidence gaps.
+screen and positive target contribution (j < r in Table 5).
+The joint feasible-oracle counts are 12/26/3/2. Small VOC re-                                6 CONCLUSION
+pair subsets make their cost intervals descriptive, not evidence           Under a declared worst-foil criterion, substantial failure
+of stable population effects. Outside the screened popula-             remains after annotation-based foil exclusion and after mov-
+tion, sign transitions can also regress: COCO B/32 has four            ing the failure threshold away from zero. This is evidence
+opposite-sign regressions among all baseline passes. Counts            about the audit criterion, not semantic error. Eight-candidate
+over all failures or all switched regions have different denomi-       enumeration separates missing candidates from budget and
+nators from the screened sign repairs reported here. Raw-target        selector limits. Looser budgets increase sign-repair opportu-
+intervals containing zero do not establish equivalence.                nity in every setting, with setting-dependent endpoint changes.
+                                                                       Region identity, normalization, and foil-ontology controls are
                                                                        needed before broader claims about explanation reliability or
                                                                        cross-dataset differences.
                     REFERENCES                                      [9] M. Yuksekgonul, F. Bianchi, P. Kalluri, D. Jurafsky, and

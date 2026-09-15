@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "e1c61f13d767d566a2c104645556528a6c5a92e44fb5ade5e22988f05ada4ba3",
+  "pdf_sha256": "e717ba29495869ad15b85c807278a7578185a859cd8af92d6947ee12444189b1",
   "pages_reviewed": [
     1,
     2,
@@ -9,5 +9,5 @@
   ],
   "accepted_layout": true,
   "render": "Poppler 1200\u20131250 px page height",
-  "findings": "Five author ORCID links verified against submission metadata; three newly supplied IDs transcribed from user DOCX. ACKNOWLEDGMENTS removed at user request. Pages 1\u20134 render identically to prior original-Figure-1 version. Page 5 reviewed after removal; no clipping. Conflicts declaration remains pending."
+  "findings": "All five pages visually reviewed after clarity revision. Original diagram retained with masking labels corrected from archived implementation; Figure 2 and all table data byte-identical. Five ORCID links verified; no acknowledgments. No overflow or clipping."
 }
