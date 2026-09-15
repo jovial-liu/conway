@@ -24,7 +24,7 @@
       "email": "zhipengye@nustti.edu.cn",
       "affiliation": "Taizhou Institute of Science and Technology, Nanjing University of Science and Technology",
       "mailing_address": "Taizhou 225300, Jiangsu, China",
-      "orcid": "",
+      "orcid": "https://orcid.org/0000-0002-3384-2779",
       "corresponding": true
     },
     {
@@ -33,7 +33,7 @@
       "email": "jf@nustti.edu.cn",
       "affiliation": "Taizhou Institute of Science and Technology, Nanjing University of Science and Technology",
       "mailing_address": "Taizhou 225300, Jiangsu, China",
-      "orcid": "",
+      "orcid": "https://orcid.org/0000-0001-5362-3234",
       "corresponding": false
     },
     {
@@ -42,7 +42,7 @@
       "email": "qiufeng.wang@xjtlu.edu.cn",
       "affiliation": "Department of Intelligence Science, Xi'an Jiaotong-Liverpool University",
       "mailing_address": "Suzhou 215123, Jiangsu, China",
-      "orcid": "",
+      "orcid": "https://orcid.org/0000-0002-0918-4606",
       "corresponding": false
     },
     {
@@ -57,11 +57,11 @@
   ],
   "ready_to_submit": false,
   "pending": [
-    "ORCID URLs for Zhipeng Ye, Feng Jiang and Qiufeng Wang",
     "Author-confirmed conflicts-of-interest statement to insert on page 5",
-    "Author confirmation of ethical-compliance and AI-assistance statements; final author approval"
+    "Author confirmation of ethical-compliance statement; final author approval"
   ],
   "review_category": null,
   "funding": "This work was supported by the Young Scientific and Technological Talent Support Program under the Taizhou Fengcheng Talent Plan.",
-  "conflicts_of_interest": null
+  "conflicts_of_interest": null,
+  "acknowledgments_in_pdf": false
 }

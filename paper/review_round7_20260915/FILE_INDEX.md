@@ -39,3 +39,5 @@
 - [scripts/verify_and_plot.py](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/scripts/verify_and_plot.py)
 
 - [Funding-updated submission PDF](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/submission/liu_funding_updated.pdf)
+
+- [ORCID-complete PDF without acknowledgments](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/submission/liu_orcid_updated_no_acknowledgments.pdf)

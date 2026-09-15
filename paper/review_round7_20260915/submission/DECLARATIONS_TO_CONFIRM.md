@@ -1,18 +1,12 @@
-# 作者需补充的信息
+# 投稿信息状态
 
-已录入资助说明：
+五位作者 ORCID 已全部录入。Zhipeng Ye、Feng Jiang、Qiufeng Wang 及 Kaixin Liu 的编号依据用户上传的 ORCID DOCX；Qihang Wu 的编号依据用户之前的明确指示。
 
-This work was supported by the Young Scientific and Technological Talent Support Program under the Taizhou Fengcheng Talent Plan.
+ACKNOWLEDGMENTS 整节已按用户要求从论文删除。先前提供的资助事实仍保留在投稿元数据中，删除正文致谢不表示无资助。
 
-已录入 ORCID：Kaixin Liu 0009-0005-5213-8081；Qihang Wu 0009-0009-6082-0223。
-
-仍待提供：
-1. Zhipeng Ye、Feng Jiang、Qiufeng Wang 的 ORCID 完整链接。
-2. 作者确认是否存在相关财务或非财务利益冲突。资助的存在并不能自动确定利益冲突有无。
-3. 核对 PDF 第 5 页的伦理与 AI 辅助说明。
+仍待确认：
+1. 是否存在相关财务或非财务利益冲突。
+2. 伦理说明、最终作者审阅及投稿类别。
 
 仅在作者确认无利益冲突后，可加入：
-
 The authors declare no relevant financial or nonfinancial conflicts of interest.
-
-上传的 37 页 DCI 论文全文、链接及元数据未检出 ORCID，不能从该文件推断其编号。

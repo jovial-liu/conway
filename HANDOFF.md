@@ -41,10 +41,12 @@ Round-4、Round-5 和旧 paper/local_rerun_revision/generated/paper_final.pdf �
 
 ## 投稿准备状态
 
-先读当前目录 submission/START_HERE_zh.md 和 FILE_INDEX.md。submission/liu.pdf 为投稿文件命名副本，但利益冲突声明尚待作者确认，另有三位作者 ORCID 缺失；ready_to_submit=false。原实验和统计结果不变。Figure 1 已按用户要求恢复为 Round-6 原图，Figure 2 标签至少 9pt。第 5 页包含伦理和 AI 辅助说明。已移除 MGA-CLIP 与 Contrastive Concept Importance 两条未能直接核验的外围引用。当前共 13 条引用，不宣称全部出版元数据均已独立核实。
+先读当前目录 submission/START_HERE_zh.md 和 FILE_INDEX.md。submission/liu.pdf 为投稿文件命名副本，但利益冲突声明尚待作者确认，五位作者 ORCID 已全部录入；ready_to_submit=false。原实验和统计结果不变。Figure 1 已按用户要求恢复为 Round-6 原图，Figure 2 标签至少 9pt。第 5 页保留伦理说明；ACKNOWLEDGMENTS 整节已按用户要求删除。已移除 MGA-CLIP 与 Contrastive Concept Importance 两条未能直接核验的外围引用。当前共 13 条引用，不宣称全部出版元数据均已独立核实。
 
 用户已补充 Kaixin Liu 的 ORCID 0009-0005-5213-8081，已加入姓名链接和投稿表；已按原文加入 Young Scientific and Technological Talent Support Program under the Taizhou Fengcheng Talent Plan 资助。仍缺 Zhipeng Ye/Feng Jiang/Qiufeng Wang 的 ORCID 和利益冲突确认。
 
 最新作者变更：按用户要求删除 Xihang Zhou，当前作者共五人；源码、PDF 元数据及投稿表已同步。
 
 Figure 1 最新状态：使用重画前的原 PDF/SVG，已移除替代的 TikZ 源文件，勿再次自动替换。
+
+最新更新：依据上传 ORCID DOCX 补齐 Zhipeng Ye、Feng Jiang、Qiufeng Wang 的编号；五位作者 ORCID 齐全。按用户要求删除 ACKNOWLEDGMENTS 整节。当前下载文件 submission/liu_orcid_updated_no_acknowledgments.pdf；原 Figure 1 保留。

@@ -20,3 +20,7 @@
 ## 恢复原 Figure 1
 
 按用户明确要求恢复 Round-6 的 Figure 1 原始 PDF/SVG；撤下后续 TikZ 重绘稿。当前五位作者、资助说明、ORCID 和 Figure 2 保持不变。
+
+## ORCID 与致谢更新
+
+依据用户上传 DOCX 补齐三位作者 ORCID；五位作者编号齐全。按用户要求删除 ACKNOWLEDGMENTS 整节。原 Figure 1 及五位作者保留。
