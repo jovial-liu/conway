@@ -1,0 +1,12 @@
+{
+  "pdf_sha256": "eb5f8c1eff928e092e4125e63a8e57fb577ab6e5180a4e7b8cb4640348a6864f",
+  "pages_reviewed": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "accepted_layout": true,
+  "findings": "Round-8 all five pages reviewed. New normalization Table 4 explicitly fixes original A_old. Other main tables and Figure 2 use new traceable records. Original Figure 1 and five ORCIDs retained, no acknowledgments. No overlap or clipping."
+}

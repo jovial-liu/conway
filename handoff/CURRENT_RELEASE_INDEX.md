@@ -1,3 +1,5 @@
-# Round-7 submission preparation
+# Current paper release
 
-Read ../HANDOFF.md and ../paper/review_round7_20260915/FILE_INDEX.md. Submission PDF: ../paper/review_round7_20260915/submission/liu.pdf. Five ORCIDs and conflict declarations remain incomplete. No ZIP; no conference submission has been made.
+paper/review_round8_20260915
+
+See README.md and FILE_INDEX.md. Round-8 integrates traceable experiments; Round-7 is historical.

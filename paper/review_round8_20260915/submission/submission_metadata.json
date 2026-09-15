@@ -1,0 +1,67 @@
+{
+  "title": "BEYOND MEAN FOILS: AUDITING WORST-FOIL SPECIFICITY IN FROZEN CLIP REGION EXPLANATIONS",
+  "abstract": "Spatial overlap and mean class contrast need not imply target-specific region responses. We audit CCI's maximum-target-drop region in frozen CLIP, using separate prompts for selection and evaluation. Across COCO and VOC with two checkpoints, 41.08-64.78% of locality/mean-foil screen-passers fail a worst-foil criterion. With original screening memberships retained, excluding annotated-present foils leaves 39.69-63.64% failing. Exclusion reduces failure beyond exact cardinality-matched random removal by 0.86-0.92 percentage points on COCO; VOC intervals include zero. Positive-target filtering retains high failure. Among screened failures, unrestricted eight-region oracles permit sign repair in 6.25-7.84% on COCO and 27.40-31.15% on VOC. A target-drop tolerance of epsilon = 0.02 reduces feasible repair to 0.16-0.98%; relaxing it increases opportunity with setting-dependent target and locality changes.",
+  "abstract_word_count": 115,
+  "keywords": [
+    "CLIP",
+    "explanation auditing",
+    "class specificity",
+    "constrained region selection"
+  ],
+  "authors": [
+    {
+      "order": 1,
+      "name": "Kaixin Liu",
+      "email": "24107880127@nustti.edu.cn",
+      "affiliation": "Taizhou Institute of Science and Technology, Nanjing University of Science and Technology",
+      "mailing_address": "Taizhou 225300, Jiangsu, China",
+      "orcid": "https://orcid.org/0009-0005-5213-8081",
+      "corresponding": false
+    },
+    {
+      "order": 2,
+      "name": "Zhipeng Ye",
+      "email": "zhipengye@nustti.edu.cn",
+      "affiliation": "Taizhou Institute of Science and Technology, Nanjing University of Science and Technology",
+      "mailing_address": "Taizhou 225300, Jiangsu, China",
+      "orcid": "https://orcid.org/0000-0002-3384-2779",
+      "corresponding": true
+    },
+    {
+      "order": 3,
+      "name": "Feng Jiang",
+      "email": "jf@nustti.edu.cn",
+      "affiliation": "Taizhou Institute of Science and Technology, Nanjing University of Science and Technology",
+      "mailing_address": "Taizhou 225300, Jiangsu, China",
+      "orcid": "https://orcid.org/0000-0001-5362-3234",
+      "corresponding": false
+    },
+    {
+      "order": 4,
+      "name": "Qiufeng Wang",
+      "email": "qiufeng.wang@xjtlu.edu.cn",
+      "affiliation": "Department of Intelligence Science, Xi'an Jiaotong-Liverpool University",
+      "mailing_address": "Suzhou 215123, Jiangsu, China",
+      "orcid": "https://orcid.org/0000-0002-0918-4606",
+      "corresponding": false
+    },
+    {
+      "order": 5,
+      "name": "Qihang Wu",
+      "email": "24107880128@nustti.edu.cn",
+      "affiliation": "Taizhou Institute of Science and Technology, Nanjing University of Science and Technology",
+      "mailing_address": "Taizhou 225300, Jiangsu, China",
+      "orcid": "https://orcid.org/0009-0009-6082-0223",
+      "corresponding": false
+    }
+  ],
+  "ready_to_submit": false,
+  "pending": [
+    "Author-confirmed conflicts-of-interest statement to insert on page 5",
+    "Author confirmation of ethical-compliance statement; final author approval"
+  ],
+  "review_category": null,
+  "funding": "This work was supported by the Young Scientific and Technological Talent Support Program under the Taizhou Fengcheng Talent Plan.",
+  "conflicts_of_interest": null,
+  "acknowledgments_in_pdf": false
+}

@@ -1,3 +1,13 @@
+# 当前交接：Round-8
+
+工作分支 paper/verified-rerun-integration。当前唯一有效论文目录 paper/review_round8_20260915/；下载 submission/liu_round8_traceable.pdf。完整阅读该目录 README.md、CHANGES_zh.md、GPT_SOURCE_INDEX.md。
+
+实验权威内容 7ee2b6080aa6752790e17c910c5c8a3111235d4d，实验交接 78387d76f271d84b508373c603a5eff75c09299b。优先项 1–3 已落实到论文：归一化旧固定人群表、同批新记录主表、NeurIPS 2022 创新边界。旧 Round-7 保留作历史，不再是当前稿。
+
+五位作者 ORCID 已录入；Xihang Zhou 已删除；原 Figure 1 保留；不恢复 ACKNOWLEDGMENTS。无 ZIP、无 merge main、无实际投稿。利益冲突声明仍待作者确认。
+
+## 历史交接记录（下列旧状态已被上文替代）
+
 # ccf0：当前 Round-7 展开源码交接
 
 仓库 `jovial-liu/conway`；工作分支 `paper/verified-rerun-integration`。

@@ -1,0 +1,79 @@
+{
+  "experiment_commit": "7ee2b6080aa6752790e17c910c5c8a3111235d4d",
+  "release_commit": "78387d76f271d84b508373c603a5eff75c09299b",
+  "scope": "CSV-derived counts and normalization audit independently checked. Physical masks/tensors not downloaded; same-batch PASS reports are supplied by experiment runner. Table 5 conditional bootstrap: 10000 image resamples, seeds 8800+10*setting+metric.",
+  "settings": [
+    {
+      "setting": "coco_openai_b16",
+      "source_sha256": "73cdc08b36c486ef2286ccb65a35120f59d41ab9bf6f3efa7c3887b9a320b010",
+      "records": 27708,
+      "A": 17726,
+      "B_C0_C1_C2_r_j": [
+        11410,
+        10697,
+        695,
+        0,
+        18,
+        12
+      ],
+      "unrestricted_pct": 6.2489044697633656,
+      "feasible_pct": 0.15775635407537247,
+      "joint_oracle": 12,
+      "normalization_old_A": 17726
+    },
+    {
+      "setting": "coco_openai_b32",
+      "source_sha256": "99fd6a020932d4557680dc0e5d85c7380bfd5733a58b00e0cd91e3d1dc9667a8",
+      "records": 27708,
+      "A": 17848,
+      "B_C0_C1_C2_r_j": [
+        11562,
+        10655,
+        876,
+        1,
+        30,
+        25
+      ],
+      "unrestricted_pct": 7.844663553018509,
+      "feasible_pct": 0.2681197024736205,
+      "joint_oracle": 26,
+      "normalization_old_A": 17847
+    },
+    {
+      "setting": "voc2007_openai_b16",
+      "source_sha256": "27bd27c6b5bb8858c521c0c04d411be0b103ee354c16085e49a810171d97b78f",
+      "records": 1943,
+      "A": 1209,
+      "B_C0_C1_C2_r_j": [
+        511,
+        371,
+        135,
+        0,
+        5,
+        3
+      ],
+      "unrestricted_pct": 27.397260273972602,
+      "feasible_pct": 0.9784735812133072,
+      "joint_oracle": 3,
+      "normalization_old_A": 1209
+    },
+    {
+      "setting": "voc2007_openai_b32",
+      "source_sha256": "0c1de7d662efaaa42cbd4e7c71b92ca82bf6a294c2727438115ec38e396b68d5",
+      "records": 1943,
+      "A": 1227,
+      "B_C0_C1_C2_r_j": [
+        504,
+        347,
+        154,
+        1,
+        2,
+        1
+      ],
+      "unrestricted_pct": 31.150793650793652,
+      "feasible_pct": 0.5952380952380952,
+      "joint_oracle": 2,
+      "normalization_old_A": 1227
+    }
+  ]
+}
