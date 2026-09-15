@@ -3,7 +3,7 @@
 \usepackage{icassp2027_paperkit}
 \usepackage{amsmath,amssymb,booktabs,graphicx,microtype,url}
 \usepackage[T1]{fontenc}
-\usepackage{textcomp,balance,capt-of}
+\usepackage{textcomp,balance,caption}
 \usepackage[hidelinks]{hyperref}
 \urlstyle{same}
 \hypersetup{pdftitle={Beyond Mean Foils: Auditing Worst-Foil Specificity in Frozen CLIP Region Explanations},pdfauthor={Kaixin Liu; Zhipeng Ye; Feng Jiang; Qiufeng Wang; Qihang Wu; Xihang Zhou},pdfkeywords={CLIP, explanation auditing, fixed-population foil controls, repair capacity}}
@@ -14,6 +14,10 @@
 \setlength{\intextsep}{5pt plus 2pt minus 2pt}
 \setlength{\abovecaptionskip}{2pt}
 \setlength{\belowcaptionskip}{0pt}
+\captionsetup{font=small,labelfont=bf,justification=justified,singlelinecheck=false}
+\captionsetup[table]{position=top,skip=4pt}
+\captionsetup[figure]{position=bottom,skip=5pt}
+\raggedbottom
 \widowpenalty=10000
 \clubpenalty=10000
 \newcommand{\foils}{\mathcal F}
@@ -199,7 +203,7 @@ on actual repairs. Exact $q_i$ is primary; 100 seeded draws check it.
 \centering
 \captionof{table}{Fixed original $A$: full-foil, annotation-absent, and exact cardinality-matched random failure rates (\%). $\Delta_A$ is absent minus random in percentage points, with paired 95\% CI.}
 \label{tab:screens}
-\small\setlength{\tabcolsep}{1.1pt}
+\small\renewcommand{\arraystretch}{1.12}\setlength{\tabcolsep}{1.1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
 \toprule
 Setting & Full & Absent & Random & $\Delta_A$\\
@@ -207,7 +211,7 @@ Setting & Full & Absent & Random & $\Delta_A$\\
 \tabinput{tables/restricted_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{6pt}
+\end{minipage}\par\vspace{8pt}
 
 \paragraph{Failure persists after annotation exclusion.}
 Screen sizes are 17,726, 17,847, 1,209, and 1,227 in table order.
@@ -226,13 +230,14 @@ failure remains 61.38/62.61/40.05/39.34\%. Matched-random comparisons retain
 the COCO/VOC interval pattern. Even scenes with exactly two annotated
 categories have COCO annotation-absent failure of 63.39/64.95\%.
 
+\par\addvspace{6pt}
 \noindent\begin{minipage}{\columnwidth}
 \centering
 \captionof{table}{Exact local decomposition of \emph{screened failures} $B=A\cap F$
 at $\epsilon=.02$. Counts in $C_0,C_1,C_2,r$ are mutually exclusive;
 $C_2+r$ is the feasible-oracle count.}
 \label{tab:oracle}
-\small\setlength{\tabcolsep}{1.4pt}
+\small\renewcommand{\arraystretch}{1.12}\setlength{\tabcolsep}{1.4pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrrr@{}}
 \toprule
 Setting & $|B|$ & $C_0$ & $C_1$ & $C_2$ & $r$\\
@@ -240,20 +245,33 @@ Setting & $|B|$ & $C_0$ & $C_1$ & $C_2$ & $r$\\
 \tabinput{tables/oracle_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{6pt}
+\end{minipage}\par\vspace{8pt}
 
 \paragraph{Candidate and budget bottlenecks differ by dataset.}
 No region among the eight candidates passes for 93.75/92.16\% of COCO
 screened failures, versus 72.60/68.71\% on VOC (Table~\ref{tab:oracle}).
 Removing the budget would therefore permit sign repair in only 6.25/7.84\%
-of COCO $B$, versus 27.40/31.29\% on VOC. These limits concern the stored
-candidates, not every possible image region. The $.02$ budget then excludes
+of COCO $B$, versus 27.40/31.29\% on VOC. Figure~\ref{fig:ident} summarizes capacity within these eight candidates. The $.02$ budget then excludes
 96.43--98.10\% of those unrestricted opportunities: for COCO B/16, 695 of
 713 are excluded, leaving 18. Across settings, feasible-oracle counts are
 18/31/5/3 (0.16/0.27/0.98/0.59\% of $B$), and WF finds 18/30/5/2.
 
 
 
+\newpage
+\par\addvspace{6pt}
+\noindent\begin{minipage}{\columnwidth}
+\centering
+\includegraphics[width=\columnwidth]{figures/figure2_repair_capacity.pdf}
+\captionof{figure}{Budget-constrained sign-repair capacity among fixed screened failures $B$. Connected markers compare the same setting on a shared linear scale.
+Unrestricted: at least one of all eight candidates has $P\ge0$; feasible:
+at least one also meets $\epsilon=.02$. Percentages use each setting's own
+$|B|$ (Table~\ref{tab:oracle}); these are exact counts, not margin gains or
+confidence intervals.}
+\label{fig:ident}
+\end{minipage}\par\vspace{8pt}
+
+\par\addvspace{6pt}
 \noindent\begin{minipage}{\columnwidth}
 \centering
 \captionof{table}{Local COCO B/16 tolerance sweep. Multi is the all-image percentage
@@ -261,7 +279,7 @@ with $|\regions_\epsilon|>1$; $O_B,r_B$ are oracle/actual repair percentages
 \emph{of fixed $B$}. Target and bbox columns show \emph{global impacts}: all-image WF$-$CCI
 means, not costs conditional on repair. Bbox is in percentage points.}
 \label{tab:frontier}
-\small\setlength{\tabcolsep}{1pt}
+\small\renewcommand{\arraystretch}{1.12}\setlength{\tabcolsep}{1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}rrrrrr@{}}
 \toprule
 $\epsilon$ & Multi & $O_B$ & $r_B$ & $\Delta d_t$ & $100\Delta$bbox\\
@@ -269,7 +287,7 @@ $\epsilon$ & Multi & $O_B$ & $r_B$ & $\Delta d_t$ & $100\Delta$bbox\\
 \tabinput{tables/frontier_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{6pt}
+\end{minipage}\par\vspace{8pt}
 
 \paragraph{More opportunity requires a looser budget.}
 In Table~\ref{tab:frontier}, increasing $\epsilon$ from $.02$ to $.20$
@@ -284,16 +302,7 @@ Thus the low repair rate at that budget must be read alongside the
 unrestricted oracle in Table~\ref{tab:oracle}, not as budget-independent
 repair capacity.
 
-\noindent\begin{minipage}{\columnwidth}
-\centering
-\includegraphics[width=\columnwidth]{figures/figure2_repair_capacity.pdf}
-\captionof{figure}{Sign-repair capacity among fixed screened failures $B$.
-Unrestricted: at least one of all eight candidates has $P\ge0$; feasible:
-at least one also meets $\epsilon=.02$. Percentages use each setting's own
-$|B|$ (Table~\ref{tab:oracle}); these are exact counts, not margin gains or
-confidence intervals.}
-\label{fig:ident}
-\end{minipage}\par\vspace{6pt}
+
 
 \paragraph{Global impact is not the cost of repair.}
 Table~\ref{tab:frontier} averages costs over all images, including unchanged
@@ -303,13 +312,15 @@ is narrower still: it conditions on actual sign repairs in $B$.
 Conditional costs are neither all-image nor causal effects.
 
 
+\clearpage
+\par\addvspace{6pt}
 \noindent\begin{minipage}{\columnwidth}
 \centering
 \captionof{table}{Mean aggregate-margin differences over all eligible images, WF minus each
 alternative, with paired 95\% CIs. Values are multiplied by $10^3$;
 $D$ counts WF/Max-.1 selection disagreements at $\epsilon=.02$.}
 \label{tab:baselines}
-\small\setlength{\tabcolsep}{1pt}
+\small\renewcommand{\arraystretch}{1.12}\setlength{\tabcolsep}{1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrr@{}}
 \toprule
 Setting & WF$-$Mean & WF$-$Max-.1 & $D$\\
@@ -317,7 +328,7 @@ Setting & WF$-$Mean & WF$-$Max-.1 & $D$\\
 \tabinput{tables/comparison_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{6pt}
+\end{minipage}\par\vspace{8pt}
 
 \paragraph{Small baseline gains arise from few disagreements.}
 WF and Max-.1 differ on only 84/89/5/5 images
@@ -328,6 +339,7 @@ $[.0443,.1171]$, while raw target drop changes by $-.0326$
 $[-.0628,-.0033]$. The whole-sample gain is $.000245$.
 The VOC disagreement subsets contain only five images each.
 
+\par\addvspace{6pt}
 \noindent\begin{minipage}{\columnwidth}
 \centering
 \captionof{table}{Actual sign repairs \emph{within original $B$}, $\epsilon=.02$.
@@ -335,7 +347,7 @@ $r$ counts repairs; $j$ counts those also satisfying $J$.
 WF$-$CCI means with repair-subset 95\% CIs. $\Delta d_t$ is raw
 held-out target-score change; only bbox change is in percentage points.}
 \label{tab:costs}
-\small\setlength{\tabcolsep}{1.1pt}
+\small\renewcommand{\arraystretch}{1.12}\setlength{\tabcolsep}{1.1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
 \toprule
 Setting & $r$ & $j$ & $\Delta d_t$ & $100\Delta$bbox\\
@@ -343,7 +355,7 @@ Setting & $r$ & $j$ & $\Delta d_t$ & $100\Delta$bbox\\
 \tabinput{tables/endpoint_cost_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{6pt}
+\end{minipage}\par\vspace{8pt}
 
 \paragraph{Sign repair need not retain the other endpoints.}
 Only 12/25/3/1 of the 18/30/5/2 repairs in $B$ also retain the original
@@ -358,6 +370,8 @@ These are different populations from $B$ repairs. Raw-target intervals
 containing zero do not establish equivalence.
 
 
+\newpage
+\par\addvspace{6pt}
 \noindent\begin{minipage}{\columnwidth}
 \centering
 \captionof{table}{An illustrative COCO B/16 sign repair at $\epsilon=.02$
@@ -365,7 +379,7 @@ containing zero do not establish equivalence.
 17 repairs in $A^+\cap F$; it does not represent repair frequency.
 Margins use each region's own full foil set.}
 \label{tab:case}
-\small
+\small\renewcommand{\arraystretch}{1.12}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrr@{}}
 \toprule
 Endpoint & CCI-top1 & WF\\
@@ -376,7 +390,7 @@ Raw target drop & $+.3462$ & $+.3633$\\
 BBox precision & $.7143$ & $.6111$\\
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{6pt}
+\end{minipage}\par\vspace{8pt}
 
 \paragraph{A sign repair can retain the screen but lose locality.}
 Table~\ref{tab:case} illustrates this distinction: the margin changes sign,

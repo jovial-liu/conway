@@ -4,7 +4,7 @@ This revision supersedes Round-4 for manuscript editing. All inputs are ordinary
 
 - PDF: `generated/ccf0_round5_20260915.pdf`
 - Editable manuscript: `source/main.tex`
-- Author information: `source/authors.tex` (unchanged)
+- Author information: `source/authors.tex` (Qihang Wu is the fifth author)
 - Expanded arXiv compilation tree: `arxiv_source/`
 - SHA256 manifest: `generated/SHA256SUMS.txt` (paths relative to this directory)
 - Compilation checks: `generated/build_checks.json`

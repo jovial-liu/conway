@@ -35,19 +35,37 @@ for setting,expected in zip(SETTINGS,EXPECTED):
   eligible=repair&(positive[idx,cci]>0); inds=np.flatnonzero(eligible);ordered=inds[np.argsort(margin[inds,cci[inds]],kind='stable')];chosen=int(ordered[len(ordered)//2]);assert str(rows[chosen]['image_id'])=='254807'
   case={'image_id':rows[chosen]['image_id'],'selection_pool':int(eligible.sum()),'endpoints':{name:[float(v[chosen,cci[chosen]]),float(v[chosen,wf[chosen]])] for name,v in [('worst_foil_margin',margin),('mean_foil_margin',mean),('raw_target_drop',raw),('bbox_precision',bbox)]}}
 (OUT/'generated/evidence_checks.json').write_text(json.dumps({'scope':'Reanalysis of existing CSVs: strategy choices, counts, means, tolerance rows and case selection. No inference or new bootstrap confidence intervals.','settings':report,'case':case},indent=2)+'\n')
-plt.rcParams.update({'font.family':'DejaVu Serif','font.size':9,'pdf.fonttype':42,'ps.fonttype':42,'svg.fonttype':'none','axes.spines.top':False,'axes.spines.right':False})
-fig,ax=plt.subplots(figsize=(3.3858,2.4));fig.subplots_adjust(left=.30,right=.975,top=.77,bottom=.23)
-y=np.arange(4);u=np.array([r['unrestricted_pct'] for r in report]);f=np.array([r['feasible_pct'] for r in report]);h=.27
-ax.barh(y-h/2,u,height=h,color='#4e748b',label='Unrestricted (all 8)')
-ax.barh(y+h/2,f,height=h,color='#b16b4d',label='Feasible (epsilon = .02)')
-for j,(a,b) in enumerate(zip(u,f)):
- ax.text(a+.55,j-h/2,f'{a:.2f}',va='center',fontsize=9)
- ax.text(b+.55,j+h/2,f'{b:.2f}',va='center',fontsize=9,color='#75422f')
-ax.set(yticks=y,yticklabels=['COCO B/16','COCO B/32','VOC B/16','VOC B/32'],xlim=(0,39),xticks=[0,10,20,30],xlabel='Sign-repair capacity (% of B)')
-ax.invert_yaxis();ax.spines['left'].set_visible(False);ax.tick_params(axis='y',length=0,pad=4);ax.grid(axis='x',alpha=.18);ax.set_axisbelow(True)
-fig.legend(*ax.get_legend_handles_labels(),loc='upper left',bbox_to_anchor=(.03,1.01),frameon=False,fontsize=9,handlelength=1.5,labelspacing=.3)
-for ext in ['pdf','svg','png']:fig.savefig(OUT/f'source/figures/figure2_repair_capacity.{ext}',dpi=200)
-print(json.dumps({'verified_records':sum(r['records'] for r in report),'case':case,'counts':[r['B_C0_C1_C2_r_j'] for r in report]},indent=2))
-
-svg = OUT/'source/figures/figure2_repair_capacity.svg'
+# Paired endpoints on one zero-based scale; exact labels retain small feasible rates.
+plt.rcParams.update({'font.family':'DejaVu Serif','font.size':9,'pdf.fonttype':42,
+ 'ps.fonttype':42,'svg.fonttype':'none','axes.spines.top':False,
+ 'axes.spines.right':False,'axes.spines.left':False,'axes.linewidth':.6,
+ 'mathtext.fontset':'dejavuserif'})
+fig,ax=plt.subplots(figsize=(3.3858,2.65))
+fig.subplots_adjust(left=.245,right=.975,top=.80,bottom=.21)
+y=np.array([0.,1.,2.4,3.4])
+u=np.array([r['unrestricted_pct'] for r in report])
+f=np.array([r['feasible_pct'] for r in report])
+blue='#255b78';orange='#a34c22'
+ax.axhspan(1.7,4.0,color='#f3f5f6',zorder=0)
+for yy,a,b in zip(y,u,f):
+ ax.plot([b,a],[yy,yy],color='#9ba7ad',lw=1.4,zorder=2)
+ ax.plot(a,yy,'o',color=blue,ms=5.3,zorder=3)
+ ax.plot(b,yy,'D',color=orange,ms=4.5,zorder=3)
+ ax.annotate(f'{a:.2f}',(a,yy),xytext=(0,7),textcoords='offset points',ha='center',fontsize=9,color=blue)
+ ax.annotate(f'{b:.2f}',(b,yy),xytext=(4,-12),textcoords='offset points',ha='left',fontsize=9,color=orange)
+ax.set(yticks=y,yticklabels=['COCO B/16','COCO B/32','VOC B/16','VOC B/32'],
+ xlim=(-.7,36),ylim=(4.05,-.65),xticks=[0,10,20,30],xlabel=r'Sign-repair capacity (% of $B$)')
+ax.tick_params(axis='y',length=0,pad=5,labelsize=8.5)
+ax.tick_params(axis='x',length=3,color='#899298',labelsize=9)
+ax.grid(axis='x',color='#dce1e4',lw=.5);ax.set_axisbelow(True)
+from matplotlib.lines import Line2D
+handles=[Line2D([],[],marker='o',ls='none',color=blue,ms=5,label='Unrestricted (8 candidates)'),
+ Line2D([],[],marker='D',ls='none',color=orange,ms=4.5,label=r'Feasible ($\epsilon=0.02$)')]
+fig.legend(handles=handles,loc='upper left',bbox_to_anchor=(.02,1.015),frameon=False,
+ fontsize=9,handlelength=1.1,handletextpad=.5,labelspacing=.4)
+for ext in ['pdf','svg','png']:
+ fig.savefig(OUT/f'source/figures/figure2_repair_capacity.{ext}',dpi=300,
+  metadata={'Date':None} if ext=='svg' else None)
+svg=OUT/'source/figures/figure2_repair_capacity.svg'
 svg.write_text('\n'.join(line.rstrip() for line in svg.read_text().splitlines())+'\n')
+print(json.dumps({'verified_records':sum(r['records'] for r in report),'case':case},indent=2))

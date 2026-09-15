@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "99b89559b122f37949a402a01fceacffc788ecfee17455a82d9c36110794fe33",
+  "pdf_sha256": "2662a1d197be2b59dfed3cfaeaaa7278db0d2678ed5f913b01710af88cc21e35",
   "reviewed_pages": [
     1,
     2,
@@ -7,8 +7,7 @@
     4,
     5
   ],
-  "render": "Poppler PNG, 1400 px page height",
-  "findings": "All pages visually checked: readable figures and tables, captions in place, no overlap or clipping, correct Table 6 and new Figure 2, no historical photograph substitution. References confined to page 5 without a split entry.",
-  "accepted": true,
-  "author_update": "Page 1 visually rechecked; pages 2\u20135 render identically to previous revision. Author text, email and ORCID link checked."
+  "render": "Poppler PNG, 1100\u20131400 px page height",
+  "findings": "All five pages visually checked. Figure 2 paired markers and eight value labels are legible; captions, tables and column breaks have no clipping or overlap. Main text remains 10pt with four technical pages and references on page five. Author block and table input files unchanged from the author-corrected revision.",
+  "accepted": true
 }

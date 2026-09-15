@@ -220,3 +220,5 @@ Round-4 定义 `J`：WF 新区域同时满足：
 > 请先读 `HANDOFF.md` 和 `paper/review_round5_20260915/GPT_SOURCE_INDEX.md`，接手 ccf0。工作分支是 `paper/verified-rerun-integration`。不要读取或要求 ZIP；所有当前源码、图件与 PDF 都是普通 GitHub 文件；原 Figure 3 已改成 Table 6。当前主稿是 `paper/review_round5_20260915/source/main.tex`。直接继续修改、编译和交付，不要回退到旧稿。
 
 作者更新：第五作者 Qihang Wu，邮箱 24107880128@nustti.edu.cn，ORCID 0009-0009-6082-0223。单位暂按所给邮箱归入单位 1，待作者确认。
+
+版式更新：Figure 2 已重绘为带精确数值的双端点图，位于第 3 页右栏顶部；表题、行距及分栏已统一。当前仍使用 Round-5 展开源码与同名 PDF。
