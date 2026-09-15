@@ -54,3 +54,5 @@ Figure 1 最新状态：使用重画前的原 PDF/SVG，已移除替代的 TikZ 
 当前表述优化版：submission/liu_clarity_revised.pdf。原 Figure 1 样式保留，仅按代码更正为 Patch-key masking / Class token retained；表格数据与 Figure 2 未变。
 
 最新语言版：submission/liu_language_revised.pdf；采用直接陈述发现的学术语气，避免重复防御性表述。
+
+最新引言补强版：submission/liu_intro_strengthened.pdf。补充最强竞争类别的直觉解释及与 COCOA/CASE 的具体关系。

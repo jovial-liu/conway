@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "fc199b2308e90f8fd8aee699fc48255f430a088aa983e1b1e5a8deb70acef087",
+  "pdf_sha256": "8d64ecc98780733ba6bab2122a1e16d6c656fd1a5a17fd9ad6180d7cb391a306",
   "pages_reviewed": [
     1,
     2,
@@ -9,5 +9,5 @@
   ],
   "accepted_layout": true,
   "render": "Poppler 1200\u20131250 px page height",
-  "findings": "All pages reviewed after language revision. Findings stated directly; substantive limitations consolidated in Section 5. Figures, table data and authors unchanged. Five pages, no overflow."
+  "findings": "Introduction strengthened with intuitive strongest-competitor explanation and specific COCOA/CASE comparison verified against primary abstracts. Pages 1\u20132 visually reviewed; pages 3\u20135 render identically to prior reviewed version. Figures, tables and authors unchanged. Five pages, no overflow."
 }

@@ -47,22 +47,27 @@ CLIP, explanation auditing, class specificity, constrained region selection
 \section{Introduction}
 CLIP~\cite{radford2021clip} region explanations use intervention-induced
 image--text score changes. Cluster-based Concept Importance
-(CCI)~\cite{agarwal2025cci} combines cluster scores into a heatmap;
-we audit its maximum-target-drop region, CCI-top1. Spatial overlap,
-positive target contribution, and target specificity are distinct:
-a region may support multiple genuinely present classes.
+(CCI)~\cite{agarwal2025cci} groups patches and measures their contribution;
+we audit its maximum-target-drop region, CCI-top1. A positive mean-foil
+contrast can average away a strong competitor: masking a region may reduce
+the target score more than the average non-target score, yet reduce one
+non-target score even more. Worst-foil specificity tests this strongest
+competitor, complementing spatial overlap and mean contrast.
 
-COCOA~\cite{lin2023cocoa} studies corpus--foil attribution;
-CASE~\cite{williamson2025case} builds contrastive saliency maps.
+COCOA~\cite{lin2023cocoa} attributes representation similarity to a reference
+corpus relative to foil samples. CASE~\cite{williamson2025case} tests class
+sensitivity and constructs contrastive saliency maps. Our audit examines
+CCI-selected regions under held-out prompts, testing whether locality and
+positive mean-foil contrast imply a positive worst-foil margin across
+non-target dataset classes. It combines fixed-population annotation
+exclusion, cardinality-matched foil controls, and exact candidate enumeration
+to identify the sources of failure and limits on sign repair.
+
 Related CLIP attribution~\cite{wang2023m2ib,li2023clipsurgery,dreyer2025cliplatent},
-class contrasts~\cite{li2026cdaclip},
-and caption foils~\cite{yuksekgonul2023aro} motivate our audit.
-We ask whether locality and positive mean-foil contrast suffice for
-worst-foil specificity. Our controlled audit quantifies their mismatch,
-isolates annotation exclusion from foil-count reduction, and separates
-candidate, budget, and selector limits on sign repair. Worst-foil (WF)
-reranking serves as a diagnostic probe;
-unlike IDEA's few-shot adaptation~\cite{ye2026idea}, CLIP stays fixed.
+class contrasts~\cite{li2026cdaclip}, and caption foils~\cite{yuksekgonul2023aro}
+provide complementary perspectives. Worst-foil (WF) reranking probes the
+available candidate and budget space with CLIP fixed; IDEA~\cite{ye2026idea}
+instead adapts CLIP for few-shot classification.
 
 \begin{figure*}[t]
 \centering
@@ -162,7 +167,6 @@ With zero numerator when $k_i>N_i-m_i$, we compare
 $\Delta_A=|A|^{-1}\sum_{i\in A}(\mathbf1\{F_i^{\rm abs}\}-q_i)$.
 Restricted sets are nonempty, and crowd annotations are excluded.
 
-\newpage
 \section{Protocol and Reproducibility}
 COCO val2014~\cite{lin2014coco} and VOC2007 test~\cite{everingham2010voc}
 provide 27,708/1,943 eligible images, each evaluated with OpenAI CLIP B/16
