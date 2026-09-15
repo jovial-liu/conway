@@ -22,6 +22,7 @@ metadata=dict(title=title,abstract=abstract,abstract_word_count=len(abstract.spl
 shutil.copy2(root/'generated/ccf0_round8_20260915.pdf',out/'liu.pdf')
 shutil.copy2(out/'liu.pdf',out/'liu_round8_traceable.pdf')
 shutil.copy2(out/'liu.pdf',out/'liu_round8_six_authors.pdf')
+shutil.copy2(out/'liu.pdf',out/'liu_round8_page4_balanced.pdf')
 files=[p for p in out.iterdir() if p.is_file() and p.name!='SHA256SUMS.txt']
 (out/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(files)))
 print('Prepared liu.pdf and form fields; missing author-supplied information remains explicit.')

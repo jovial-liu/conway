@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "29aeadc46e35550feb0d6555e3eab9b1b3aab7e87dd17096eec7c5f006bd181a",
+  "pdf_sha256": "d852f8a3f06d0be438685669b138141eb40a811db0775239f8bd3c742e18f8b4",
   "pages_reviewed": [
     1,
     2,
@@ -8,5 +8,5 @@
     5
   ],
   "accepted_layout": true,
-  "findings": "Six-author update: Zhenghao Wang inserted before Qihang Wu, distinct Nanjing University of Science and Technology affiliation. Six ORCID links verified. Page 1 visually reviewed; pages 2\u20135 render identically to prior verified version. Title-block spacing adjusted without changing body font or figures."
+  "findings": "Page 4 visually reviewed after increasing Table 4 and Table 5 row spacing and adjacent paragraph spacing. Column bottoms align within 0.4 pt; no clipping or overlaps. Pages 1, 2, 3 and 5 render identically to the previous six-author PDF. No manuscript wording or data changed."
 }

@@ -310,7 +310,7 @@ successful sign repairs, respectively.
 and original CCI regions. Raw/Norm: failure rates (\%); Flip: percentage
 whose failure status differs. This audit uses the earlier recorded population.}
 \label{tab:normalization}
-\small\renewcommand{\arraystretch}{1.22}\setlength{\tabcolsep}{1pt}
+\small\renewcommand{\arraystretch}{1.90}\setlength{\tabcolsep}{1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
 \toprule
 Setting & $|A_{\rm old}|$ & Raw & Norm & Flip\\
@@ -318,7 +318,7 @@ Setting & $|A_{\rm old}|$ & Raw & Norm & Flip\\
 \tabinput{tables/normalization_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{8pt}
+\end{minipage}\par\vspace{12pt}
 
 \paragraph{Normalization has a small effect on the fixed audit.}
 With original regions and $A_{\rm old}$ held fixed, raw and normalized
@@ -327,7 +327,7 @@ at most 0.107\% of this population (Table~\ref{tab:normalization}).
 The hardest foil agrees on 99.42--99.84\% of images. These paired
 comparisons preserve the high failure rate under both score definitions.
 
-\par\addvspace{6pt}
+\par\addvspace{18pt}
 \noindent\begin{minipage}{\columnwidth}
 \centering
 \captionof{table}{Actual sign repairs \emph{within original $B$}, $\epsilon=.02$.
@@ -335,7 +335,7 @@ $r$ counts repairs; $j$ counts those also satisfying $J$.
 WF$-$CCI means with repair-subset 95\% CIs. $\Delta d_t$ is raw
 held-out target-score change; only bbox change is in percentage points.}
 \label{tab:costs}
-\small\renewcommand{\arraystretch}{1.40}\setlength{\tabcolsep}{1.1pt}
+\small\renewcommand{\arraystretch}{1.90}\setlength{\tabcolsep}{1.1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
 \toprule
 Setting & $r$ & $j$ & $\Delta d_t$ & $100\Delta$bbox\\
@@ -343,7 +343,7 @@ Setting & $r$ & $j$ & $\Delta d_t$ & $100\Delta$bbox\\
 \tabinput{tables/endpoint_cost_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{8pt}
+\end{minipage}\par\vspace{12pt}
 
 \paragraph{Target and locality changes after sign repair.}
 In every setting, some sign repairs fail to retain the locality/mean-foil

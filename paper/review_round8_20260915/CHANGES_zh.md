@@ -1,3 +1,7 @@
+## 第四页留白调整
+
+调整表 4、表 5 行距与相邻段落间距，两栏底部差约 0.4 pt。正文及数据不变；维持五页，无溢出，其余四页渲染一致。最新文件为 submission/liu_round8_page4_balanced.pdf。
+
 # Round-8 更新
 
 1. 完成论文中的归一化敏感性表（Table 4）：固定旧 A 和旧区域，四设置 raw/normalized 失败率、符号翻转率；hardest-foil 一致率写入正文。
