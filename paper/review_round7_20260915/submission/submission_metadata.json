@@ -53,20 +53,11 @@
       "mailing_address": "Taizhou 225300, Jiangsu, China",
       "orcid": "https://orcid.org/0009-0009-6082-0223",
       "corresponding": false
-    },
-    {
-      "order": 6,
-      "name": "Xihang Zhou",
-      "email": "xihang.zhou@mail.utoronto.ca",
-      "affiliation": "Department of Statistical Sciences, University of Toronto",
-      "mailing_address": "Toronto, Ontario M5S 1A1, Canada",
-      "orcid": "",
-      "corresponding": false
     }
   ],
   "ready_to_submit": false,
   "pending": [
-    "ORCID URLs for Zhipeng Ye, Feng Jiang, Qiufeng Wang and Xihang Zhou",
+    "ORCID URLs for Zhipeng Ye, Feng Jiang and Qiufeng Wang",
     "Author-confirmed conflicts-of-interest statement to insert on page 5",
     "Author confirmation of ethical-compliance and AI-assistance statements; final author approval"
   ],

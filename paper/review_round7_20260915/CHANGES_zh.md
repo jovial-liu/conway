@@ -7,8 +7,12 @@
 - 提供 liu.pdf、ASCII 摘要、标题、关键词、作者 CSV、JSON、声明待确认说明和哈希；没有创建 ZIP 或代办投稿。
 - 沿用 Round-6 阈值与四设置预算分析，不改变实验数值，不声称补齐原始 masks 或逐类响应。
 
-剩余的学术风险：归一化敏感性、原始区域身份、语义 hardest-foil 审核、跨设置校准与空间控制。新增的投稿信息缺口：其余四位作者 ORCID、利益冲突声明。当前文件是可审阅的投稿准备版，不是手续已齐全的提交证明。
+剩余的学术风险：归一化敏感性、原始区域身份、语义 hardest-foil 审核、跨设置校准与空间控制。新增的投稿信息缺口：其余三位作者 ORCID、利益冲突声明。当前文件是可审阅的投稿准备版，不是手续已齐全的提交证明。
 
 ## 资助及 ORCID 更新
 
-按用户提供原文加入 Taizhou Fengcheng Talent Plan 下的资助说明；加入 Kaixin Liu 的 ORCID 姓名链接及表单记录。上传 DCI PDF 的全文、259 个链接、PDF 对象和 XML 元数据中未检出 ORCID。仍缺其他四人 ORCID 和利益冲突确认。
+按用户提供原文加入 Taizhou Fengcheng Talent Plan 下的资助说明；加入 Kaixin Liu 的 ORCID 姓名链接及表单记录。上传 DCI PDF 的全文、259 个链接、PDF 对象和 XML 元数据中未检出 ORCID。仍缺其他三人 ORCID 和利益冲突确认。
+
+## 作者更新
+
+按用户明确要求移除 Xihang Zhou 的署名、邮箱、多伦多大学单位和 PDF 作者元数据；当前共五位作者。剩余 ORCID 缺口为 Zhipeng Ye、Feng Jiang、Qiufeng Wang。

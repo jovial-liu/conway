@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "ab274c75daf66737c70ebd13f2e596b89b735dfbf552d98af330a62fae49e631",
+  "pdf_sha256": "b64f51b0d5263a1dc2d8dd53e18f23e67be2a1833af0d24f4a27685433016b96",
   "pages_reviewed": [
     1,
     2,
@@ -9,5 +9,5 @@
   ],
   "accepted_layout": true,
   "render": "Poppler 1200\u20131250 px page height",
-  "findings": "Funding update: page 5 visually checked; supplied funding sentence is legible. Pages 1\u20134 render identically to previous version. Kaixin Liu ORCID link verified. Four ORCIDs and conflicts statement remain pending."
+  "findings": "All five pages visually reviewed after removing Xihang Zhou, his email and Toronto affiliation. Five authors remain; no overlap or clipping. Funding retained. Three ORCIDs and conflicts statement remain pending."
 }
