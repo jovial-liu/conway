@@ -1,0 +1,81 @@
+name: Materialize visible round4 source
+
+on:
+  push:
+    branches: [paper/verified-rerun-integration]
+    paths:
+      - '.github/workflows/materialize-visible-round4-source.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Decode and expand current source
+        run: |
+          set -euo pipefail
+          root="paper/review_round4_20260914"
+          staged="handoff/round4/ccf0_round4_20260914_arxiv.zip.b64"
+          decoded="/tmp/ccf0_round4_20260914_arxiv.zip"
+          base64 -d "$staged" > "$decoded"
+          unzip -t "$decoded"
+
+          rm -rf "$root/source" "$root/arxiv_source" "$root/reference_figures"
+          mkdir -p "$root/source" "$root/arxiv_source" "$root/reference_figures" "$root/generated"
+          unzip -q "$decoded" -d "$root/arxiv_source"
+          cp -a "$root/arxiv_source/." "$root/source/"
+
+          # Keep prior Figure 2/3 assets as ordinary GitHub files, not only inside ZIPs,
+          # so future ChatGPT sessions can inspect them directly.
+          cp paper/local_rerun_revision/source/figures/figure2_identification_final.pdf \
+            "$root/reference_figures/figure2_previous_round3.pdf"
+          cp paper/local_rerun_revision/source/figures/figure3_qualitative_final.pdf \
+            "$root/reference_figures/figure3_previous_round3.pdf"
+          cp paper/local_rerun_revision/source/figures/figure3_qualitative_final.svg \
+            "$root/reference_figures/figure3_previous_round3.svg" 2>/dev/null || true
+
+          cp "$decoded" "$root/generated/ccf0_round4_20260914_arxiv.zip"
+          rm -f "$root/generated/ccf0_round4_20260914_source.zip"
+          (cd "$root" && zip -qr generated/ccf0_round4_20260914_source.zip \
+            source arxiv_source reference_figures README.md)
+
+          sha256sum \
+            "$root/generated/ccf0_round4_20260914_source.zip" \
+            "$root/generated/ccf0_round4_20260914_arxiv.zip" \
+            > "$root/generated/SOURCE_SHA256SUMS.txt"
+
+          cat > "$root/VISIBLE_SOURCE_NOTE.md" <<'EOF'
+          # Visible source note
+
+          The current compile-ready Round-4 source is expanded under `source/` and `arxiv_source/`.
+          `generated/ccf0_round4_20260914_arxiv.zip` and `generated/ccf0_round4_20260914_source.zip` are also provided.
+
+          Figure 2 is directly available at `source/figures/figure2_identification_final.pdf`.
+          The previous Figure 2 and Figure 3 assets are deliberately kept as normal repository files under `reference_figures/`, not only inside ZIP archives, so future ChatGPT sessions can inspect them directly.
+
+          The current Round-4 Figure 3 is implemented in `source/main.tex` as an inline response-audit panel rather than an external graphic file.
+          EOF
+
+      - name: Commit visible source and figures
+        run: |
+          set -euo pipefail
+          git config user.name "Paper source materializer"
+          git config user.email "paper-source@users.noreply.github.com"
+          git add paper/review_round4_20260914/source \
+                  paper/review_round4_20260914/arxiv_source \
+                  paper/review_round4_20260914/reference_figures \
+                  paper/review_round4_20260914/generated/ccf0_round4_20260914_source.zip \
+                  paper/review_round4_20260914/generated/ccf0_round4_20260914_arxiv.zip \
+                  paper/review_round4_20260914/generated/SOURCE_SHA256SUMS.txt \
+                  paper/review_round4_20260914/VISIBLE_SOURCE_NOTE.md
+          if ! git diff --cached --quiet; then
+            git commit -m "Materialize visible round-4 source and figures"
+            git push origin HEAD:paper/verified-rerun-integration
+          fi
