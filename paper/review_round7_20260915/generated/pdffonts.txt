@@ -8,7 +8,7 @@ GQVNFC+CMSY7                         Type 1            Builtin          yes yes 
 BAGKGA+NimbusRomNo9L-Regu            Type 1            Custom           yes yes yes     52  0
 QQREUW+NimbusMonL-Regu               Type 1            Custom           yes yes yes     53  0
 XPNWXI+CMMI10                        Type 1            Builtin          yes yes yes     55  0
-WHTXUC+CMR10                         Type 1            Builtin          yes yes yes     56  0
+VKLQBJ+CMR10                         Type 1            Builtin          yes yes yes     56  0
 SJISBO+NimbusRomNo9L-MediItal        Type 1            Custom           yes yes yes     57  0
 GFTVSW+CMSY10                        Type 1            Builtin          yes yes yes     58  0
 RMLWYW+CMEX10                        Type 1            Builtin          yes yes yes     62  0

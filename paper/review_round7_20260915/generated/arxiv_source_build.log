@@ -97,42 +97,42 @@ ts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/
 base/8r.enc}] [2 <./figures/figure1_method_clean.pdf>]
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 204.
+(caption)                particular \caption on input line 198.
 See the caption package documentation for explanation.
 
 (./tables/restricted_rows.tex)
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 239.
+(caption)                particular \caption on input line 233.
 See the caption package documentation for explanation.
 
 (./tables/oracle_rows.tex)
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 271.
+(caption)                particular \caption on input line 264.
 See the caption package documentation for explanation.
 
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 278.
+(caption)                particular \caption on input line 271.
 See the caption package documentation for explanation.
 
 (./tables/all_budget_rows.tex) [3 <./figures/figure2_repair_capacity.pdf>]
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 311.
+(caption)                particular \caption on input line 304.
 See the caption package documentation for explanation.
 
 (./tables/comparison_rows.tex)
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 338.
+(caption)                particular \caption on input line 331.
 See the caption package documentation for explanation.
 
 (./tables/endpoint_cost_rows.tex)
 
 Package caption Warning: The option `hypcap=true' will be ignored for this
-(caption)                particular \caption on input line 368.
+(caption)                particular \caption on input line 359.
 See the caption package documentation for explanation.
 
 (./tables/threshold_rows.tex) [4] (./references.tex) [5]
@@ -157,7 +157,7 @@ f-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/t
 ype1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/
 utmri8a.pfb>
 Output written on /workspace/scratch/33569daa15cc/conway/paper/review_round7_20
-260915/generated/build/arxiv_source/main.pdf (5 pages, 430574 bytes).
+260915/generated/build/arxiv_source/main.pdf (5 pages, 429696 bytes).
 Transcript written on /workspace/scratch/33569daa15cc/conway/paper/review_round
 7_20260915/generated/build/arxiv_source/main.log.
 Latexmk: Getting log file '/workspace/scratch/33569daa15cc/conway/paper/review_round7_20260915/generated/build/arxiv_source/main.log'

@@ -28,3 +28,7 @@
 ## 表述优化
 
 原 Figure 1 仅修正 masking 与 class-token 标签，对应归档实验脚本 build_attention_mask；图形结构不变。引言明确审计问题和三项贡献；精简重复数值，明确 A、B 与全部 eligible images 的分母；统一 sign repair 的限定，分层组织局限性。所有表格数据与 Figure 2 均未改变。五位作者 ORCID 和无 ACKNOWLEDGMENTS 版本保留。
+
+## 语言修订
+
+按用户要求改为直接陈述发现与证据，删除重复防御性措辞，将实质边界集中在局限性部分；结论总结贡献与评价意义。图表、实验数值及作者信息不变。

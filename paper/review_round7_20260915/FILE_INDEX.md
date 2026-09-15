@@ -43,3 +43,5 @@
 - [ORCID-complete PDF without acknowledgments](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/submission/liu_orcid_updated_no_acknowledgments.pdf)
 
 - [Clarity-revised PDF](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/submission/liu_clarity_revised.pdf)
+
+- [Language-revised PDF](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/submission/liu_language_revised.pdf)
