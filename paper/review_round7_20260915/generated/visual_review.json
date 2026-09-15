@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "213e712cb827557ea11df305e5d8cf294ce88057802f500ff394a4392846fa6f",
+  "pdf_sha256": "e635bcaaa9d8dc747fb05446b5475740aa916d2c3a3008e7c6425a9242928cfb",
   "pages_reviewed": [
     1,
     2,
@@ -9,5 +9,5 @@
   ],
   "accepted_layout": true,
   "render": "Poppler 1200\u20131250 px page height",
-  "findings": "Pages 3\u20135 visually reviewed after increasing table row spacing and balancing references. Pages 1\u20132 render identically to prior reviewed version. Five pages; no overflow or clipping. Data, figures and five author ORCIDs unchanged. Evidence wording distinguishes locally retained regenerated responses from unavailable original masks."
+  "findings": "Priority 3 completed: primary NeurIPS 2022 Section 3.3 checked; original-logit versus intervention-drop foil distinction and audit scope added. Pages 1,2,5 visually reviewed; tables and figures unchanged. Priorities 1 and 2 are blocked on local tensors and full same-record capture; scripts tested only on synthetic fixtures. No fabricated results added."
 }

@@ -54,20 +54,22 @@ the target score more than the average non-target score, yet reduce one
 non-target score even more. Worst-foil specificity tests this strongest
 competitor, complementing spatial overlap and mean contrast.
 
-COCOA~\cite{lin2023cocoa} attributes representation similarity to a reference
-corpus relative to foil samples. CASE~\cite{williamson2025case} tests class
-sensitivity and constructs contrastive saliency maps. Our audit examines
-CCI-selected regions under held-out prompts, testing whether locality and
-positive mean-foil contrast imply a positive worst-foil margin across
-non-target dataset classes. It combines fixed-population annotation
-exclusion, cardinality-matched foil controls, and exact candidate enumeration
-to identify the sources of failure and limits on sign repair.
+Wang and Wang~\cite{wang2022whynot} analyze mean, max, and weighted
+class contrast. Their max contrast chooses the non-target class with the
+highest original-image logit; our worst foil maximizes the score drop under
+a region intervention and can vary with the region. CCI-top1 isolates the
+region selected for maximum target drop, enabling a direct audit of its
+cross-class specificity.
 
+COCOA~\cite{lin2023cocoa} explains corpus similarity relative to foil samples;
+CASE~\cite{williamson2025case} tests class sensitivity and constructs
+contrastive saliency. Our contribution combines fixed-population auditing,
+exact cardinality-matched foil controls, and candidate/budget decomposition
+to quantify the prevalence and sources of worst-foil failure.
 Related CLIP attribution~\cite{wang2023m2ib,li2023clipsurgery,dreyer2025cliplatent},
 class contrasts~\cite{li2026cdaclip}, and caption foils~\cite{yuksekgonul2023aro}
-provide complementary perspectives. Worst-foil (WF) reranking probes the
-available candidate and budget space with CLIP fixed; IDEA~\cite{ye2026idea}
-instead adapts CLIP for few-shot classification.
+provide complementary perspectives. WF reranking probes fixed CLIP
+candidates; IDEA~\cite{ye2026idea} adapts CLIP for few-shot classification.
 
 \begin{figure*}[t]
 \centering

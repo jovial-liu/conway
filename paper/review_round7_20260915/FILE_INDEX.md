@@ -49,3 +49,6 @@
 - [Introduction-strengthened PDF](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/submission/liu_intro_strengthened.pdf)
 
 - [Layout and evidence revision PDF](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/submission/liu_layout_evidence_revised.pdf)
+
+- [Priority-3 updated PDF](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/submission/liu_priority3_related_work.pdf)
+- [Priority 1–3 execution handoff](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/priority123/README_zh.md)
