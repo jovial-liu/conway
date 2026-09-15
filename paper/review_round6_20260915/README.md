@@ -1,3 +1,5 @@
+> Superseded for editing by ../review_round7_20260915/.
+
 # Current manuscript: Round-6
 
 Current PDF: `generated/ccf0_round6_20260915.pdf`.

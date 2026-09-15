@@ -1,10 +1,10 @@
-# ccf0：当前 Round-6 展开源码交接
+# ccf0：当前 Round-7 展开源码交接
 
 仓库 `jovial-liu/conway`；工作分支 `paper/verified-rerun-integration`。
 
-当前唯一有效论文目录：`paper/review_round6_20260915/`。直接读取普通文件，不读取或要求 ZIP。
+当前唯一可编辑论文目录：`paper/review_round7_20260915/`。直接读取普通文件，不读取或要求 ZIP。
 
-- 论文：`generated/ccf0_round6_20260915.pdf`
+- 论文：`generated/ccf0_round7_20260915.pdf`
 - 源码：`source/main.tex`、`source/authors.tex`、`source/references.tex`、`source/tables/`、`source/figures/`
 - 展开 arXiv 树：`arxiv_source/`
 - 入口：`GPT_SOURCE_INDEX.md`
@@ -38,3 +38,7 @@ Restricted-foil controls：6a52e8f3d39f343d8483390882dcb5e57003d904。
 本地 Codex 负责必要实验；云端 GPT 负责论文和现有证据再分析。不要修改历史实验，不提交 arXiv，不 merge main，不 force push。
 
 Round-4、Round-5 和旧 paper/local_rerun_revision/generated/paper_final.pdf 均是历史版本。不要根据同名 PDF 或旧图恢复当前稿。
+
+## 投稿准备状态
+
+先读当前目录 submission/START_HERE_zh.md 和 FILE_INDEX.md。submission/liu.pdf 为投稿文件命名副本，但资金/利益冲突声明尚待作者确认，另有五位作者 ORCID 缺失；ready_to_submit=false。原实验和统计结果不变。新版 Figure 1 用 TikZ 重绘，Figure 2 标签至少 9pt。第 5 页包含伦理和 AI 辅助说明。已移除 MGA-CLIP 与 Contrastive Concept Importance 两条未能直接核验的外围引用。当前共 13 条引用，不宣称全部出版元数据均已独立核实。

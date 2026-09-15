@@ -1,0 +1,44 @@
+{
+  "pages": 5,
+  "technical_pages": 4,
+  "references_page": 5,
+  "font_resources": 27,
+  "all_fonts_embedded_subset": true,
+  "type3_fonts": false,
+  "undefined_references": false,
+  "overfull_boxes": false,
+  "source_arxiv_render_identical": true,
+  "page_text_bounds_pt": [
+    [
+      53.957000732421875,
+      96.655029296875,
+      560.7339477539062,
+      717.7032470703125
+    ],
+    [
+      53.597999572753906,
+      72.71485900878906,
+      560.7381591796875,
+      718.35498046875
+    ],
+    [
+      54.09600067138672,
+      72.39891815185547,
+      560.6470947265625,
+      712.5155029296875
+    ],
+    [
+      53.678001403808594,
+      71.06327819824219,
+      560.6466674804688,
+      695.6074829101562
+    ],
+    [
+      59.40699768066406,
+      72.39891815185547,
+      560.7388916015625,
+      669.0465087890625
+    ]
+  ],
+  "note": "Glyph bounds allow small font-metric protrusions; visual inspection is recorded separately."
+}

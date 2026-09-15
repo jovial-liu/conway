@@ -1,11 +1,3 @@
-# Current release: Round-6
+# Round-7 submission preparation
 
-- Handoff: ../HANDOFF.md
-- Manuscript: ../paper/review_round6_20260915/generated/ccf0_round6_20260915.pdf
-- Source: ../paper/review_round6_20260915/source/
-- Expanded arXiv: ../paper/review_round6_20260915/arxiv_source/
-- Changes: ../paper/review_round6_20260915/CHANGES_zh.md
-- Remaining experiments: ../paper/review_round6_20260915/LOCAL_EXPERIMENT_REQUEST.md
-- SHA256: ../paper/review_round6_20260915/generated/SHA256SUMS.txt
-
-No ZIP. Round-5 and earlier releases are historical.
+Read ../HANDOFF.md and ../paper/review_round7_20260915/FILE_INDEX.md. Submission PDF: ../paper/review_round7_20260915/submission/liu.pdf. Five ORCIDs and funding/conflict declarations remain incomplete. No ZIP; no conference submission has been made.
