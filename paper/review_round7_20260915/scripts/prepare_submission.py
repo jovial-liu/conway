@@ -20,6 +20,7 @@ metadata=dict(title=title,abstract=abstract,abstract_word_count=len(abstract.spl
 (out/'submission_metadata.json').write_text(json.dumps(metadata,indent=2)+'\n')
 shutil.copy2(root/'generated/ccf0_round7_20260915.pdf',out/'liu.pdf')
 shutil.copy2(out/'liu.pdf',out/'liu_funding_updated.pdf')
+shutil.copy2(out/'liu.pdf',out/'liu_original_figure1_restored.pdf')
 files=[p for p in out.iterdir() if p.is_file() and p.name!='SHA256SUMS.txt']
 (out/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(files)))
 print('Prepared liu.pdf and form fields; missing author-supplied information remains explicit.')
