@@ -1,3 +1,5 @@
+> Superseded by ../review_round6_20260915/. Read the root HANDOFF.md.
+
 # Current manuscript: Round-5, 2026-09-15
 
 This revision supersedes Round-4 for manuscript editing. All inputs are ordinary files; no ZIP is required or produced.

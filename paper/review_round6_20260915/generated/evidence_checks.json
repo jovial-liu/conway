@@ -1,0 +1,267 @@
+{
+  "scope": "Reanalysis of existing CSVs: strategy choices, counts, means, tolerance rows and case selection. No inference or new bootstrap confidence intervals.",
+  "settings": [
+    {
+      "setting": "coco_openai_b16",
+      "source_sha256": "bece4e746855dea84bb9135c6bec41edbfbe9b8dcbb26afdcc66e59ebf2ca07f",
+      "records": 27708,
+      "A": 17726,
+      "B_C0_C1_C2_r_j": [
+        11410,
+        10697,
+        695,
+        0,
+        18,
+        12
+      ],
+      "unrestricted_pct": 6.2489044697633656,
+      "feasible_pct": 0.15775635407537247,
+      "repair_raw_target_change": 0.028602542562617198,
+      "repair_bbox_change_pp": -19.52565444840325,
+      "frontier": [
+        {
+          "epsilon": 0.01,
+          "multi_pct": 2.4613829940811316,
+          "oracle_pct": 0.07011393514460999,
+          "repair_pct": 0.07011393514460999,
+          "raw_target_change": 0.00013318829705066557,
+          "bbox_change_pp": -0.04916216100369661
+        },
+        {
+          "epsilon": 0.02,
+          "multi_pct": 4.706222029738703,
+          "oracle_pct": 0.15775635407537247,
+          "repair_pct": 0.15775635407537247,
+          "raw_target_change": 5.2166070579651574e-05,
+          "bbox_change_pp": -0.11843408643338904
+        },
+        {
+          "epsilon": 0.05,
+          "multi_pct": 11.476829796448678,
+          "oracle_pct": 0.42068361086765993,
+          "repair_pct": 0.4119193689745837,
+          "raw_target_change": -0.0004971427613399135,
+          "bbox_change_pp": -0.228645293939102
+        },
+        {
+          "epsilon": 0.1,
+          "multi_pct": 20.759347480871952,
+          "oracle_pct": 0.7800175284837861,
+          "repair_pct": 0.7449605609114811,
+          "raw_target_change": -0.0020460525574615787,
+          "bbox_change_pp": -0.545850386859219
+        },
+        {
+          "epsilon": 0.2,
+          "multi_pct": 35.776670997545835,
+          "oracle_pct": 1.5687992988606485,
+          "repair_pct": 1.4986853637160384,
+          "raw_target_change": -0.013971750982387334,
+          "bbox_change_pp": -1.6262773776271489
+        }
+      ]
+    },
+    {
+      "setting": "coco_openai_b32",
+      "source_sha256": "674a6fb2a83e229bc0bebe9029967f48db960268d880cad9613911d08d6634e3",
+      "records": 27708,
+      "A": 17847,
+      "B_C0_C1_C2_r_j": [
+        11561,
+        10655,
+        875,
+        1,
+        30,
+        25
+      ],
+      "unrestricted_pct": 7.836692327653318,
+      "feasible_pct": 0.26814289421330334,
+      "repair_raw_target_change": 0.09353407770395279,
+      "repair_bbox_change_pp": -14.041005124648413,
+      "frontier": [
+        {
+          "epsilon": 0.01,
+          "multi_pct": 2.2051393099465857,
+          "oracle_pct": 0.11244702015396592,
+          "repair_pct": 0.11244702015396592,
+          "raw_target_change": 3.434019688439144e-05,
+          "bbox_change_pp": -0.042863755421160415
+        },
+        {
+          "epsilon": 0.02,
+          "multi_pct": 4.399451421971993,
+          "oracle_pct": 0.26814289421330334,
+          "repair_pct": 0.259493123432229,
+          "raw_target_change": -9.387364766972714e-05,
+          "bbox_change_pp": -0.08006720341579626
+        },
+        {
+          "epsilon": 0.05,
+          "multi_pct": 10.617872094701891,
+          "oracle_pct": 0.5622351007698296,
+          "repair_pct": 0.544935559207681,
+          "raw_target_change": -0.0010514871424851552,
+          "bbox_change_pp": -0.23911511374929773
+        },
+        {
+          "epsilon": 0.1,
+          "multi_pct": 19.878735383282805,
+          "oracle_pct": 1.1331199723207335,
+          "repair_pct": 1.1244702015396593,
+          "raw_target_change": -0.003952783321999777,
+          "bbox_change_pp": -0.33217512205043054
+        },
+        {
+          "epsilon": 0.2,
+          "multi_pct": 34.95741302151003,
+          "oracle_pct": 2.049995675114609,
+          "repair_pct": 1.9980970504281639,
+          "raw_target_change": -0.014337827910327281,
+          "bbox_change_pp": -0.6006019498781284
+        }
+      ]
+    },
+    {
+      "setting": "voc2007_openai_b16",
+      "source_sha256": "85832f21c935f736256b0bb9ef1f42d29f4cd91b118a375230aaeb4eb35a877a",
+      "records": 1943,
+      "A": 1209,
+      "B_C0_C1_C2_r_j": [
+        511,
+        371,
+        135,
+        0,
+        5,
+        3
+      ],
+      "unrestricted_pct": 27.397260273972602,
+      "feasible_pct": 0.9784735812133072,
+      "repair_raw_target_change": -0.02085624821484089,
+      "repair_bbox_change_pp": -16.87445878982544,
+      "frontier": [
+        {
+          "epsilon": 0.01,
+          "multi_pct": 2.3160061760164696,
+          "oracle_pct": 0.7827788649706457,
+          "repair_pct": 0.7827788649706457,
+          "raw_target_change": 1.6269613895229745e-05,
+          "bbox_change_pp": -0.15022328762865778
+        },
+        {
+          "epsilon": 0.02,
+          "multi_pct": 4.78641276376737,
+          "oracle_pct": 0.9784735812133072,
+          "repair_pct": 0.9784735812133072,
+          "raw_target_change": -0.0008307991802694331,
+          "bbox_change_pp": -0.3396540581106342
+        },
+        {
+          "epsilon": 0.05,
+          "multi_pct": 11.32269686052496,
+          "oracle_pct": 2.152641878669276,
+          "repair_pct": 1.9569471624266144,
+          "raw_target_change": -0.002382689381189159,
+          "bbox_change_pp": -0.130939698954004
+        },
+        {
+          "epsilon": 0.1,
+          "multi_pct": 20.38085434894493,
+          "oracle_pct": 3.9138943248532287,
+          "repair_pct": 3.7181996086105675,
+          "raw_target_change": -0.0056629502209398575,
+          "bbox_change_pp": -0.02584263521313238
+        },
+        {
+          "epsilon": 0.2,
+          "multi_pct": 34.48275862068966,
+          "oracle_pct": 6.653620352250488,
+          "repair_pct": 6.066536203522505,
+          "raw_target_change": -0.022326237027057116,
+          "bbox_change_pp": 0.0838722417258566
+        }
+      ]
+    },
+    {
+      "setting": "voc2007_openai_b32",
+      "source_sha256": "d6ba22e6912f57093dcf733a59e16c77d116e7a99ee1d284ab034dfca352fef1",
+      "records": 1943,
+      "A": 1227,
+      "B_C0_C1_C2_r_j": [
+        505,
+        347,
+        155,
+        1,
+        2,
+        1
+      ],
+      "unrestricted_pct": 31.287128712871286,
+      "feasible_pct": 0.594059405940594,
+      "repair_raw_target_change": -0.07837221026420593,
+      "repair_bbox_change_pp": -28.17460373044014,
+      "frontier": [
+        {
+          "epsilon": 0.01,
+          "multi_pct": 2.470406587750901,
+          "oracle_pct": 0.39603960396039606,
+          "repair_pct": 0.19801980198019803,
+          "raw_target_change": -0.0006956406794699332,
+          "bbox_change_pp": 0.008439551415789453
+        },
+        {
+          "epsilon": 0.02,
+          "multi_pct": 4.734945959855893,
+          "oracle_pct": 0.594059405940594,
+          "repair_pct": 0.39603960396039606,
+          "raw_target_change": -0.0006818156075873329,
+          "bbox_change_pp": 0.022735883066228414
+        },
+        {
+          "epsilon": 0.05,
+          "multi_pct": 11.991765311374165,
+          "oracle_pct": 1.9801980198019802,
+          "repair_pct": 1.782178217821782,
+          "raw_target_change": -0.002534141005008475,
+          "bbox_change_pp": 0.252402509403057
+        },
+        {
+          "epsilon": 0.1,
+          "multi_pct": 21.770458054554812,
+          "oracle_pct": 3.762376237623762,
+          "repair_pct": 3.564356435643564,
+          "raw_target_change": -0.006268188415560871,
+          "bbox_change_pp": 0.9422717948611471
+        },
+        {
+          "epsilon": 0.2,
+          "multi_pct": 34.58569222851261,
+          "oracle_pct": 7.128712871287128,
+          "repair_pct": 6.732673267326733,
+          "raw_target_change": -0.016436137172099435,
+          "bbox_change_pp": 1.1115270994154989
+        }
+      ]
+    }
+  ],
+  "case": {
+    "image_id": "254807",
+    "selection_pool": 17,
+    "endpoints": {
+      "worst_foil_margin": [
+        -0.6544946432113647,
+        0.2689252495765686
+      ],
+      "mean_foil_margin": [
+        0.021568983793258667,
+        0.9089710116386414
+      ],
+      "raw_target_drop": [
+        0.3461953401565552,
+        0.3632577061653137
+      ],
+      "bbox_precision": [
+        0.7142857313156128,
+        0.6111111044883728
+      ]
+    }
+  }
+}

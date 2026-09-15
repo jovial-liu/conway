@@ -1,224 +1,40 @@
-# ccf0 最终交接：GPT 直接读取展开源码
+# ccf0：当前 Round-6 展开源码交接
 
-仓库：`jovial-liu/conway`  
-工作分支：`paper/verified-rerun-integration`  
-论文：**Beyond Mean Foils: Auditing Worst-Foil Specificity in Frozen CLIP Region Explanations**
+仓库 `jovial-liu/conway`；工作分支 `paper/verified-rerun-integration`。
 
-## 0. 最重要规则：不要用 ZIP
+当前唯一有效论文目录：`paper/review_round6_20260915/`。直接读取普通文件，不读取或要求 ZIP。
 
-**GPT/插件后续不要读取、依赖或要求任何 ZIP。**
+- 论文：`generated/ccf0_round6_20260915.pdf`
+- 源码：`source/main.tex`、`source/authors.tex`、`source/references.tex`、`source/tables/`、`source/figures/`
+- 展开 arXiv 树：`arxiv_source/`
+- 入口：`GPT_SOURCE_INDEX.md`
+- 修改：`CHANGES_zh.md`
+- 核验：`VERIFICATION.md`、`generated/SHA256SUMS.txt`、`generated/build_checks.json`、`generated/visual_review.json`
+- 新分析：`scripts/robustness.py`、`generated/robustness_checks.json`
+- 剩余实验：`LOCAL_EXPERIMENT_REQUEST.md`
 
-当前源码、图件和证据都应从普通 GitHub 文件/目录直接读取。历史提交中的 ZIP 只是旧包装记录，不是当前工作入口；当前分支已移除主要 ZIP 交付物。
+以上路径除仓库和分支外均相对当前论文目录。
 
-新对话首先读取：
+## 本轮状态
 
-1. `HANDOFF.md`
-2. `paper/review_round5_20260915/GPT_SOURCE_INDEX.md`
-3. `paper/review_round5_20260915/source/main.tex`
-4. `paper/review_round5_20260915/source/figures/`
-5. `paper/review_round5_20260915/CHANGELOG_zh.md`
+- Qihang Wu 为第五作者。用户已确认其单位为南京理工大学泰州科技学院；邮箱 24107880128@nustti.edu.cn，ORCID 0009-0009-6082-0223。其他作者及顺序不变。
+- Table 3 已改为四设置 .02/.20 预算端点。五档预算的完整再分析保存在 JSON。
+- Table 6 已改为固定 A 的阈值敏感性，不再是 image 254807 的单案例面板。
+- Figure 2 为双端点容量图，沿用已核验数值。不存在 Figure 3。
+- failure 仅指未通过指定的 worst-foil 判据；不能写成解释必然语义错误。
+- 预算放宽时 bbox 全图均值在 COCO 降、VOC 升，不能写成普遍定位损失。
+- COCO/VOC 的 foil 数、目标选择和标注不同；不能直接推断数据集本质难度。
+- 汇总值一致不证明空间 masks 身份一致。原始 masks 缺失，区域固定控制仍依赖忠实重建；完整逐类响应也缺失，归一化敏感性未完成。
+- 参考文献仅部分核实，未验证条目详见 VERIFICATION.md。不可宣称全部文献已核实。
 
-## 1. 当前唯一可编辑源码
+## 证据与权限边界
 
-主稿：
+原始 local rerun：1817e1666161fa902869affe61b55f7c98c45668。
+Restricted-foil controls：6a52e8f3d39f343d8483390882dcb5e57003d904。
+权威实验目录继续为 experiments/local_rerun_2026-09-13/、experiments/verification_2026-09-13/、experiments/reviewer_controls_2026-09-13/。
 
-`paper/review_round5_20260915/source/main.tex`
+本轮仅再分析现有候选 CSV，没有运行 CLIP、补造 masks 或新增置信区间。Table 1/2/4/5 的数值和已有置信区间保留；不得把 59,302 image-model records 写成独立图像数。
 
-配套普通文件：
+本地 Codex 负责必要实验；云端 GPT 负责论文和现有证据再分析。不要修改历史实验，不提交 arXiv，不 merge main，不 force push。
 
-- `paper/review_round5_20260915/source/authors.tex`
-- `paper/review_round5_20260915/source/references.tex`
-- `paper/review_round5_20260915/source/icassp2027_paperkit.sty`
-- `paper/review_round5_20260915/source/tables/`
-- `paper/review_round5_20260915/source/figures/`
-
-与之对应的展开 arXiv 树：
-
-`paper/review_round5_20260915/arxiv_source/`
-
-以后修改、编译、交付新版时，直接从这些展开文件开始，不要回退到：
-
-- `paper/local_rerun_revision/`
-- round2 / round3 旧稿
-- `paper/evidence_base/`
-- 用户早期上传的 `liu_submission_compliance_final(1).pdf`
-
-## 2. 当前图表与修订状态
-
-- Figure 1：`paper/review_round5_20260915/source/figures/figure1_method_clean.pdf`。
-- Figure 2：`paper/review_round5_20260915/source/figures/figure2_repair_capacity.pdf`，使用当前候选 CSV 的无预算/可行修复能力。
-- 原 Round-4 inline Figure 3 已改成 `source/main.tex` 中的 Table 6，表题在上方。当前没有 Figure 3。
-- 旧照片和旧跨 foil 图仅保留在 `paper/review_round4_20260914/reference_figures/`，不要作为当前证据自动恢复。
-- 当前 PDF：`paper/review_round5_20260915/generated/ccf0_round5_20260915.pdf`。
-- 编译与哈希：`generated/build_checks.json`、`generated/SHA256SUMS.txt`。
-- 修改记录与未完成实验：`paper/review_round5_20260915/CHANGELOG_zh.md`。
-
-Round-5 基于 b731a8b58ab5dbb57fce9f02f4d4cb4da5e70884 的展开 Round-4 源码。修复论文表述与图表，未运行新 CLIP 推理，未更改现有表格结果或置信区间。Round-4 和用户新上传的旧 paper_final(2).pdf 均不是当前编辑入口。
-
-## 3. 作者与格式约束
-
-- 保持五页：前四页技术正文，第五页参考文献。
-- 六作者顺序固定：Kaixin Liu、Zhipeng Ye、Feng Jiang、Qiufeng Wang、Qihang Wu、Xihang Zhou。
-- 机构、共同一作、通讯作者按当前 `authors.tex`。
-- 保留 IDEA 引用 `ye2026idea`。
-- 不恢复已删除的 Acknowledgment。
-- 不因切换对话退回旧版排版。
-- Figure 1 旧版隐藏正文对象的问题已经修复，不要恢复裁剪整页旧稿的做法。
-- 最终 PDF 应检查 5 页、字体嵌入/子集化、无 Type 3、无越界和隐藏旧正文。
-
-## 4. 实验与证据版本
-
-### 4.1 local rerun
-
-固定实验提交：
-
-`1817e1666161fa902869affe61b55f7c98c45668`
-
-目录：
-
-`experiments/local_rerun_2026-09-13/rerun_workspace/`
-
-四个 setting：
-
-- `coco_openai_b16`：27,708 records
-- `coco_openai_b32`：27,708 records
-- `voc2007_openai_b16`：1,943 records
-- `voc2007_openai_b32`：1,943 records
-
-共 59,302 个 image-model records；同数据集两个模型共享图像，不能写成 59,302 张独立图像。
-
-### 4.2 restricted-foil controls
-
-最终 reviewer-control 实验提交：
-
-`6a52e8f3d39f343d8483390882dcb5e57003d904`
-
-目录：
-
-`experiments/reviewer_controls_2026-09-13/`
-
-该实验固定原始 CCI-top1 区域和 full-foil 下定义的筛选集合 `A`，比较：
-
-- full foils；
-- annotation-absent foils；
-- 每图 foil 数量匹配的 exact random subset expectation。
-
-四设置独立核验均 PASS。
-
-## 5. 当前主要结果
-
-### 5.1 固定 A 的 worst-foil failure
-
-`A = (CCI bbox precision >= .5) AND (full-foil normalized aggregate mean-foil margin > 0)`。
-
-| Setting | Full F|A | Annotation-absent F|A | Exact matched-random | Absent - random, pp [95% CI] |
-|---|---:|---:|---:|---:|
-| COCO B/16 | 64.37% | 63.17% | 64.09% | -0.92 [-1.08,-0.77] |
-| COCO B/32 | 64.78% | 63.64% | 64.50% | -0.86 [-1.01,-0.72] |
-| VOC B/16 | 42.27% | 40.94% | 41.46% | -0.52 [-1.16,+0.06] |
-| VOC B/32 | 41.16% | 39.77% | 40.32% | -0.55 [-1.19,+0.04] |
-
-结论边界：annotation-absent 仅代表“未被标注存在”，不等于人工验证的语义缺席。
-
-### 5.2 正目标贡献检查
-
-`Aplus = A AND (CCI held-out normalized target drop > 0)`。
-
-Full-foil failure：62.64%、63.79%、41.40%、40.74%。  
-Annotation-absent failure：61.38%、62.61%、40.05%、39.34%。
-
-因此主失败现象不是主要由负目标贡献样本造成。
-
-### 5.3 精确 repair decomposition，固定原始 B=A AND F
-
-在 `epsilon=.02` 下：
-
-- `C0`：全部 K=8 候选都没有 passing candidate；
-- `C1`：存在 passing candidate，但没有任何 passing candidate 满足目标预算；
-- `C2`：存在 feasible passing candidate，但 WF 未选中；
-- `r`：WF 实际 sign repair。
-
-| Setting | B | C0 | C1 | C2 | r |
-|---|---:|---:|---:|---:|---:|
-| COCO B/16 | 11,410 | 10,697 | 695 | 0 | 18 |
-| COCO B/32 | 11,561 | 10,655 | 875 | 1 | 30 |
-| VOC B/16 | 511 | 371 | 135 | 0 | 5 |
-| VOC B/32 | 505 | 347 | 155 | 1 | 2 |
-
-正确解释：当前低修复率主要来自候选空间有限和紧目标预算，而不是 WF 漏掉大量已经可行的修复。
-
-### 5.4 sign repair 不等于全部 endpoint 都保持
-
-Round-4 定义 `J`：WF 新区域同时满足：
-
-- worst-foil margin >= 0；
-- bbox precision >= .5；
-- full mean-foil margin > 0；
-- held-out target contribution > 0。
-
-在原始 `B`、`epsilon=.02` 下：
-
-| Setting | WF sign repairs | Repairs also satisfying J |
-|---|---:|---:|
-| COCO B/16 | 18 | 12 |
-| COCO B/32 | 30 | 25 |
-| VOC B/16 | 5 | 3 |
-| VOC B/32 | 2 | 1 |
-
-不要把 sign repair 写成“全面修复”。
-
-### 5.5 tolerance 与代价
-
-当前候选数据已分析 `.01/.02/.05/.10/.20` 五档 tolerance。放宽预算会增加多候选比例和 oracle 修复机会，同时带来 target/locality 代价。不要声称低修复率对所有 tolerance 都不变。
-
-### 5.6 WF vs Max-.1
-
-两策略仅在 84/89/5/5 个 image-model records 上选择不同区域。全样本增益很小主要因为绝大多数样本选同一区域；WF 的角色仍是诊断性 reranking probe，不是新 SOTA explanation algorithm。
-
-## 6. 统计规则
-
-- 10,000 image-level bootstrap draws。
-- NumPy `default_rng`。
-- percentile 2.5/97.5。
-- paired quantities 先逐图形成差值再重采样。
-- intervals 为 pointwise，未做 multiplicity correction。
-- matched-cardinality random 主结果用 exact combinatorial expectation；Monte Carlo 只作 sanity check。
-
-不要混淆这些总体：
-
-- A；
-- Aplus；
-- B=A AND F；
-- all baseline failures；
-- switched subset；
-- actual repaired subset。
-
-## 7. 仍然不能宣称完成的内容
-
-当前证据不支持：
-
-- 对完整 CCI heatmap 的普遍结论；
-- 对所有 CLIP explanation 方法的普遍结论；
-- annotation absence = 语义缺席；
-- 新 K、其他 intervention、其他模型已经验证；
-- raw worst-foil / normalizer sensitivity 已完成；
-- segmentation / region-size sensitivity 已完成；
-- 全量 MPS 与 CPU 严格等价；
-- 任意历史 frozen 中间张量均可恢复。
-
-## 8. 分工
-
-- 本地 Mac Codex：只负责必要的实验、统计核验和数据搬运。
-- 云端 GPT：论文修改、Figure 3、内部版本记录、外部材料依赖、编译和交付。
-- 没有新实验需求时，不要默认重跑 CLIP。
-- 不自动提交 arXiv。
-- 不 merge main。
-- 不 force push。
-
-## 9. 新对话直接使用的提示
-
-> 请先读 `HANDOFF.md` 和 `paper/review_round5_20260915/GPT_SOURCE_INDEX.md`，接手 ccf0。工作分支是 `paper/verified-rerun-integration`。不要读取或要求 ZIP；所有当前源码、图件与 PDF 都是普通 GitHub 文件；原 Figure 3 已改成 Table 6。当前主稿是 `paper/review_round5_20260915/source/main.tex`。直接继续修改、编译和交付，不要回退到旧稿。
-
-作者更新：第五作者 Qihang Wu，邮箱 24107880128@nustti.edu.cn，ORCID 0009-0009-6082-0223。单位暂按所给邮箱归入单位 1，待作者确认。
-
-版式更新：Figure 2 已重绘为带精确数值的双端点图，位于第 3 页右栏顶部；表题、行距及分栏已统一。当前仍使用 Round-5 展开源码与同名 PDF。
+Round-4、Round-5 和旧 paper/local_rerun_revision/generated/paper_final.pdf 均是历史版本。不要根据同名 PDF 或旧图恢复当前稿。

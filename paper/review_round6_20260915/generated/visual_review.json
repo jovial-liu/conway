@@ -1,0 +1,13 @@
+{
+  "pdf_sha256": "96cb624cde6a60c70bd71abf15d6f05696baba8d580b848dead88376eac08a9f",
+  "reviewed_pages": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "render": "Poppler PNG at 1200\u20131250 px page height",
+  "accepted": true,
+  "findings": "All pages visually checked. Table 3 contains all four settings, Table 6 is threshold sensitivity, the former single-image panel is removed. No overlapping or clipped text; author block and ORCID are retained with confirmed affiliation. Main results and both new tables fit in four technical pages; bibliography is on page five."
+}
