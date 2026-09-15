@@ -58,7 +58,7 @@ Round-5 基于 b731a8b58ab5dbb57fce9f02f4d4cb4da5e70884 的展开 Round-4 源码
 ## 3. 作者与格式约束
 
 - 保持五页：前四页技术正文，第五页参考文献。
-- 六作者顺序固定：Kaixin Liu、Zhipeng Ye、Feng Jiang、Qiufeng Wang、Hao Li、Xihang Zhou。
+- 六作者顺序固定：Kaixin Liu、Zhipeng Ye、Feng Jiang、Qiufeng Wang、Qihang Wu、Xihang Zhou。
 - 机构、共同一作、通讯作者按当前 `authors.tex`。
 - 保留 IDEA 引用 `ye2026idea`。
 - 不恢复已删除的 Acknowledgment。
@@ -218,3 +218,5 @@ Round-4 定义 `J`：WF 新区域同时满足：
 ## 9. 新对话直接使用的提示
 
 > 请先读 `HANDOFF.md` 和 `paper/review_round5_20260915/GPT_SOURCE_INDEX.md`，接手 ccf0。工作分支是 `paper/verified-rerun-integration`。不要读取或要求 ZIP；所有当前源码、图件与 PDF 都是普通 GitHub 文件；原 Figure 3 已改成 Table 6。当前主稿是 `paper/review_round5_20260915/source/main.tex`。直接继续修改、编译和交付，不要回退到旧稿。
+
+作者更新：第五作者 Qihang Wu，邮箱 24107880128@nustti.edu.cn，ORCID 0009-0009-6082-0223。单位暂按所给邮箱归入单位 1，待作者确认。

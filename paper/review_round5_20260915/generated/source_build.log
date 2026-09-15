@@ -4,8 +4,10 @@ Latexmk: This is Latexmk, John Collins, 31 Jan. 2024. Version 4.83.
 Latexmk: applying rule 'pdflatex'...
 Rule 'pdflatex':  Reasons for rerun
 Changed files or newly in use/created:
+  authors.tex
   main.tex
 Category 'changed_user':
+  authors.tex
   main.tex
 
 ------------
@@ -124,7 +126,7 @@ usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texl
 ive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/
 fonts/type1/urw/times/utmri8a.pfb>
 Output written on /workspace/scratch/33569daa15cc/conway/paper/review_round5_20
-260915/generated/build/source/main.pdf (5 pages, 382378 bytes).
+260915/generated/build/source/main.pdf (5 pages, 382079 bytes).
 Transcript written on /workspace/scratch/33569daa15cc/conway/paper/review_round
 5_20260915/generated/build/source/main.log.
 Latexmk: Getting log file '/workspace/scratch/33569daa15cc/conway/paper/review_round5_20260915/generated/build/source/main.log'

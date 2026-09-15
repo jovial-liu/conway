@@ -1,7 +1,7 @@
 Title:           Beyond Mean Foils: Auditing Worst-Foil Specificity in Frozen CLIP Region Explanations
 Subject:
 Keywords:        CLIP, explanation auditing, fixed-population foil controls, repair capacity
-Author:          Kaixin Liu; Zhipeng Ye; Feng Jiang; Qiufeng Wang; Hao Li; Xihang Zhou
+Author:          Kaixin Liu; Zhipeng Ye; Feng Jiang; Qiufeng Wang; Qihang Wu; Xihang Zhou
 Creator:         LaTeX with hyperref
 Producer:        pdfTeX-1.40.25
 CreationDate:    Tue Sep 15 02:00:00 2026 CEST
@@ -17,6 +17,6 @@ Pages:           5
 Encrypted:       no
 Page size:       612 x 792 pts (letter)
 Page rot:        0
-File size:       382378 bytes
+File size:       382079 bytes
 Optimized:       no
 PDF version:     1.7
