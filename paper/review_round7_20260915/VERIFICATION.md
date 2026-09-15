@@ -7,7 +7,7 @@ Current official pages consulted 2026-09-15:
 - https://2027.ieeeicassp.org/about/sps-policies/
 - https://2027.ieeeicassp.org/about/editorial-policies/
 
-The PDF build checks five pages, correct reference placement, embedded/subset fonts, no Type 3 fonts or overfull boxes, and independently compiled source/arXiv rendering equivalence. New Figure 1 uses 9.2pt text and Figure 2 labels use at least 9pt; mathematical subscripts retain conventional smaller sizes. Visual review is recorded separately. Existing compatible custom layout is retained; this is not certification by the conference checker.
+The PDF build checks five pages, correct reference placement, embedded/subset fonts, no Type 3 fonts or overfull boxes, and independently compiled source/arXiv rendering equivalence. Figure 1 is restored unchanged from Round-6 at the user’s request; Figure 2 labels use at least 9pt; mathematical subscripts retain conventional smaller sizes. Visual review is recorded separately. Existing compatible custom layout is retained; this is not certification by the conference checker.
 
 Bibliography: CCI, CASE, COCOA and CLIP latent-attribution arXiv records were directly retrieved and title/author content checked. CDA-CLIP publisher page was retrieved in Round-6; M2IB official NeurIPS search results support its identity. Some publisher DOI pages remained inaccessible, including IDEA and CLIP Surgery; their existing metadata is retained rather than invented. MGA-CLIP and Contrastive Concept Importance were removed from the peripheral related-work list because this pass could not establish their metadata from direct primary pages. No claim of complete independent bibliographic verification is made.
 

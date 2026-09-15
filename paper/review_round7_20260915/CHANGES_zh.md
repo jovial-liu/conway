@@ -16,3 +16,7 @@
 ## 作者更新
 
 按用户明确要求移除 Xihang Zhou 的署名、邮箱、多伦多大学单位和 PDF 作者元数据；当前共五位作者。剩余 ORCID 缺口为 Zhipeng Ye、Feng Jiang、Qiufeng Wang。
+
+## 恢复原 Figure 1
+
+按用户明确要求恢复 Round-6 的 Figure 1 原始 PDF/SVG；撤下后续 TikZ 重绘稿。当前五位作者、资助说明、ORCID 和 Figure 2 保持不变。

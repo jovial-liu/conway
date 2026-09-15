@@ -16,7 +16,6 @@
 ## source
 
 - [source/authors.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/source/authors.tex)
-- [source/figures/figure1_method.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/source/figures/figure1_method.tex)
 - [source/figures/figure1_method_clean.pdf](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/source/figures/figure1_method_clean.pdf)
 - [source/figures/figure1_method_clean.svg](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/source/figures/figure1_method_clean.svg)
 - [source/figures/figure2_repair_capacity.pdf](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/source/figures/figure2_repair_capacity.pdf)

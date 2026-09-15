@@ -1,9 +1,8 @@
 BEYOND MEAN FOILS: AUDITING WORST-FOIL SPECIFICITY IN FROZEN CLIP REGION
                              EXPLANATIONS
                           Kaixin Liu1,∗ , Zhipeng Ye1,∗,† , Feng Jiang1 , Qiufeng Wang2 , Qihang Wu1
-                 Taizhou Institute of Science and Technology, Nanjing University of Science and Technology,
                  1
-
+                 Taizhou Institute of Science and Technology, Nanjing University of Science and Technology,
                                                 Taizhou 225300, Jiangsu, China
           2
             Department of Intelligence Science, Xi’an Jiaotong-Liverpool University, Suzhou 215123, Jiangsu, China
@@ -63,27 +62,12 @@ few-shot adaptation [10], CLIP stays fixed.                                     
 τm ⟨zm (x), em (c)⟩, with unit-norm embeddings and learned           selection-stage target drop; this gives no held-out guaran-
                                                                      tee. Mean and Max-.1 instead maximize dsel t − meanf df
                                                                                                                              sel
-(a) Candidate construction                        (b) Selection-stage probe                         (c) Held-out evaluation
-
-
-  Frozen CLIP patch features                        One selection prompt                              Three evaluation prompts
-  K = 8 clusters per image                          Retain candidates within                          Region held fixed
-  Mask selected attention-key                       ε of CCI’s target drop                            Worst-foil specificity
-  columns in each block/head                        WF: largest worst-foil margin                     Target-score response
-  CCI: maximum target drop                          within this feasible set                          BBox precision
-
-
-
-
- Selection uses no held-out responses; oracles inspect held-out candidates only for diagnosis.
-Figure 1: Selection and held-out audit. A region is fixed using selection-stage responses before three-template evaluation of specificity, target
+Figure 1: Selection and held-out audit. A region is fixed using selection-stage responses before three-template evaluation of specificity, target
 response, and locality. The schematic depicts the protocol, not a measured response example.
 
 
-and dsel
-      t − .1 maxf df over the same set. The reference
-                       sel
-                                                                                  3 PROTOCOL AND REPRODUCIBILITY
+and dsel               sel
+      t − .1 maxf df over the same set. The reference                             3 PROTOCOL AND REPRODUCIBILITY
 budget is ϵ = .02 in logit units, not 2% relative loss. A                     COCO val2014 [11] and VOC2007 test [12] provide
 post-hoc .01/.02/.05/.10/.20 sweep selects no new optimum.                27,708/1,943 eligible images, each evaluated with OpenAI
 Cosine budgets ϵ/τm are not calibrated across checkpoints;                CLIP B/16 and B/32 (59,302 image–model records). The
@@ -116,9 +100,8 @@ mi foils exceeding the target, a uniform size-ki subset without           Paired
 replacement fails with probability                                        sampling. Foil comparisons resample within fixed A/A+ ;
                                                                           repair-cost intervals condition on actual repairs. Exact qi is
                                   Ni −mi
-                                                                          primary; 100 seeded draws check it.
                                          
-                                      ki
+                                      ki                                  primary; 100 seeded draws check it.
                        qi = 1 −       Ni
                                             .                    (8)
                                       ki

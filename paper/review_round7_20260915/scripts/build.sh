@@ -9,7 +9,6 @@ cp "$paper_root/source/"*.tex "$paper_root/source/icassp2027_paperkit.sty" "$pap
 mkdir -p "$paper_root/arxiv_source/tables" "$paper_root/arxiv_source/figures"
 cp "$paper_root/source/tables/"*.tex "$paper_root/arxiv_source/tables/"
 cp "$paper_root/source/figures/figure1_method_clean.pdf" "$paper_root/source/figures/figure2_repair_capacity.pdf" "$paper_root/arxiv_source/figures/"
-cp "$paper_root/source/figures/figure1_method.tex" "$paper_root/arxiv_source/figures/"
 for tree in source arxiv_source; do
   (
     cd "$paper_root/$tree"
