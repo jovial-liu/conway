@@ -1,0 +1,7 @@
+{
+  "source_commit": "168d61bf2b338e2f1bc20873ed38cf4dbc87b869",
+  "source_git_blob_sha1": "92f2c2029d30aba3820f47e253f87736378268e9",
+  "extracted_object": 67,
+  "drawing_stream_sha256": "273cc45ca6fe2f49644546a0c326397e184adcd53a83583edd6a48a3d4ab0148",
+  "repair": "Extract original standalone diagram drawing stream; exclude outer full-page form and hidden manuscript. Re-embed matching DejaVu Serif fonts with Unicode mapping; do not redraw geometry."
+}
