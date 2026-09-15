@@ -24,10 +24,10 @@
 \gdef\@address{}
 \renewcommand{\title}[1]{\gdef\@title{\uppercase{#1}}}
 \renewcommand{\maketitle}{%
-  \twocolumn[{\vspace*{1.8em}\begin{center}
-  {\large\bfseries\@title\par}\vspace{1.0em}
+  \twocolumn[{\vspace*{1.4em}\begin{center}
+  {\large\bfseries\@title\par}\vspace{0.6em}
   {\normalsize\begin{tabular}[t]{c}\@name\@address\end{tabular}\par}
-  \end{center}\vspace{1.0em}}]}
+  \end{center}\vspace{0.6em}}]}
 \renewenvironment{abstract}{\begin{center}\bfseries ABSTRACT\end{center}\vspace{-0.5em}}{\par}
 \newenvironment{keywords}{\vspace{0.35em}\noindent\textbf{\textit{Index Terms}---}}{\par}
 \renewcommand\section{\@startsection{section}{1}{\z@}{1.0ex plus .2ex minus .2ex}{0.55ex}{\centering\bfseries\MakeUppercase}}

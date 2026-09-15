@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "eb5f8c1eff928e092e4125e63a8e57fb577ab6e5180a4e7b8cb4640348a6864f",
+  "pdf_sha256": "29aeadc46e35550feb0d6555e3eab9b1b3aab7e87dd17096eec7c5f006bd181a",
   "pages_reviewed": [
     1,
     2,
@@ -8,5 +8,5 @@
     5
   ],
   "accepted_layout": true,
-  "findings": "Round-8 all five pages reviewed. New normalization Table 4 explicitly fixes original A_old. Other main tables and Figure 2 use new traceable records. Original Figure 1 and five ORCIDs retained, no acknowledgments. No overlap or clipping."
+  "findings": "Six-author update: Zhenghao Wang inserted before Qihang Wu, distinct Nanjing University of Science and Technology affiliation. Six ORCID links verified. Page 1 visually reviewed; pages 2\u20135 render identically to prior verified version. Title-block spacing adjusted without changing body font or figures."
 }

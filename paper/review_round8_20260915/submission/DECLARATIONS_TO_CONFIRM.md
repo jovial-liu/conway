@@ -1,6 +1,6 @@
 # 投稿信息状态
 
-五位作者 ORCID 已全部录入。Zhipeng Ye、Feng Jiang、Qiufeng Wang 及 Kaixin Liu 的编号依据用户上传的 ORCID DOCX；Qihang Wu 的编号依据用户之前的明确指示。
+六位作者 ORCID 已全部录入。Zhipeng Ye、Feng Jiang、Qiufeng Wang 及 Kaixin Liu 的编号依据用户上传的 ORCID DOCX；Qihang Wu 的编号依据用户之前的明确指示。
 
 ACKNOWLEDGMENTS 整节已按用户要求从论文删除。先前提供的资助事实仍保留在投稿元数据中，删除正文致谢不表示无资助。
 

@@ -1,16 +1,17 @@
 BEYOND MEAN FOILS: AUDITING WORST-FOIL SPECIFICITY IN FROZEN CLIP REGION
                              EXPLANATIONS
-                          Kaixin Liu1,∗ , Zhipeng Ye1,∗,† , Feng Jiang1 , Qiufeng Wang2 , Qihang Wu1
+              Kaixin Liu1,∗ , Zhipeng Ye1,∗,† , Feng Jiang1 , Qiufeng Wang2 , Zhenghao Wang3 , Qihang Wu1
                   1
-                 Taizhou Institute of Science and Technology, Nanjing University of Science and Technology,
-                                                Taizhou 225300, Jiangsu, China
-          2
-            Department of Intelligence Science, Xi’an Jiaotong-Liverpool University, Suzhou 215123, Jiangsu, China
-            24107880127@nustti.edu.cn, zhipengye@nustti.edu.cn, jf@nustti.edu.cn,
-                        qiufeng.wang@xjtlu.edu.cn, 24107880128@nustti.edu.cn
-                                   ∗
-                                     Equal contribution. † Corresponding author: Zhipeng Ye.
-
+              Taizhou Institute of Science and Technology, Nanjing University of Science and Technology,
+                                              Taizhou 225300, Jiangsu, China
+       2
+         Department of Intelligence Science, Xi’an Jiaotong-Liverpool University, Suzhou 215123, Jiangsu, China
+                             3
+                               Nanjing University of Science and Technology, Nanjing, China
+         24107880127@nustti.edu.cn, zhipengye@nustti.edu.cn, jf@nustti.edu.cn,
+  qiufeng.wang@xjtlu.edu.cn, wangzhenghao2002@outlook.com, 24107880128@nustti.edu.cn
+                                ∗
+                                  Equal contribution. † Corresponding author: Zhipeng Ye.
 
                           ABSTRACT                                     date/budget decomposition to quantify the prevalence and
                                                                        sources of worst-foil failure. Related CLIP attribution [6, 7, 8],
@@ -232,69 +233,4 @@ screen and positive target contribution (j < r in Table 5).                 Same
 The joint feasible-oracle counts are 12/26/3/2. VOC estimates               Three images changed selected regions from the earlier run.
 are based on small sign-repair subsets. Outside the screened                Primary results use the new records; Table 4 fixes the earlier
 population, sign transitions can also regress: COCO B/32                    regions and population. Prompt holdout covers templates
-has four opposite-sign regressions among all baseline passes.               within the same images and models; cross-checkpoint budget
-Counts over all failures or all switched regions have different             calibration requires further evaluation.
-denominators from the screened sign repairs reported here.
-                                                                                                  6 CONCLUSION
-                                                                                 Locality and positive mean-foil contrast leave substantial
-                                                                            worst-foil failure in CCI-top1 regions, persisting after anno-
-                                                                            tation exclusion and at larger margin thresholds. Candidate
-                                                                            availability and target-drop constraints account for most limits
-                                                                            on sign repair. Larger budgets increase capacity with setting-
-                                                                            dependent target and locality effects. These findings support
-                                                                            reporting worst-foil specificity alongside locality and mean-
-                                                                            foil contrast when evaluating frozen CLIP region explanations.
-                    REFERENCES                                          ing CLIP’s latent components reveals unexpected seman-
-[1] A. Radford, J. W. Kim, C. Hallacy, A. Ramesh, G. Goh,               tic reliance,” arXiv preprint arXiv:2505.20229, 2025.
-    S. Agarwal, G. Sastry, A. Askell, P. Mishkin, J. Clark,             [Online]. Available: https://arxiv.org/abs/2505.20229.
-    G. Krueger, and I. Sutskever, “Learning transferable
-                                                                    [9] F. Li, Z. Meng, C. Tan, and Y. Yin, “Class-disentangled
-    visual models from natural language supervision,” in
-                                                                        attribution with gradient guidance for CLIP,” Journal
-    Proceedings of the 38th International Conference on
-                                                                        of King Saud University Computer and Information
-    Machine Learning, ser. Proceedings of Machine Learn-                Sciences, vol. 38, p. 376, 2026. [Online]. Available:
-    ing Research, vol. 139. PMLR, 2021, pp. 8748–8763.                  https://doi.org/10.1007/s44443-026-00779-3.
-    [Online]. Available: https://proceedings.mlr.press/v139/
-    radford21a.html.                                               [10] M. Yuksekgonul, F. Bianchi, P. Kalluri, D. Jurafsky, and
-                                                                        J. Zou, “When and why vision-language models behave
-[2] A. Agarwal, S. Karanam, and V. Gandhi, “Concept re-                 like bags-of-words, and what to do about it?” in Interna-
-    gions matter: Benchmarking CLIP with a new cluster-                 tional Conference on Learning Representations (ICLR),
-    importance approach,” arXiv preprint arXiv:2511.12978,              2023. [Online]. Available: https://openreview.net/forum?
-    2025. [Online]. Available: https://arxiv.org/abs/2511.              id=KRLUvxh8uaX.
-    12978.
-                                                                   [11] Z. Ye, F. Jiang, Q. Wang, K. Huang, and J. Huang,
-[3] Y. Wang and X. Wang, “‘Why not other classes?’: To-                 “IDEA: Image description enhanced CLIP-adapter for
-    wards class-contrastive back-propagation explanations,”             image classification,” Pattern Recognition, vol. 171,
-    in Advances in Neural Information Processing Systems,               p. 112224, 2026. [Online]. Available: https://doi.org/
-    vol. 35, 2022. [Online]. Available: https://doi.org/10.             10.1016/j.patcog.2025.112224.
-    52202/068431-0660.
-                                                                   [12] T.-Y. Lin, M. Maire, S. Belongie, J. Hays, P. Perona,
-[4] C. Lin, H. Chen, C. Kim, and S.-I. Lee, “Contrastive                D. Ramanan, P. Dollar, and C. L. Zitnick, “Microsoft
-    corpus attribution for explaining representations,” in              COCO: Common objects in context,” in Computer
-    International Conference on Learning Representations                Vision–ECCV 2014, ser. Lecture Notes in Computer Sci-
-    (ICLR), 2023. [Online]. Available: https://arxiv.org/abs/           ence, vol. 8693. Springer, 2014, pp. 740–755. [Online].
-    2210.00107.                                                         Available: https://doi.org/10.1007/978-3-319-10602-1_
-[5] D. Williamson, Y. Ji, and M. Dwyer, “CASE: Con-                     48.
-    trastive activation for saliency estimation,” arXiv preprint   [13] M. Everingham, L. Van Gool, C. K. I. Williams, J. Winn,
-    arXiv:2506.07327, 2025. [Online]. Available: https:                 and A. Zisserman, “The PASCAL visual object classes
-    //arxiv.org/abs/2506.07327.                                         (VOC) challenge,” International Journal of Computer
-[6] Y. Wang, T. G. J. Rudner, and A. G. Wilson, “Visual                 Vision, vol. 88, no. 2, pp. 303–338, 2010. [Online]. Avail-
-    explanations of image-text representations via multi-               able: https://doi.org/10.1007/s11263-009-0275-4.
-    modal information bottleneck attribution,” in Advances
-                                                                   [14] T. Gomez, T. Freour, and H. Mouchere, “Metrics for
-    in Neural Information Processing Systems, vol. 36, 2023,
-                                                                        saliency map evaluation of deep learning explanation
-    pp. 16 009–16 027. [Online]. Available: https://doi.org/
-                                                                        methods,” in Pattern Recognition and Artificial Intelli-
-    10.52202/075280-0704.
-                                                                        gence: Third International Conference, ICPRAI 2022,
-[7] Y. Li, H. Wang, Y. Duan, J. Zhang, and X. Li, “A                    ser. Lecture Notes in Computer Science. Springer, 2022,
-    closer look at the explainability of contrastive language-          pp. 84–95. [Online]. Available: https://doi.org/10.1007/
-    image pre-training,” Pattern Recognition, vol. 162,                 978-3-031-09037-0_8.
-    p. 111409, 2025. [Online]. Available: https://doi.org/
-    10.1016/j.patcog.2025.111409.                                      COMPLIANCE WITH ETHICAL STANDARDS
-                                                                      This work analyses publicly released COCO and PASCAL
-[8] M. Dreyer, L. Hufe, J. Berend, T. Wiegand, S. La-              VOC images and annotations. No participants were recruited
-    puschkin, and W. Samek, “From what to how: Attribut-           and no new human or animal experiments were conducted.
-
+has four opposite-sign regressions among all baseline passes.               within the same images and models; cross-checkpoint budg

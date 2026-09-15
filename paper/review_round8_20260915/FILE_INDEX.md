@@ -55,3 +55,5 @@
 - [submission/liu_round8_traceable.pdf](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/liu_round8_traceable.pdf)
 - [submission/submission_metadata.json](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/submission_metadata.json)
 - [submission/title.txt](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/title.txt)
+
+- [Six-author PDF](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/liu_round8_six_authors.pdf)

@@ -1,6 +1,6 @@
 # Round-8: traceable experiment integration
 
-Current manuscript: `submission/liu_round8_traceable.pdf` (same bytes as `submission/liu.pdf`). Five pages: four technical pages plus references/ethics. Five author ORCIDs retained; no acknowledgments; original Figure 1 preserved.
+Current manuscript: `submission/liu_round8_traceable.pdf` (same bytes as `submission/liu.pdf`). Five pages: four technical pages plus references/ethics. Six author ORCIDs retained; no acknowledgments; original Figure 1 preserved.
 
 Primary numerical source: experiments/priority123_20260915 at experiment commit 7ee2b6080aa6752790e17c910c5c8a3111235d4d; handoff commit 78387d76f271d84b508373c603a5eff75c09299b. Tables 1–3,5–6 and Figure 2 use new same-generation records. Table 4 alone fixes the older regions and normalized A, explicitly labeled A_old. Original-logit versus intervention-drop foil distinction and NeurIPS 2022 reference retained.
 
