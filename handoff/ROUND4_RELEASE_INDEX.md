@@ -1,3 +1,5 @@
+> Superseded for current editing by Round-5. Read [CURRENT_RELEASE_INDEX.md](CURRENT_RELEASE_INDEX.md).
+
 # ccf0 Round-4 release index
 
 Branch: `paper/verified-rerun-integration`

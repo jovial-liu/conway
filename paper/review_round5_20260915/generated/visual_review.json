@@ -1,0 +1,13 @@
+{
+  "pdf_sha256": "e3888510b23bdef1a90c755638ba86d94ad9d4710a45c464928b30c0b7597245",
+  "reviewed_pages": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "render": "Poppler PNG, 1400 px page height",
+  "findings": "All pages visually checked: readable figures and tables, captions in place, no overlap or clipping, correct Table 6 and new Figure 2, no historical photograph substitution. References confined to page 5 without a split entry.",
+  "accepted": true
+}

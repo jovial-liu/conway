@@ -1,0 +1,33 @@
+# Round-5 修改记录与尚未解决的问题
+
+基于工作分支 b731a8b58ab5dbb57fce9f02f4d4cb4da5e70884 的展开 Round-4 源码修订。没有以旧 PDF 或旧源码覆盖当前稿。
+
+## 已完成的论文修改
+
+1. 原 Figure 3 的数值面板改为 Table 6，表题在上方，去掉装饰框及箭头。保留案例选择规则，明确它来自成功修复子集、不代表发生频率。数值与 image 254807 的现有候选 CSV 一致。
+2. Figure 2 换成当前数据的 unrestricted/feasible repair-capacity 图。直接从表 2 对应的 59,302 条候选记录复算；分别标明各 setting 的固定 B 分母和 epsilon=.02。原历史 archive 的跨 foil 增益图不再进入当前论文，参考图仍保留在 Round-4 目录。
+3. 删除结论和 PDF 关键词中的内部版本哈希、round4 包名、旧文件故事、portable checker、40 个区间等验证日志。删除“已发布四设置 sweep”“详见已发布五预算分析”的外部材料依赖措辞。
+4. 复现段落保留必要事实和缺失材料限制；提供可点击的实验目录链接，但主论证不要求读者打开仓库。没有声称允许提交额外审稿附件。
+5. 摘要将无预算候选修复上限置于紧预算结果之前，保留 full/absent/matched-random 和正目标检查的主要发现。
+6. 引言明确审计贡献与 WF 诊断角色，展开 CCI 缩写。保留 IDEA 引用；删除与直接 max-foil 定义无清楚对应关系的 CVaR 引用。
+7. 删除没有对应主结果的 prompt-mean margin 公式，仅保留实际报告的 normalized aggregate margin；现有结果定义未改。明确 raw target drop 与 normalized target screen 的区别。
+8. 根据 run_local_rerun.py 确认 masking 实现，改写为 attention logits 的指定 patch-key 列加 -infinity，而非 K/V 数值本身；说明样本排序/打乱、候选聚类与目标预算单位。
+9. 表 4 明确全体 eligible images 分母和 epsilon；表 5 明确只有 bbox 变化使用百分点。
+10. 讨论明确未校准预算、候选/干预范围、未匹配区域面积、bbox 不等于 coverage、prompt holdout 不等于模型或图像 holdout。
+11. 版面维持四页技术正文＋一页参考文献；正文保持 10pt、表格约 9pt。将文本高度减至 226mm，给底部字形留余量；修复溢出行，避免参考文献条目跨栏拆开。
+
+## 数字与核验边界
+
+表 1–5 的报告数值和置信区间未改。已有候选 CSV 上复核全部策略选择、B/C0/C1/C2/r/j 计数、五档预算的主要均值/比例及案例选择。没有重跑 CLIP，没有新增统计置信区间。本轮不是对所有原始图像、mask、完整逐类张量或全部已有置信区间的独立重建。
+
+## 仍需要本地实验支持，不能靠文字解决
+
+- raw 与 normalized worst-foil 的敏感性和符号翻转比例；
+- P<0 与 P<-delta 的阈值敏感性、失败幅度分布；
+- 区域面积匹配/分层、分割标注控制；
+- 其他 K、候选构造或干预方式的稳健性；
+- 语义近邻 hardest-foil 配对、漏标对象与人工核验；
+- 跨 checkpoint 校准预算的比较；
+- 原始 mask 和完整逐类响应缺失造成的独立复现限制。
+
+这些均保留为证据局限，不声称已经完成。Round-5 是针对现有证据完成的论文修订，不能据此保证录用。

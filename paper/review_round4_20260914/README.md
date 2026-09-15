@@ -1,3 +1,5 @@
+> Current manuscript: [Round-5](../review_round5_20260915/README.md). This Round-4 snapshot is retained for history; do not edit it as the latest draft.
+
 # ccf0-round4-20260914: endpoint-aligned manuscript finalization
 
 This fourth revision supersedes the round-3 manuscript. The current compile-ready source is now materialized directly in GitHub under `source/` and mirrored under `arxiv_source/`; the ZIPs under `generated/` are convenience packages, not the only copy. The older PDF under `paper/local_rerun_revision/generated/` remains obsolete.

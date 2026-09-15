@@ -13,28 +13,28 @@
 新对话首先读取：
 
 1. `HANDOFF.md`
-2. `paper/review_round4_20260914/GPT_SOURCE_INDEX.md`
-3. `paper/review_round4_20260914/source/main.tex`
-4. `paper/review_round4_20260914/source/figures/`
-5. `paper/review_round4_20260914/reference_figures/`
+2. `paper/review_round5_20260915/GPT_SOURCE_INDEX.md`
+3. `paper/review_round5_20260915/source/main.tex`
+4. `paper/review_round5_20260915/source/figures/`
+5. `paper/review_round5_20260915/CHANGELOG_zh.md`
 
 ## 1. 当前唯一可编辑源码
 
 主稿：
 
-`paper/review_round4_20260914/source/main.tex`
+`paper/review_round5_20260915/source/main.tex`
 
 配套普通文件：
 
-- `paper/review_round4_20260914/source/authors.tex`
-- `paper/review_round4_20260914/source/references.tex`
-- `paper/review_round4_20260914/source/icassp2027_paperkit.sty`
-- `paper/review_round4_20260914/source/tables/`
-- `paper/review_round4_20260914/source/figures/`
+- `paper/review_round5_20260915/source/authors.tex`
+- `paper/review_round5_20260915/source/references.tex`
+- `paper/review_round5_20260915/source/icassp2027_paperkit.sty`
+- `paper/review_round5_20260915/source/tables/`
+- `paper/review_round5_20260915/source/figures/`
 
 与之对应的展开 arXiv 树：
 
-`paper/review_round4_20260914/arxiv_source/`
+`paper/review_round5_20260915/arxiv_source/`
 
 以后修改、编译、交付新版时，直接从这些展开文件开始，不要回退到：
 
@@ -43,33 +43,17 @@
 - `paper/evidence_base/`
 - 用户早期上传的 `liu_submission_compliance_final(1).pdf`
 
-## 2. Figure 1 / Figure 2 / Figure 3
+## 2. 当前图表与修订状态
 
-当前 Figure 1：
+- Figure 1：`paper/review_round5_20260915/source/figures/figure1_method_clean.pdf`。
+- Figure 2：`paper/review_round5_20260915/source/figures/figure2_repair_capacity.pdf`，使用当前候选 CSV 的无预算/可行修复能力。
+- 原 Round-4 inline Figure 3 已改成 `source/main.tex` 中的 Table 6，表题在上方。当前没有 Figure 3。
+- 旧照片和旧跨 foil 图仅保留在 `paper/review_round4_20260914/reference_figures/`，不要作为当前证据自动恢复。
+- 当前 PDF：`paper/review_round5_20260915/generated/ccf0_round5_20260915.pdf`。
+- 编译与哈希：`generated/build_checks.json`、`generated/SHA256SUMS.txt`。
+- 修改记录与未完成实验：`paper/review_round5_20260915/CHANGELOG_zh.md`。
 
-- `paper/review_round4_20260914/source/figures/figure1_method_clean.pdf`
-- `paper/review_round4_20260914/source/figures/figure1_method_clean.svg`
-
-当前 Figure 2：
-
-- `paper/review_round4_20260914/source/figures/figure2_identification_final.pdf`
-- `paper/review_round4_20260914/source/figures/figure2_identification_final.svg`
-
-当前 Round-4 Figure 3 **不是外部图片**，而是直接写在：
-
-`paper/review_round4_20260914/source/main.tex`
-
-中的 inline LaTeX response-audit panel。
-
-此前的照片版 Figure 2 / Figure 3 已作为普通 GitHub 文件保留，GPT 可直接检查，不需要 ZIP：
-
-- `paper/review_round4_20260914/reference_figures/figure2_previous_round3.pdf`
-- `paper/review_round4_20260914/reference_figures/figure2_previous_round3.svg`
-- `paper/review_round4_20260914/reference_figures/figure3_previous_round3.pdf`
-- `paper/review_round4_20260914/reference_figures/figure3_previous_round3.svg`
-- `paper/review_round4_20260914/reference_figures/figure3_previous_round3_pixels.png`
-
-不要擅自把旧 Figure 3 当成当前 Figure 3；它只是可直接读取的历史参考图件。
+Round-5 基于 b731a8b58ab5dbb57fce9f02f4d4cb4da5e70884 的展开 Round-4 源码。修复论文表述与图表，未运行新 CLIP 推理，未更改现有表格结果或置信区间。Round-4 和用户新上传的旧 paper_final(2).pdf 均不是当前编辑入口。
 
 ## 3. 作者与格式约束
 
@@ -233,4 +217,4 @@ Round-4 定义 `J`：WF 新区域同时满足：
 
 ## 9. 新对话直接使用的提示
 
-> 请先读 `HANDOFF.md` 和 `paper/review_round4_20260914/GPT_SOURCE_INDEX.md`，接手 ccf0。工作分支是 `paper/verified-rerun-integration`。不要读取或要求 ZIP；所有源码和 Figure 2/3 参考图都已经展开为普通 GitHub 文件。当前主稿是 `paper/review_round4_20260914/source/main.tex`。直接继续修改、编译和交付，不要回退到旧稿。
+> 请先读 `HANDOFF.md` 和 `paper/review_round5_20260915/GPT_SOURCE_INDEX.md`，接手 ccf0。工作分支是 `paper/verified-rerun-integration`。不要读取或要求 ZIP；所有当前源码、图件与 PDF 都是普通 GitHub 文件；原 Figure 3 已改成 Table 6。当前主稿是 `paper/review_round5_20260915/source/main.tex`。直接继续修改、编译和交付，不要回退到旧稿。
