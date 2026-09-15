@@ -1,0 +1,16 @@
+{
+  "uploaded_file": "50b636de-783a-4660-8da0-48c0f58f677c.pdf",
+  "sha256": "0f67ef1681a6e6f82391bd39b6603a27edf527683b17c4f5bc05f6759a4ff3da",
+  "pages": 37,
+  "link_annotations": 259,
+  "orcid_text_matches": 0,
+  "orcid_link_matches": 0,
+  "orcid_metadata_or_object_matches": 0,
+  "missing_current_authors": [
+    "Zhipeng Ye",
+    "Feng Jiang",
+    "Qiufeng Wang",
+    "Xihang Zhou"
+  ],
+  "note": "The first three appear as authors without ORCID; Xihang Zhou is not in the author list. Kaixin Liu and Qihang Wu identifiers were supplied directly by the user."
+}

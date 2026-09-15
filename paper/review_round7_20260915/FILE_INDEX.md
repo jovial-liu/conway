@@ -38,3 +38,5 @@
 - [scripts/prepare_submission.py](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/scripts/prepare_submission.py)
 - [scripts/robustness.py](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/scripts/robustness.py)
 - [scripts/verify_and_plot.py](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/scripts/verify_and_plot.py)
+
+- [Funding-updated submission PDF](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/submission/liu_funding_updated.pdf)

@@ -15,7 +15,7 @@
       "email": "24107880127@nustti.edu.cn",
       "affiliation": "Taizhou Institute of Science and Technology, Nanjing University of Science and Technology",
       "mailing_address": "Taizhou 225300, Jiangsu, China",
-      "orcid": "",
+      "orcid": "https://orcid.org/0009-0005-5213-8081",
       "corresponding": false
     },
     {
@@ -66,9 +66,11 @@
   ],
   "ready_to_submit": false,
   "pending": [
-    "ORCID URLs for the five authors other than Qihang Wu",
-    "Author-confirmed funding and conflicts-of-interest statement to insert on page 5",
+    "ORCID URLs for Zhipeng Ye, Feng Jiang, Qiufeng Wang and Xihang Zhou",
+    "Author-confirmed conflicts-of-interest statement to insert on page 5",
     "Author confirmation of ethical-compliance and AI-assistance statements; final author approval"
   ],
-  "review_category": null
+  "review_category": null,
+  "funding": "This work was supported by the Young Scientific and Technological Talent Support Program under the Taizhou Fengcheng Talent Plan.",
+  "conflicts_of_interest": null
 }

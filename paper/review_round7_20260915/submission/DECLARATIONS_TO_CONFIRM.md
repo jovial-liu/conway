@@ -1,12 +1,18 @@
 # 作者需补充的信息
 
-1. Kaixin Liu、Zhipeng Ye、Feng Jiang、Qiufeng Wang、Xihang Zhou：各自 ORCID 完整链接。不要根据同名搜索自动认领。
-2. 资助：是否收到与本研究相关的资助？若有，提供机构和项目编号。
-3. 利益冲突：是否存在应披露的财务或非财务关系？若无，明确确认无。
-4. 核对第 5 页的伦理与 AI 辅助说明。当前仅陈述使用公开 COCO/VOC、未新招募参与者或开展人/动物实验；未虚构伦理审批号或豁免决定。若有机构审批/豁免信息，请提供。
+已录入资助说明：
 
-仅在作者确认“无资助且无利益冲突”后，可加入：
+This work was supported by the Young Scientific and Technological Talent Support Program under the Taizhou Fengcheng Talent Plan.
 
-No funding was received for this study. The authors declare no relevant financial or nonfinancial conflicts of interest.
+已录入 ORCID：Kaixin Liu 0009-0005-5213-8081；Qihang Wu 0009-0009-6082-0223。
 
-若有资助或冲突，需改为实际内容，不使用上述句子。当前 PDF 没有插入这段未经确认的声明，也没有用占位符冒充已完成声明。
+仍待提供：
+1. Zhipeng Ye、Feng Jiang、Qiufeng Wang、Xihang Zhou 的 ORCID 完整链接。
+2. 作者确认是否存在相关财务或非财务利益冲突。资助的存在并不能自动确定利益冲突有无。
+3. 核对 PDF 第 5 页的伦理与 AI 辅助说明。
+
+仅在作者确认无利益冲突后，可加入：
+
+The authors declare no relevant financial or nonfinancial conflicts of interest.
+
+上传的 37 页 DCI 论文全文、链接及元数据未检出 ORCID，Xihang Zhou 也不在其作者名单中，不能从该文件推断其编号。

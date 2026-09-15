@@ -1,8 +1,8 @@
 # ICASSP 2027 提交材料（Round-7）
 
-论文已编译，但尚不能把手续标为齐全：缺其余五位作者的 ORCID 和经作者确认的资助/利益冲突声明。请先补齐再上传。
+论文已编译，但尚不能把手续标为齐全：缺其余四位作者的 ORCID 和经作者确认的利益冲突声明。请先补齐再上传。
 
-- `liu.pdf`：当前审稿 PDF；资金/利益冲突信息确认后还需更新第 5 页。
+- `liu.pdf`：当前审稿 PDF；利益冲突信息确认后还需更新第 5 页。
 - `title.txt`、`abstract.txt`、`keywords.txt`：复制到表单；标题、摘要与 PDF 对应。
 - `authors.csv`、`submission_metadata.json`：作者顺序、邮箱、单位、地址和 ORCID；空项不能猜填。
 - `DECLARATIONS_TO_CONFIRM.md`：待确认声明及填写方法。

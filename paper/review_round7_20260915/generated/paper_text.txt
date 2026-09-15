@@ -336,12 +336,13 @@ containing zero do not establish equivalence.                          gion iden
     p. 111409, 2025. [Online]. Available: https://doi.org/         and no new human or animal experiments were conducted.
     10.1016/j.patcog.2025.111409.
                                                                                     ACKNOWLEDGMENTS
-[7] M. Dreyer, L. Hufe, J. Berend, T. Wiegand, S. La-                  OpenAI ChatGPT (Codex) assisted with manuscript revi-
-    puschkin, and W. Samek, “From what to how: Attribut-           sion, figure preparation, and scripts for reanalysis of stored
-    ing CLIP’s latent components reveals unexpected seman-         experimental outputs. This assistance did not generate new
-    tic reliance,” arXiv preprint arXiv:2505.20229, 2025.          CLIP inference results.
-    [Online]. Available: https://arxiv.org/abs/2505.20229.
-[8] F. Li, Z. Meng, C. Tan, and Y. Yin, “Class-disentangled
+[7] M. Dreyer, L. Hufe, J. Berend, T. Wiegand, S. La-                  This work was supported by the Young Scientific and
+    puschkin, and W. Samek, “From what to how: Attribut-           Technological Talent Support Program under the Taizhou
+    ing CLIP’s latent components reveals unexpected seman-         Fengcheng Talent Plan.
+    tic reliance,” arXiv preprint arXiv:2505.20229, 2025.              OpenAI ChatGPT (Codex) assisted with manuscript revi-
+    [Online]. Available: https://arxiv.org/abs/2505.20229.         sion, figure preparation, and scripts for reanalysis of stored
+                                                                   experimental outputs. This assistance did not generate new
+[8] F. Li, Z. Meng, C. Tan, and Y. Yin, “Class-disentangled        CLIP inference results.
     attribution with gradient guidance for CLIP,” Journal
     of King Saud University Computer and Information
     Sciences, vol. 38, p. 376, 2026. [Online]. Available:

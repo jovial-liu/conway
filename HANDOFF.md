@@ -41,4 +41,6 @@ Round-4、Round-5 和旧 paper/local_rerun_revision/generated/paper_final.pdf �
 
 ## 投稿准备状态
 
-先读当前目录 submission/START_HERE_zh.md 和 FILE_INDEX.md。submission/liu.pdf 为投稿文件命名副本，但资金/利益冲突声明尚待作者确认，另有五位作者 ORCID 缺失；ready_to_submit=false。原实验和统计结果不变。新版 Figure 1 用 TikZ 重绘，Figure 2 标签至少 9pt。第 5 页包含伦理和 AI 辅助说明。已移除 MGA-CLIP 与 Contrastive Concept Importance 两条未能直接核验的外围引用。当前共 13 条引用，不宣称全部出版元数据均已独立核实。
+先读当前目录 submission/START_HERE_zh.md 和 FILE_INDEX.md。submission/liu.pdf 为投稿文件命名副本，但利益冲突声明尚待作者确认，另有四位作者 ORCID 缺失；ready_to_submit=false。原实验和统计结果不变。新版 Figure 1 用 TikZ 重绘，Figure 2 标签至少 9pt。第 5 页包含伦理和 AI 辅助说明。已移除 MGA-CLIP 与 Contrastive Concept Importance 两条未能直接核验的外围引用。当前共 13 条引用，不宣称全部出版元数据均已独立核实。
+
+用户已补充 Kaixin Liu 的 ORCID 0009-0005-5213-8081，已加入姓名链接和投稿表；已按原文加入 Young Scientific and Technological Talent Support Program under the Taizhou Fengcheng Talent Plan 资助。仍缺 Zhipeng Ye/Feng Jiang/Qiufeng Wang/Xihang Zhou 的 ORCID 和利益冲突确认。

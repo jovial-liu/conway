@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "20ed3d8f12088077365c369b31d7953e2c25f70c5444ccd0c3f545ae6d06b4ae",
+  "pdf_sha256": "ab274c75daf66737c70ebd13f2e596b89b735dfbf552d98af330a62fae49e631",
   "pages_reviewed": [
     1,
     2,
@@ -9,5 +9,5 @@
   ],
   "accepted_layout": true,
   "render": "Poppler 1200\u20131250 px page height",
-  "findings": "All pages inspected. New Figure 1 text and arrows are clear; Figure 2 labels enlarged; references and ethics/AI assistance statements fit on page five. Funding/conflicts statement remains pending author input. No overlap or clipping."
+  "findings": "Funding update: page 5 visually checked; supplied funding sentence is legible. Pages 1\u20134 render identically to previous version. Kaixin Liu ORCID link verified. Four ORCIDs and conflicts statement remain pending."
 }
