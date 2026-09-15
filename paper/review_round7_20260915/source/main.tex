@@ -201,7 +201,7 @@ on actual repairs. Exact $q_i$ is primary; 100 seeded draws check it.
 \centering
 \captionof{table}{Fixed original $A$: full-foil, annotation-absent, and exact cardinality-matched random failure rates (\%). $\Delta_A$ is absent minus random in percentage points, with paired 95\% CI.}
 \label{tab:screens}
-\small\renewcommand{\arraystretch}{1.12}\setlength{\tabcolsep}{1.1pt}
+\small\renewcommand{\arraystretch}{1.22}\setlength{\tabcolsep}{1.1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
 \toprule
 Setting & Full & Absent & Random & $\Delta_A$\\
@@ -236,7 +236,7 @@ categories have COCO annotation-absent failure of 63.39/64.95\%.
 at $\epsilon=.02$. Counts in $C_0,C_1,C_2,r$ are mutually exclusive;
 $C_2+r$ is the feasible-oracle count.}
 \label{tab:oracle}
-\small\renewcommand{\arraystretch}{1.12}\setlength{\tabcolsep}{1.4pt}
+\small\renewcommand{\arraystretch}{1.22}\setlength{\tabcolsep}{1.4pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrrr@{}}
 \toprule
 Setting & $|B|$ & $C_0$ & $C_1$ & $C_2$ & $r$\\
@@ -274,7 +274,7 @@ $|B|$ (Table~\ref{tab:oracle}) and are computed by exact enumeration.}
 \centering
 \captionof{table}{Budget endpoints (C: COCO; V: VOC). Multi: percentage of all eligible images with multiple feasible candidates. $O_B,r_B$: oracle/actual sign-repair percentages of screened failures $B$. $\Delta d_t,\Delta b$: all-image raw-target and bbox changes (bbox in percentage points).}
 \label{tab:frontier}
-\small\renewcommand{\arraystretch}{1.12}\setlength{\tabcolsep}{1pt}
+\small\renewcommand{\arraystretch}{1.22}\setlength{\tabcolsep}{1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrrrr@{}}
 \toprule
 Set & $\epsilon$ & Multi & $O_B$ & $r_B$ & $\Delta d_t$ & $\Delta b$\\
@@ -307,7 +307,7 @@ successful sign repairs, respectively.
 alternative, with paired 95\% CIs. Values are multiplied by $10^3$;
 $D$ counts WF/Max-.1 selection disagreements at $\epsilon=.02$.}
 \label{tab:baselines}
-\small\renewcommand{\arraystretch}{1.12}\setlength{\tabcolsep}{1pt}
+\small\renewcommand{\arraystretch}{1.40}\setlength{\tabcolsep}{1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrr@{}}
 \toprule
 Setting & WF$-$Mean & WF$-$Max-.1 & $D$\\
@@ -334,7 +334,7 @@ $r$ counts repairs; $j$ counts those also satisfying $J$.
 WF$-$CCI means with repair-subset 95\% CIs. $\Delta d_t$ is raw
 held-out target-score change; only bbox change is in percentage points.}
 \label{tab:costs}
-\small\renewcommand{\arraystretch}{1.12}\setlength{\tabcolsep}{1.1pt}
+\small\renewcommand{\arraystretch}{1.40}\setlength{\tabcolsep}{1.1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
 \toprule
 Setting & $r$ & $j$ & $\Delta d_t$ & $100\Delta$bbox\\
@@ -362,7 +362,7 @@ denominators from the screened sign repairs reported here.
 Entries are percentages of screen-passers $A$ with $P<-\delta$ using the normalized aggregate margin.
 Thresholds are evaluated post hoc in logit units.}
 \label{tab:threshold}
-\small\renewcommand{\arraystretch}{1.12}
+\small\renewcommand{\arraystretch}{1.22}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
 \toprule
 Setting & $\delta=0$ & $.01$ & $.10$ & $.50$\\
@@ -396,12 +396,13 @@ and human validation. Small VOC sign-repair subsets limit precision of
 conditional endpoint estimates.
 
 \paragraph{Reproducibility and normalization.}
-\href{https://github.com/jovial-liu/conway/tree/paper/verified-rerun-integration/experiments}{Stored summaries and scripts} support the threshold and budget reanalyses.
-Original masks and complete per-class responses are unavailable; region
-identity and normalization-induced changes in foil rankings remain
-unverified. Region-fixed comparisons assume faithful regeneration.
-Prompt holdout covers templates within the same images and models;
-cross-checkpoint budget calibration requires further evaluation.
+\href{https://github.com/jovial-liu/conway/tree/paper/verified-rerun-integration/experiments}{Released summaries, per-image diagnostics, and scripts} support the analyses.
+The manifest lists raw/normalized responses for eight regenerated candidates
+as retained locally with SHA256 hashes, outside the public release.
+Normalization sensitivity remains to be evaluated. Original masks were not
+retained; region-fixed comparisons assume faithful regeneration. Prompt
+holdout covers templates within the same images and models. Cross-checkpoint
+budget calibration requires further evaluation.
 
 \section{Conclusion}
 Locality and positive mean-foil contrast leave substantial worst-foil failure
@@ -413,6 +414,7 @@ reporting worst-foil specificity alongside locality and mean-foil contrast
 when evaluating frozen CLIP region explanations.
 
 \clearpage
+\balance
 \input{references.tex}
 \section*{Compliance with Ethical Standards}
 This work analyses publicly released COCO and PASCAL VOC images and

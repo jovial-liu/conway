@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "8d64ecc98780733ba6bab2122a1e16d6c656fd1a5a17fd9ad6180d7cb391a306",
+  "pdf_sha256": "213e712cb827557ea11df305e5d8cf294ce88057802f500ff394a4392846fa6f",
   "pages_reviewed": [
     1,
     2,
@@ -9,5 +9,5 @@
   ],
   "accepted_layout": true,
   "render": "Poppler 1200\u20131250 px page height",
-  "findings": "Introduction strengthened with intuitive strongest-competitor explanation and specific COCOA/CASE comparison verified against primary abstracts. Pages 1\u20132 visually reviewed; pages 3\u20135 render identically to prior reviewed version. Figures, tables and authors unchanged. Five pages, no overflow."
+  "findings": "Pages 3\u20135 visually reviewed after increasing table row spacing and balancing references. Pages 1\u20132 render identically to prior reviewed version. Five pages; no overflow or clipping. Data, figures and five author ORCIDs unchanged. Evidence wording distinguishes locally retained regenerated responses from unavailable original masks."
 }

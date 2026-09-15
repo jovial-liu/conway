@@ -47,3 +47,5 @@
 - [Language-revised PDF](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/submission/liu_language_revised.pdf)
 
 - [Introduction-strengthened PDF](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/submission/liu_intro_strengthened.pdf)
+
+- [Layout and evidence revision PDF](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round7_20260915/submission/liu_layout_evidence_revised.pdf)

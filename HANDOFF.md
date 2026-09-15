@@ -56,3 +56,5 @@ Figure 1 最新状态：使用重画前的原 PDF/SVG，已移除替代的 TikZ 
 最新语言版：submission/liu_language_revised.pdf；采用直接陈述发现的学术语气，避免重复防御性表述。
 
 最新引言补强版：submission/liu_intro_strengthened.pdf。补充最强竞争类别的直觉解释及与 COCOA/CASE 的具体关系。
+
+最新文件：submission/liu_layout_evidence_revised.pdf。已更正本机重生成响应与原始 masks 的可用性表述，增大表格行距并平衡参考文献页。后续实验注意：run_full_class_responses.py 的 raw_response_definition 写 masked-minus-original，实际 diff=original-after；应由实验维护端修正元数据说明，数值不改。
