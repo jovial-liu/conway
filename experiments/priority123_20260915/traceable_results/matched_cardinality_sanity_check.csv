@@ -1,0 +1,5 @@
+status,dataset_model,subset,n_A,mc_seed_count,mc_mean_failure_rate_across_seeds,mc_sd_across_seeds,exact_mean_q,mc_minus_exact,max_abs_seed_level_mc_minus_exact,mc_seed_rule
+local_rerun_traceable,coco_openai_b16,A,17726,100,0.640951709353492,0.00040550298194359704,0.640915052766892,3.6656586600014585e-05,0.0009669285035581732,"SeedSequence([seed, sample_index])"
+local_rerun_traceable,coco_openai_b32,A,17848,100,0.6450521066786195,0.00037241040721229014,0.6450357104392288,1.639623939064805e-05,0.0010980143388253927,"SeedSequence([seed, sample_index])"
+local_rerun_traceable,voc2007_openai_b16,A,1209,100,0.4146401985111663,0.0025364770800713507,0.4146185457480773,2.1652763088964022e-05,0.007217682539763848,"SeedSequence([seed, sample_index])"
+local_rerun_traceable,voc2007_openai_b32,A,1227,100,0.40220048899755495,0.0024613972731550807,0.40240592011694226,-0.0002054311193873115,0.0055029046320196895,"SeedSequence([seed, sample_index])"

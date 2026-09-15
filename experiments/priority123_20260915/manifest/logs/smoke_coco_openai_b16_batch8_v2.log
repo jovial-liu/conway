@@ -1,0 +1,10 @@
+/Users/von/Projects/cci-local-recovery/.venv-local-rerun/lib/python3.9/site-packages/torch/serialization.py:1493: UserWarning: 'torch.load' received a zip file that looks like a TorchScript archive dispatching to 'torch.jit.load' (call 'torch.jit.load' directly to silence this warning)
+  warnings.warn(
+Traceback (most recent call last):
+  File "/Users/von/Projects/cci-local-recovery/conway_upload/paper/review_round7_20260915/priority123/run_traceable_capture.py", line 356, in <module>
+    run(parse_args())
+  File "/Users/von/Projects/cci-local-recovery/conway_upload/paper/review_round7_20260915/priority123/run_traceable_capture.py", line 259, in run
+    rows_out, batch_raw, batch_norm, current_device, record = response_batch(
+  File "/Users/von/Projects/cci-local-recovery/conway_upload/paper/review_round7_20260915/priority123/run_traceable_capture.py", line 155, in response_batch
+    "A": int(A[local].item()), "Aplus": int((A & (eval_target_norm[rows, cci] > 0))[local].item()),
+NameError: name 'eval_target_norm' is not defined

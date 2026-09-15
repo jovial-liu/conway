@@ -1,0 +1,65 @@
+{
+  "status": "complete_traceable_analysis",
+  "completion": [
+    {
+      "status": "completed",
+      "dataset_model": "coco_openai_b16",
+      "n_images": 27708,
+      "A": 17726,
+      "Aplus": 16855,
+      "B": 11410,
+      "C0": 10697,
+      "C1": 695,
+      "C2": 0,
+      "r": 18,
+      "j": 12,
+      "switch_count": 663,
+      "source_dir": "/Users/von/Projects/cci-local-recovery/priority123_traceable_20260915/full/coco_openai_b16"
+    },
+    {
+      "status": "completed",
+      "dataset_model": "coco_openai_b32",
+      "n_images": 27708,
+      "A": 17848,
+      "Aplus": 17331,
+      "B": 11562,
+      "C0": 10655,
+      "C1": 876,
+      "C2": 1,
+      "r": 30,
+      "j": 25,
+      "switch_count": 613,
+      "source_dir": "/Users/von/Projects/cci-local-recovery/priority123_traceable_20260915/full/coco_openai_b32"
+    },
+    {
+      "status": "completed",
+      "dataset_model": "voc2007_openai_b16",
+      "n_images": 1943,
+      "A": 1209,
+      "Aplus": 1186,
+      "B": 511,
+      "C0": 371,
+      "C1": 135,
+      "C2": 0,
+      "r": 5,
+      "j": 3,
+      "switch_count": 50,
+      "source_dir": "/Users/von/Projects/cci-local-recovery/priority123_traceable_20260915/full/voc2007_openai_b16"
+    },
+    {
+      "status": "completed",
+      "dataset_model": "voc2007_openai_b32",
+      "n_images": 1943,
+      "A": 1227,
+      "Aplus": 1215,
+      "B": 504,
+      "C0": 347,
+      "C1": 154,
+      "C2": 1,
+      "r": 2,
+      "j": 1,
+      "switch_count": 38,
+      "source_dir": "/Users/von/Projects/cci-local-recovery/priority123_traceable_20260915/full/voc2007_openai_b32"
+    }
+  ]
+}

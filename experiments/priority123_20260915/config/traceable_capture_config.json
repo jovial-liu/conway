@@ -1,0 +1,52 @@
+{
+  "status": "local_rerun_traceable",
+  "datasets": {
+    "coco": "COCO val2014, 27708 eligible images",
+    "voc2007": "VOC2007 test, 1943 eligible images"
+  },
+  "models": {
+    "openai_b16": "OpenAI CLIP ViT-B/16",
+    "openai_b32": "OpenAI CLIP ViT-B/32"
+  },
+  "preprocess": "archived OpenAI CLIP preprocessing: resize short side to 224 and center crop 224",
+  "candidate_regions": {
+    "k": 8,
+    "kmeans_n_init": 3,
+    "kmeans_max_iter": 50,
+    "seed_rule": "1701 + sorted sample_index",
+    "patch_grid": {
+      "openai_b16": "14x14",
+      "openai_b32": "7x7"
+    }
+  },
+  "prompts": {
+    "selection": "a photo of a {category}",
+    "held_out": [
+      "a picture of the {category}",
+      "an image containing a {category}",
+      "the {category}"
+    ]
+  },
+  "intervention": "add -inf to attention logits at selected patch-key columns in every visual attention block/head, retaining CLS",
+  "response_definition": "original-minus-masked image feature difference, multiplied by model logit scale and dotted with text features",
+  "normalization": "divide each held-out aggregate by the L2 norm of the mean held-out class text feature",
+  "epsilon": 0.02,
+  "strategy_definitions": {
+    "CCI-top1": "argmax selection target drop",
+    "WF": "argmax over epsilon-feasible candidates of selection target drop - selection max-foil drop",
+    "Mean": "argmax over epsilon-feasible candidates of selection target drop - selection mean-foil drop",
+    "Max-.1": "argmax over epsilon-feasible candidates of selection target drop - 0.1 * selection max-foil drop"
+  },
+  "screen": "bbox precision >= 0.5 AND normalized held-out foil-mean margin > 0",
+  "failure": "normalized held-out target drop minus worst non-target foil drop < 0",
+  "bootstrap": {
+    "count": 10000,
+    "interval": "percentile 2.5/97.5",
+    "unit": "image",
+    "conditional_rule": "jointly resample numerator and denominator before recomputing the ratio"
+  },
+  "device": "PyTorch MPS on MacBook M4 Pro; CPU fallback only for unsupported MPS masked-attention batches",
+  "batch_size": 8,
+  "workers": 0,
+  "raw_batch_artifacts_local_only": true
+}

@@ -98,18 +98,38 @@ def response_batch(model, device, samples, category_index, text_sel, text_eval, 
 
     sel_target = text_sel[target_ids]
     sel_drop = scale * (diff * sel_target[:, None, :]).sum(2)
+    sel_all = scale * torch.einsum("bkd,cd->bkc", diff, text_sel.to(after.device))
+    target_mask_sel = F.one_hot(target_ids, num_classes=sel_all.shape[2]).bool()[:, None, :]
+    sel_mean_foil = sel_all.masked_fill(target_mask_sel, 0.0).sum(2) / (sel_all.shape[2] - 1)
+    sel_max_foil = sel_all.masked_fill(target_mask_sel, float("-inf")).max(2).values
     cci = sel_drop.argmax(1)
     rows = torch.arange(len(indices), device=after.device)
     cci_target = sel_drop[rows, cci]
     feasible = sel_drop >= (cci_target[:, None] - 0.02)
+    neg_inf = torch.tensor(float("-inf"), device=after.device)
+    wf_score = torch.where(feasible, sel_drop - sel_max_foil, neg_inf)
+    mean_score = torch.where(feasible, sel_drop - sel_mean_foil, neg_inf)
+    max_0_1_score = torch.where(feasible, sel_drop - 0.1 * sel_max_foil, neg_inf)
+    wf = wf_score.argmax(1)
+    mean = mean_score.argmax(1)
+    max_0_1 = max_0_1_score.argmax(1)
 
     target_mask = F.one_hot(target_ids, num_classes=eval_cat_norm.shape[2]).bool()[:, None, :]
     foil_norm = eval_cat_norm.masked_fill(target_mask, float("-inf"))
-    margin_norm = eval_cat_norm.gather(2, target_ids[:, None, None].expand(-1, eval_cat_norm.shape[1], 1)).squeeze(2) - foil_norm.max(2).values
+    target_norm = eval_cat_norm.gather(2, target_ids[:, None, None].expand(-1, eval_cat_norm.shape[1], 1)).squeeze(2)
+    margin_norm = target_norm - foil_norm.max(2).values
     foil_sum = eval_cat_norm.masked_fill(target_mask, 0.0)
-    pmean_norm = eval_cat_norm.gather(2, target_ids[:, None, None].expand(-1, eval_cat_norm.shape[1], 1)).squeeze(2) - foil_sum.sum(2) / (eval_cat_norm.shape[2] - 1)
+    pmean_norm = target_norm - foil_sum.sum(2) / (eval_cat_norm.shape[2] - 1)
     bbox = inside[indices].to(after.device).float()[:, None, :].mul(cluster_masks.to(after.device).float()).sum(2)
     bbox /= cluster_masks.to(after.device).float().sum(2).clamp_min(1)
+    cci_bbox = bbox[rows, cci]
+    A = (cci_bbox >= 0.5) & (pmean_norm[rows, cci] > 0)
+    B = A & (margin_norm[rows, cci] < 0)
+    passing = margin_norm >= 0
+    C0 = B & ~passing.any(1)
+    C1 = B & passing.any(1) & ~(passing & feasible).any(1)
+    C2 = B & (passing & feasible).any(1) & ~(passing[rows, wf])
+    repair = B & passing[rows, wf]
 
     rows_out = []
     for local, global_i in enumerate(indices.tolist()):
@@ -123,16 +143,37 @@ def response_batch(model, device, samples, category_index, text_sel, text_eval, 
             "target_name": sample["target_name"],
             "annotated_category_ids": json_line([sample["target_id"], *sample["distractor_ids"]]),
             "cci_region": r,
+            "wf_region": int(wf[local].item()),
+            "mean_region": int(mean[local].item()),
+            "max_0_1_region": int(max_0_1[local].item()),
             "cci_bbox_precision": float(bbox[local, r].detach().cpu()),
             "cci_target_drop_raw": float(eval_cat_raw[local, r, target_ids[local]].detach().cpu()),
             "cci_target_drop_norm": float(eval_cat_norm[local, r, target_ids[local]].detach().cpu()),
             "cci_margin_norm": float(margin_norm[local, r].detach().cpu()),
             "cci_pmean_norm": float(pmean_norm[local, r].detach().cpu()),
             "feasible_set_size": int(feasible[local].sum().item()),
+            "feasible_mask": json_line(feasible[local].detach().cpu().numpy().astype(int).tolist()),
+            "A": int(A[local].item()), "Aplus": int((A & (target_norm[rows, cci] > 0))[local].item()),
+            "B": int(B[local].item()), "C0": int(C0[local].item()),
+            "C1": int(C1[local].item()), "C2": int(C2[local].item()),
+            "repair": int(repair[local].item()),
         })
     record = dict(inside=inside[indices].detach().cpu().numpy(), masks=cluster_masks.detach().cpu().numpy().astype(np.uint8),
                   bbox=bbox.detach().cpu().numpy(), selection_target=sel_drop.detach().cpu().numpy(),
-                  selection_all=(scale * torch.einsum('bkd,cd->bkc', diff, text_sel.to(after.device))).detach().cpu().numpy(),
+                  selection_all=sel_all.detach().cpu().numpy(),
+                  selection_mean_foil=sel_mean_foil.detach().cpu().numpy(),
+                  selection_max_foil=sel_max_foil.detach().cpu().numpy(),
+                  feasible_mask=feasible.detach().cpu().numpy().astype(np.uint8),
+                  cci_region=cci.detach().cpu().numpy(), wf_region=wf.detach().cpu().numpy(),
+                  mean_region=mean.detach().cpu().numpy(), max_0_1_region=max_0_1.detach().cpu().numpy(),
+                  A=A.detach().cpu().numpy().astype(np.uint8), Aplus=(A & (target_norm[rows, cci] > 0)).detach().cpu().numpy().astype(np.uint8),
+                  B=B.detach().cpu().numpy().astype(np.uint8), C0=C0.detach().cpu().numpy().astype(np.uint8),
+                  C1=C1.detach().cpu().numpy().astype(np.uint8), C2=C2.detach().cpu().numpy().astype(np.uint8),
+                  repair=repair.detach().cpu().numpy().astype(np.uint8),
+                  target_id=np.asarray([samples[int(i)]["target_id"] for i in indices.tolist()]),
+                  target_name=np.asarray([samples[int(i)]["target_name"] for i in indices.tolist()]),
+                  annotated_category_ids=np.asarray([json_line([samples[int(i)]["target_id"], *samples[int(i)]["distractor_ids"]]) for i in indices.tolist()]),
+                  category_ids=np.asarray(list(category_index.keys())),
                   response_per_prompt=(scale * torch.einsum('bkd,pcd->bkpc',diff,eval_emb)).detach().cpu().numpy(),
                   text_norm=class_norm.detach().cpu().numpy())
     return rows_out, eval_cat_raw.detach().cpu().numpy(), eval_cat_norm.detach().cpu().numpy(), device, record
@@ -186,8 +227,10 @@ def run(args: argparse.Namespace) -> None:
     fieldnames = [
         "sample_index", "image_id", "path", "target_id", "target_name",
         "annotated_category_ids", "cci_region", "cci_bbox_precision",
+        "wf_region", "mean_region", "max_0_1_region",
         "cci_target_drop_raw", "cci_target_drop_norm", "cci_margin_norm",
-        "cci_pmean_norm", "feasible_set_size",
+        "cci_pmean_norm", "feasible_set_size", "feasible_mask", "A", "Aplus",
+        "B", "C0", "C1", "C2", "repair",
     ]
     current_device = device
     remaining = samples[completed:]

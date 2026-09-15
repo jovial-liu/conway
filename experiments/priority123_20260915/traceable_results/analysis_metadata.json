@@ -1,0 +1,19 @@
+{
+  "status": "complete_traceable_analysis",
+  "settings": [
+    "coco_openai_b16",
+    "coco_openai_b32",
+    "voc2007_openai_b16",
+    "voc2007_openai_b32"
+  ],
+  "bootstrap_count": 10000,
+  "bootstrap_seed_base": 1701,
+  "bootstrap_interval": "percentile_2.5_97.5",
+  "bootstrap_unit": "image",
+  "epsilon": 0.02,
+  "mc_seed_count": 100,
+  "authority": "same-generation traceable batch NPZs; old local-rerun files used only for comparison",
+  "python": "3.9.6",
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "git_head": "8e6a6bdef70b01cc8d3c3708db68f56b68b060c4"
+}

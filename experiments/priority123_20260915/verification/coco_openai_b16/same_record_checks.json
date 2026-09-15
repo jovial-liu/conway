@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "n": 27708,
+  "A": 17726,
+  "Aplus": 16855,
+  "B": 11410,
+  "C0": 10697,
+  "C1": 695,
+  "C2": 0,
+  "r": 18,
+  "full_failure_pct_given_A": 64.36872390838316,
+  "annotation_absent_failure_pct_given_A": 63.16709917635113,
+  "exact_matched_random_failure_pct_given_A": 64.0915052766892,
+  "scope": "same-generation traceable records; complete CIs and cross-table analysis are produced separately"
+}

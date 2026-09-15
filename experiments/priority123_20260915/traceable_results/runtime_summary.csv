@@ -1,0 +1,5 @@
+dataset_model,device_requested,device_last,elapsed_seconds_this_run,images_per_second_this_run,completed_before,completed_this_run,completed_total,batch_size,verification_status,verification_n,verification_A,verification_B
+coco_openai_b16,mps,mps,4573.712280541,6.0580986052651165,0,27708,27708,8,PASS,27708,17726,11410
+coco_openai_b32,mps,mps,2139.5064132919997,12.950650588193163,0,27708,27708,8,PASS,27708,17848,11562
+voc2007_openai_b16,mps,mps,244.848116042,7.935531723938069,0,1943,1943,8,PASS,1943,1209,511
+voc2007_openai_b32,mps,mps,95.107480125,20.429518043511106,0,1943,1943,8,PASS,1943,1227,504

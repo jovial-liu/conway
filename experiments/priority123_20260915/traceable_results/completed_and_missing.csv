@@ -1,0 +1,5 @@
+status,dataset_model,n_images,A,Aplus,B,C0,C1,C2,r,j,switch_count,source_dir
+completed,coco_openai_b16,27708,17726,16855,11410,10697,695,0,18,12,663,/Users/von/Projects/cci-local-recovery/priority123_traceable_20260915/full/coco_openai_b16
+completed,coco_openai_b32,27708,17848,17331,11562,10655,876,1,30,25,613,/Users/von/Projects/cci-local-recovery/priority123_traceable_20260915/full/coco_openai_b32
+completed,voc2007_openai_b16,1943,1209,1186,511,371,135,0,5,3,50,/Users/von/Projects/cci-local-recovery/priority123_traceable_20260915/full/voc2007_openai_b16
+completed,voc2007_openai_b32,1943,1227,1215,504,347,154,1,2,1,38,/Users/von/Projects/cci-local-recovery/priority123_traceable_20260915/full/voc2007_openai_b32

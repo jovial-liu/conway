@@ -1,0 +1,35 @@
+2026-09-15 22:12:53,544 INFO Parsing model identifier. Schema: None, Identifier: ViT-B-16
+2026-09-15 22:12:53,544 INFO Loaded built-in ViT-B-16 model config.
+2026-09-15 22:12:53,544 INFO `pretrained` specifies file path: /Users/von/Projects/cci-local-recovery/rerun_workspace/model_weights/ViT-B-16.pt
+2026-09-15 22:12:53,544 INFO Instantiating model architecture: CLIP
+2026-09-15 22:12:54,372 INFO Loading full pretrained weights from: /Users/von/Projects/cci-local-recovery/rerun_workspace/model_weights/ViT-B-16.pt
+2026-09-15 22:12:54,620 INFO Final image preprocessing configuration set: {'size': (224, 224), 'mode': 'RGB', 'mean': (0.48145466, 0.4578275, 0.40821073), 'std': (0.26862954, 0.26130258, 0.27577711), 'interpolation': 'bicubic', 'resize_mode': 'shortest', 'fill_color': 0}
+2026-09-15 22:12:54,621 INFO Model ViT-B-16 creation process complete.
+2026-09-15 22:12:54,621 INFO Parsing tokenizer identifier. Schema: None, Identifier: ViT-B-16
+2026-09-15 22:12:54,621 INFO Attempting to load config from built-in: ViT-B-16
+2026-09-15 22:12:54,621 INFO Using default SimpleTokenizer.
+2026-09-15 22:12:56,497 INFO completed=8 new=8 elapsed_s=1.440 images_per_s=5.556888 device=mps
+2026-09-15 22:13:05,853 INFO completed=88 new=88 elapsed_s=10.796 images_per_s=8.151524 device=mps
+2026-09-15 22:13:15,190 INFO completed=168 new=168 elapsed_s=20.133 images_per_s=8.344644 device=mps
+2026-09-15 22:13:24,597 INFO completed=248 new=248 elapsed_s=29.539 images_per_s=8.395560 device=mps
+2026-09-15 22:13:33,986 INFO completed=328 new=328 elapsed_s=38.928 images_per_s=8.425809 device=mps
+2026-09-15 22:13:43,385 INFO completed=408 new=408 elapsed_s=48.327 images_per_s=8.442412 device=mps
+2026-09-15 22:13:52,787 INFO completed=488 new=488 elapsed_s=57.729 images_per_s=8.453260 device=mps
+2026-09-15 22:14:02,196 INFO completed=568 new=568 elapsed_s=67.138 images_per_s=8.460173 device=mps
+2026-09-15 22:14:11,663 INFO completed=648 new=648 elapsed_s=76.605 images_per_s=8.458982 device=mps
+2026-09-15 22:14:21,155 INFO completed=728 new=728 elapsed_s=86.097 images_per_s=8.455581 device=mps
+2026-09-15 22:14:30,674 INFO completed=808 new=808 elapsed_s=95.616 images_per_s=8.450453 device=mps
+2026-09-15 22:14:40,305 INFO completed=888 new=888 elapsed_s=105.247 images_per_s=8.437324 device=mps
+2026-09-15 22:14:49,956 INFO completed=968 new=968 elapsed_s=114.898 images_per_s=8.424856 device=mps
+2026-09-15 22:14:59,642 INFO completed=1048 new=1048 elapsed_s=124.584 images_per_s=8.411974 device=mps
+2026-09-15 22:15:09,356 INFO completed=1128 new=1128 elapsed_s=134.298 images_per_s=8.399259 device=mps
+2026-09-15 22:15:19,114 INFO completed=1208 new=1208 elapsed_s=144.056 images_per_s=8.385642 device=mps
+2026-09-15 22:15:28,988 INFO completed=1288 new=1288 elapsed_s=153.930 images_per_s=8.367433 device=mps
+2026-09-15 22:15:39,006 INFO completed=1368 new=1368 elapsed_s=163.947 images_per_s=8.344149 device=mps
+2026-09-15 22:15:49,253 INFO completed=1448 new=1448 elapsed_s=174.194 images_per_s=8.312552 device=mps
+2026-09-15 22:15:59,759 INFO completed=1528 new=1528 elapsed_s=184.701 images_per_s=8.272837 device=mps
+2026-09-15 22:16:10,608 INFO completed=1608 new=1608 elapsed_s=195.549 images_per_s=8.222986 device=mps
+2026-09-15 22:16:21,772 INFO completed=1688 new=1688 elapsed_s=206.714 images_per_s=8.165885 device=mps
+2026-09-15 22:16:33,132 INFO completed=1768 new=1768 elapsed_s=218.073 images_per_s=8.107373 device=mps
+2026-09-15 22:16:45,076 INFO completed=1848 new=1848 elapsed_s=230.017 images_per_s=8.034175 device=mps
+2026-09-15 22:16:57,282 INFO completed=1928 new=1928 elapsed_s=242.223 images_per_s=7.959618 device=mps
