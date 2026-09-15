@@ -1,3 +1,7 @@
+## 投稿前五处文字修正
+
+删除未使用的 Mean、Max-.1 定义；残余失败比例改引表 1；主结果统一 fixed baseline，历史归一化数据使用 earlier-run；修复分号后 The 的句法；引言收窄为 quantify worst-foil failure and decompose constraints on sign repair。实验数值不变，编译仍为五页。
+
 ## 第四页留白调整
 
 调整表 4、表 5 行距与相邻段落间距，两栏底部差约 0.4 pt。正文及数据不变；维持五页，无溢出，其余四页渲染一致。最新文件为 submission/liu_round8_page4_balanced.pdf。

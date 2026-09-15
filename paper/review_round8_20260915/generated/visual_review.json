@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "d852f8a3f06d0be438685669b138141eb40a811db0775239f8bd3c742e18f8b4",
+  "pdf_sha256": "efaa32c728ae3b60cba0349bd1c615d065470a33c6243599059c8d8f99fe0b33",
   "pages_reviewed": [
     1,
     2,
@@ -8,5 +8,5 @@
     5
   ],
   "accepted_layout": true,
-  "findings": "Page 4 visually reviewed after increasing Table 4 and Table 5 row spacing and adjacent paragraph spacing. Column bottoms align within 0.4 pt; no clipping or overlaps. Pages 1, 2, 3 and 5 render identically to the previous six-author PDF. No manuscript wording or data changed."
+  "findings": "Pages 1\u20134 visually reviewed after five requested wording and reference corrections. No clipping or overlap; five pages retained. Table 1 reference corrected; unused Mean and Max-.1 definitions removed; fixed baseline and earlier-run populations distinguished."
 }

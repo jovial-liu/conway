@@ -65,7 +65,7 @@ COCOA~\cite{lin2023cocoa} explains corpus similarity relative to foil samples;
 CASE~\cite{williamson2025case} tests class sensitivity and constructs
 contrastive saliency. Our contribution combines fixed-population auditing,
 exact cardinality-matched foil controls, and candidate/budget decomposition
-to quantify the prevalence and sources of worst-foil failure.
+to quantify worst-foil failure and decompose constraints on sign repair.
 Related CLIP attribution~\cite{wang2023m2ib,li2023clipsurgery,dreyer2025cliplatent},
 class contrasts~\cite{li2026cdaclip}, and caption foils~\cite{yuksekgonul2023aro}
 provide complementary perspectives. WF reranking probes fixed CLIP
@@ -132,8 +132,6 @@ R_{\rm WF}=\arg\max_{R\in\regions_\epsilon}M^{\rm sel}(R,t).
 \end{equation}
 The baseline is feasible, so any switch loses at most $\epsilon$ of
 \emph{selection-stage} target drop. We measure its held-out effects separately.
-Mean and Max-.1 instead maximize $d_t^{\rm sel}-\mathrm{mean}_f d_f^{\rm sel}$
-and $d_t^{\rm sel}-.1\max_f d_f^{\rm sel}$ over the same set.
 The reference budget is $\epsilon=.02$ logit units. A post-hoc
 $.01/.02/.05/.10/.20$ sweep measures budget sensitivity within each
 checkpoint; unrestricted oracles search the full candidate set.
@@ -151,7 +149,7 @@ into: no passing candidate ($C_0$); passing candidates but \emph{none feasible}
 ($C_1$); a feasible pass missed by WF ($C_2$); and WF sign repair ($r$).
 Thus $|B|=C_0+C_1+C_2+r$ and $N_O=C_2+r$. We additionally count repairs
 satisfying $J(R)=\{P_i(R)\ge0,\ A(R),\ \bar d_t(R)>0\}$; $A(R)$ applies
-the same full-foil screen to the new region, without changing original $B$.
+the same full-foil screen to the new region, without changing fixed baseline $B$.
 Oracles quantify held-out opportunity within the candidate set.
 
 \paragraph{Fixed-population foil controls.}
@@ -190,7 +188,7 @@ selection responses, three-template held-out responses, and bbox records
 were saved in the same generation pass. The validation checks patch
 partitions, bbox recomputation, response aggregation, candidate choices,
 and the failure decomposition. All primary tables use this release;
-Table~\ref{tab:normalization} separately retains the original audit population.
+Table~\ref{tab:normalization} separately retains the earlier-run audit population.
 
 Intervals use 10,000 image bootstraps and
 percentile 2.5/97.5 limits, pointwise without multiplicity correction.
@@ -217,8 +215,8 @@ Setting & Full & Absent & Random & $\Delta_A$\\
 \paragraph{Failure persists after annotation exclusion.}
 The fixed screen $A$ contains 17,726, 17,848, 1,209, and 1,227 images
 in table order. Exclusion lowers failure by only 1.14--1.39 percentage
-points of $A$; 96.63--98.24\% of original failures $B$ remain
-(Table~\ref{tab:oracle}). Table~\ref{tab:screens} separates this change from foil-count reduction:
+points of $A$; 96.63--98.24\% of fixed baseline failures $B$ remain
+(Table~\ref{tab:screens}). Table~\ref{tab:screens} separates this change from foil-count reduction:
 COCO exclusion has a larger effect than random removal of the same number
 of categories, whereas VOC $\Delta_A$ intervals include zero.
 The residual failure extends beyond the contribution of explicitly
@@ -294,11 +292,11 @@ At $.20$, oracle sign-repair capacity rises to 1.57--2.05\% of COCO
 $B$ and 6.65--7.14\% of VOC $B$.
 Raw-target changes become negative in all four settings, but bbox changes
 are negative on COCO and positive on VOC. Budget relaxation therefore has dataset-dependent locality effects.
-Each comparison uses the same checkpoint and original population.
+Each comparison uses the same checkpoint and fixed baseline population.
 
 \paragraph{Population-wide and sign-repair effects.}
 Table~\ref{tab:frontier} includes unchanged regions. In contrast,
-Table~\ref{tab:costs} conditions on actual sign repairs within $B$;
+Table~\ref{tab:costs} conditions on actual sign repairs within fixed baseline $B$.
 The two tables describe population-wide changes and changes among
 successful sign repairs, respectively.
 
@@ -306,9 +304,9 @@ successful sign repairs, respectively.
 \par\addvspace{6pt}
 \noindent\begin{minipage}{\columnwidth}
 \centering
-\captionof{table}{Normalization sensitivity on fixed original $A_{\rm old}$
-and original CCI regions. Raw/Norm: failure rates (\%); Flip: percentage
-whose failure status differs. This audit uses the earlier recorded population.}
+\captionof{table}{Normalization sensitivity on fixed earlier-run $A_{\rm old}$
+and earlier-run CCI regions. Raw/Norm: failure rates (\%); Flip: percentage
+whose failure status differs. This audit uses the earlier-run population.}
 \label{tab:normalization}
 \small\renewcommand{\arraystretch}{1.90}\setlength{\tabcolsep}{1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
@@ -321,7 +319,7 @@ Setting & $|A_{\rm old}|$ & Raw & Norm & Flip\\
 \end{minipage}\par\vspace{12pt}
 
 \paragraph{Normalization has a small effect on the fixed audit.}
-With original regions and $A_{\rm old}$ held fixed, raw and normalized
+With earlier-run regions and $A_{\rm old}$ held fixed, raw and normalized
 failure rates differ by at most 0.083 percentage points; sign flips affect
 at most 0.107\% of this population (Table~\ref{tab:normalization}).
 The hardest foil agrees on 99.42--99.84\% of images. These paired
@@ -330,7 +328,7 @@ comparisons preserve the high failure rate under both score definitions.
 \par\addvspace{18pt}
 \noindent\begin{minipage}{\columnwidth}
 \centering
-\captionof{table}{Actual sign repairs \emph{within original $B$}, $\epsilon=.02$.
+\captionof{table}{Actual sign repairs \emph{within fixed baseline $B$}, $\epsilon=.02$.
 $r$ counts repairs; $j$ counts those also satisfying $J$.
 WF$-$CCI means with repair-subset 95\% CIs. $\Delta d_t$ is raw
 held-out target-score change; only bbox change is in percentage points.}
@@ -401,7 +399,7 @@ conditional endpoint estimates.
 configuration, and hashes. Same-generation masks and full responses are
 retained locally. Three images changed selected regions from the earlier
 run. Primary results use the new records; Table~\ref{tab:normalization}
-fixes the earlier regions and population. Prompt holdout covers templates
+fixes the earlier-run regions and population. Prompt holdout covers templates
 within the same images and models; cross-checkpoint budget calibration
 requires further evaluation.
 

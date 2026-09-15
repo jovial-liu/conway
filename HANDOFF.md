@@ -1,3 +1,5 @@
+最新文字修正版：paper/review_round8_20260915/submission/liu_round8_text_corrected.pdf。已完成用户列出的五处定义、引用、人群措辞、标点与贡献表述修正。
+
 最新排版版：paper/review_round8_20260915/submission/liu_round8_page4_balanced.pdf。第四页两栏底部已对齐，其他四页渲染不变。
 
 最新作者版：paper/review_round8_20260915/submission/liu_round8_six_authors.pdf；六位作者，Zhenghao Wang 在 Qihang Wu 前，单位按用户“南理工”单列南京理工大学。
