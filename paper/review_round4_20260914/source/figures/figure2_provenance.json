@@ -1,0 +1,7 @@
+{
+  "source_commit": "168d61bf2b338e2f1bc20873ed38cf4dbc87b869",
+  "source_git_blob_sha1": "7468a7ac1c94bf0e6c77053be7ba633d628ae78c",
+  "extracted_object": 9,
+  "drawing_stream_sha256": "0616b1f3f3cf4f4cbafe00b27acaca3a835dc89a182d1e8fdda0dc4fb2fd8975",
+  "repair": "Preserve the original standalone chart drawing stream (object 9). Re-embed matching DejaVu Serif font resources with Unicode mapping. Chart geometry and data marks are not redrawn; no hidden-manuscript problem was attributed to this figure."
+}
