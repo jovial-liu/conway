@@ -1,3 +1,9 @@
+# 当前状态更新：2026-09-17
+
+当前源码目录仍为 paper/review_round8_20260915/，最新 PDF 是 submission/liu_readability_20260917.pdf。Zhenghao Wang 与 Qihang Wu 同属南京理工大学泰州科技学院（单位 1）；下方旧记录中的独立南京理工大学单位已失效。正文已补定义、增加图表分析、改为 Results and Analysis、删除 limitations 段及 IDEA 正文与引用。详见 CHANGES_zh.md 最新条目。
+
+## 之前的交接记录
+
 最新文字修正版：paper/review_round8_20260915/submission/liu_round8_text_corrected.pdf。已完成用户列出的五处定义、引用、人群措辞、标点与贡献表述修正。
 
 最新排版版：paper/review_round8_20260915/submission/liu_round8_page4_balanced.pdf。第四页两栏底部已对齐，其他四页渲染不变。

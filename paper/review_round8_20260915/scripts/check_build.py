@@ -10,7 +10,9 @@ assert 'REFERENCES' in texts[4] and 'CONCLUSION' in texts[3]
 for token in ['1817e166','6a52e8f3','ccf0-round4','Frozen-archive','Figure 3','released five-budget','four-setting sweep is released','portable check']:
  assert token not in '\n'.join(texts),token
 assert 'Table 6:' in texts[3] and 'Figure 2:' in texts[2]
-assert 'IDEA' in texts[4]
+assert 'IDEA' not in '\n'.join(texts)
+assert 'LIMITATIONS' not in '\n'.join(texts)
+assert 'RESULTS AND ANALYSIS' in texts[2]
 assert 'Nonzero-threshold sensitivity' in texts[3]
 assert 'Budget endpoints' in texts[2]
 assert '254807' not in '\n'.join(texts)

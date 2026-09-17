@@ -11,9 +11,8 @@ keywords='CLIP, explanation auditing, class specificity, constrained region sele
 for name,content in [('title.txt',title),('abstract.txt',abstract),('keywords.txt',keywords)]: (out/name).write_text(content+'\n',encoding='ascii')
 aff1='Taizhou Institute of Science and Technology, Nanjing University of Science and Technology';a1='Taizhou 225300, Jiangsu, China'
 aff2="Department of Intelligence Science, Xi'an Jiaotong-Liverpool University";a2='Suzhou 215123, Jiangsu, China'
-aff3='Nanjing University of Science and Technology';a3='Nanjing, China'
 authors=[]
-for n,e,a,addr,oid,corr in [('Kaixin Liu','24107880127@nustti.edu.cn',aff1,a1,'https://orcid.org/0009-0005-5213-8081',False),('Zhipeng Ye','zhipengye@nustti.edu.cn',aff1,a1,'https://orcid.org/0000-0002-3384-2779',True),('Feng Jiang','jf@nustti.edu.cn',aff1,a1,'https://orcid.org/0000-0001-5362-3234',False),('Qiufeng Wang','qiufeng.wang@xjtlu.edu.cn',aff2,a2,'https://orcid.org/0000-0002-0918-4606',False),('Zhenghao Wang','wangzhenghao2002@outlook.com',aff3,a3,'https://orcid.org/0009-0002-8768-4937',False),('Qihang Wu','24107880128@nustti.edu.cn',aff1,a1,'https://orcid.org/0009-0009-6082-0223',False)]:
+for n,e,a,addr,oid,corr in [('Kaixin Liu','24107880127@nustti.edu.cn',aff1,a1,'https://orcid.org/0009-0005-5213-8081',False),('Zhipeng Ye','zhipengye@nustti.edu.cn',aff1,a1,'https://orcid.org/0000-0002-3384-2779',True),('Feng Jiang','jf@nustti.edu.cn',aff1,a1,'https://orcid.org/0000-0001-5362-3234',False),('Qiufeng Wang','qiufeng.wang@xjtlu.edu.cn',aff2,a2,'https://orcid.org/0000-0002-0918-4606',False),('Zhenghao Wang','wangzhenghao2002@outlook.com',aff1,a1,'https://orcid.org/0009-0002-8768-4937',False),('Qihang Wu','24107880128@nustti.edu.cn',aff1,a1,'https://orcid.org/0009-0009-6082-0223',False)]:
  authors.append(dict(order=len(authors)+1,name=n,email=e,affiliation=a,mailing_address=addr,orcid=oid,corresponding=corr))
 with (out/'authors.csv').open('w',newline='') as f:
  w=csv.DictWriter(f,fieldnames=list(authors[0]),lineterminator="\n");w.writeheader();w.writerows(authors)
@@ -24,6 +23,7 @@ shutil.copy2(out/'liu.pdf',out/'liu_round8_traceable.pdf')
 shutil.copy2(out/'liu.pdf',out/'liu_round8_six_authors.pdf')
 shutil.copy2(out/'liu.pdf',out/'liu_round8_page4_balanced.pdf')
 shutil.copy2(out/'liu.pdf',out/'liu_round8_text_corrected.pdf')
+shutil.copy2(out/'liu.pdf',out/'liu_readability_20260917.pdf')
 files=[p for p in out.iterdir() if p.is_file() and p.name!='SHA256SUMS.txt']
 (out/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(files)))
 print('Prepared liu.pdf and form fields; missing author-supplied information remains explicit.')

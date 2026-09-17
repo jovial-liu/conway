@@ -68,8 +68,7 @@ exact cardinality-matched foil controls, and candidate/budget decomposition
 to quantify worst-foil failure and decompose constraints on sign repair.
 Related CLIP attribution~\cite{wang2023m2ib,li2023clipsurgery,dreyer2025cliplatent},
 class contrasts~\cite{li2026cdaclip}, and caption foils~\cite{yuksekgonul2023aro}
-provide complementary perspectives. WF reranking probes fixed CLIP
-candidates; IDEA~\cite{ye2026idea} adapts CLIP for few-shot classification.
+provide complementary perspectives.
 
 \begin{figure*}[t]
 \centering
@@ -81,14 +80,24 @@ and locality. Schematic responses illustrate the selection rule.}
 \end{figure*}
 
 \section{Audit and Repair Opportunity}
-For checkpoint $m$, the pre-softmax score is
-$s_m(x,c)=\tau_m\langle z_m(x),e_m(c)\rangle$, with unit-norm embeddings
-and learned $\tau_m=\exp(\ell_m)$. Region $R$ has intervention response
+Figure~\ref{fig:method} links candidate construction from frozen patch
+features (a), one-prompt selection (b), and three-prompt evaluation of
+the fixed region (c).
+
+Let $x$ be an image, $t$ its target class, and $c$ any dataset class.
+A candidate $R\in\regions(x)$ is a set of image patches; $\regions(x)$
+contains $K=8$ candidates. For checkpoint $m$, the pre-softmax score is
+$s_m(x,c)=\tau_m\langle z_m(x),e_m(c)\rangle$. Here $z_m$ and $e_m$ are
+unit-norm image and prompted-text embeddings, $\langle\cdot,\cdot\rangle$
+is their inner product, and $\tau_m$ is CLIP's learned positive logit scale.
+The intervention $\mathcal I(x,R)$ masks attention to patches in $R$.
+The resulting score drop is
 \begin{equation}
 d_R(c)=s_m(x,c)-s_m(\mathcal I(x,R),c).
 \label{eq:drop}
 \end{equation}
-For target category $t$, selection uses ``a photo of a \{category\}'':
+Positive $d_R(c)$ means a score reduction. Superscript $\mathrm{sel}$
+denotes the prompt ``a photo of a \{category\}''. CCI-top1 selects
 \begin{equation}
 R_{\rm CCI}=\arg\max_{R\in\regions(x)}d_R^{\rm sel}(t).
 \label{eq:cci}
@@ -96,28 +105,34 @@ R_{\rm CCI}=\arg\max_{R\in\regions(x)}d_R^{\rm sel}(t).
 
 \paragraph{Held-out margins and screens.}
 Evaluation uses ``a picture of the \{category\}'', ``an image containing a
-\{category\}'', and ``the \{category\}''. For unit-norm text embeddings
-$e_h(c)$, let $H=3$, $n_c=\|H^{-1}\sum_h e_h(c)\|_2$, and
-$\bar d_c=H^{-1}\sum_h d_h(c)/n_c$. With $\foils_t$ the non-target dataset
-categories, the aggregate worst-foil margin is
+\{category\}'', and ``the \{category\}''. Index these $H=3$ templates by $h$. Let $e_h(c)$ be their unit-norm
+text embeddings and $d_{R,h}(c)$ the drops from Eq.~\ref{eq:drop}. Define
+$n_c=\|H^{-1}\sum_h e_h(c)\|_2$ and the normalized aggregate
+$\bar d_c(R)=H^{-1}\sum_h d_{R,h}(c)/n_c$. We suppress $R$ when fixed.
+A foil is a non-target class; $\foils_t$ contains all such dataset classes.
+The held-out worst-foil margin is
 \begin{equation}
 P(R,t)=\bar d_t-\max_{f\in\foils_t}\bar d_f.
 \label{eq:estimands}
 \end{equation}
 This equals using normalized mean text embeddings; class-specific $n_c$ can
-change rankings. Tables report raw target drop $H^{-1}\sum_h d_h(t)$,
+change rankings. Tables report raw target drop $H^{-1}\sum_h d_{R,h}(t)$,
 whereas the positive-target screen uses $\bar d_t$. Selection and evaluation use separate templates.
 
-For CCI-top1, define
-$A=\{\mathrm{bbox}\ge .5,\ \bar d_t-\mathrm{mean}_f\bar d_f>0\}$ and
-$F=\{P<0\}$. We use $.5$ as the locality threshold. To distinguish positive mean-foil
+Let bbox precision be the fraction of selected patch centers inside
+target-class boxes. For CCI-top1, the fixed baseline screen-passers are
+$A=\{\mathrm{bbox}\ge .5,\ \bar d_t-\mathrm{mean}_f\bar d_f>0\}$ and the failure set is $F=\{P<0\}$. The mean is over $f\in\foils_t$;
+$A$ requires at least half of patch centers to overlap target boxes and
+a positive target-minus-mean-foil drop. To distinguish positive mean-foil
 contrast from positive target contribution, we also audit
 $A^+=A\cap\{\bar d_t>0\}$. The primary sign-repair population is
 $B=A\cap F$, fixed before reranking. Throughout, ``failure'' denotes $P<0$, and ``sign repair'' denotes a
 transition from $P<0$ to $P\ge0$.
 
 \paragraph{Target-constrained diagnostic probe.}
-Define
+In Figure~\ref{fig:method}(b), $M^{\rm sel}$ measures selection-stage
+target-minus-worst-foil drop. The tolerance $\epsilon\ge0$ defines the
+feasible subset $\regions_\epsilon\subseteq\regions(x)$:
 \begin{equation}
 M^{\rm sel}(R,t)=d_R^{\rm sel}(t)-\max_{f\in\foils_t}d_R^{\rm sel}(f),
 \end{equation}
@@ -130,14 +145,14 @@ and worst-foil (WF) reranking
 R_{\rm WF}=\arg\max_{R\in\regions_\epsilon}M^{\rm sel}(R,t).
 \label{eq:wf}
 \end{equation}
-The baseline is feasible, so any switch loses at most $\epsilon$ of
-\emph{selection-stage} target drop. We measure its held-out effects separately.
-The reference budget is $\epsilon=.02$ logit units. A post-hoc
-$.01/.02/.05/.10/.20$ sweep measures budget sensitivity within each
-checkpoint; unrestricted oracles search the full candidate set.
+CCI is feasible by construction. We use $\epsilon=.02$ logit units
+and sweep $.01/.02/.05/.10/.20$ within each checkpoint.
 
 \paragraph{Exact diagnostic oracles.}
-For the screened-failure population $B$, the feasible sign-repair count is
+For each image $i$, write $P_i(R)=P(R,t_i)$ for its target $t_i$.
+An oracle checks every candidate using held-out responses to count available
+repairs. With $\mathbf1\{\cdot\}$ the indicator (one if true, zero otherwise),
+the feasible sign-repair count on fixed baseline $B$ is
 \begin{equation}
 N_O(B,\epsilon)=\sum_{i\in B}\mathbf1\!\left\{
 \max_{R\in\regions_\epsilon(i)}P_i(R)\ge0\right\}.
@@ -150,14 +165,15 @@ into: no passing candidate ($C_0$); passing candidates but \emph{none feasible}
 Thus $|B|=C_0+C_1+C_2+r$ and $N_O=C_2+r$. We additionally count repairs
 satisfying $J(R)=\{P_i(R)\ge0,\ A(R),\ \bar d_t(R)>0\}$; $A(R)$ applies
 the same full-foil screen to the new region, without changing fixed baseline $B$.
-Oracles quantify held-out opportunity within the candidate set.
+Here $r$ counts WF sign repairs and $j$ counts those also satisfying $J$.
+Oracles measure available opportunity; WF selects using only its selection prompt.
 
 \paragraph{Fixed-population foil controls.}
 For image $i$, let $\foils_i^{\rm abs}$ remove all annotated-present categories
 from the non-target foils. The protocol holds $R_{\rm CCI}$ and full-foil screen $A$ fixed;
 $F_i^{\rm abs}$ tests $\bar d_t-\max_{f\in\foils_i^{\rm abs}}\bar d_f<0$.
 Reducing the foil set weakly decreases failure, so we also match its cardinality. For $N_i$ full
-foils, $k_i=|\foils_i^{\rm abs}|$, and $m_i$ foils exceeding the target,
+foils, $k_i=|\foils_i^{\rm abs}|$, and $m_i$ foils with $\bar d_f>\bar d_t$,
 a uniform size-$k_i$ subset without replacement fails with probability
 \begin{equation}
 q_i=1-\frac{\binom{N_i-m_i}{k_i}}{\binom{N_i}{k_i}}.
@@ -170,7 +186,7 @@ Restricted sets are nonempty, and crowd annotations are excluded.
 \section{Protocol and Reproducibility}
 COCO val2014~\cite{lin2014coco} and VOC2007 test~\cite{everingham2010voc}
 provide 27,708/1,943 eligible images, each evaluated with OpenAI CLIP B/16
-and B/32 (59,302 image--model records). The target is the largest instance's
+and B/32 (ViT-B with 16- or 32-pixel patches; 59,302 image--model records). The target is the largest instance's
 category, using annotation area on COCO and box area on VOC. We require
 another category and 2--80\% target area; COCO crowd annotations are excluded.
 Full foils are the other 79/19 classes.
@@ -180,29 +196,16 @@ initializations, 50 iterations, seed $1701+i$ (sorted IDs shuffled with seed
 1701 define $i$). Intervention $\mathcal I$
 adds $-\infty$ to attention logits at selected patch-key columns before
 softmax in every block/head, retaining the class-token column. Ties use first argmax; MPS features are cast to float32.
-BBox precision is the fraction of selected patch centers in target-class box unions,
-mapped by $224/\min(W,H)$ and center-crop offsets~\cite{gomez2022metrics}.
-
-The primary results use a single traceable release: candidate masks,
-selection responses, three-template held-out responses, and bbox records
-were saved in the same generation pass. The validation checks patch
-partitions, bbox recomputation, response aggregation, candidate choices,
-and the failure decomposition. All primary tables use this release;
-Table~\ref{tab:normalization} separately retains the earlier-run audit population.
-
-Intervals use 10,000 image bootstraps and
-percentile 2.5/97.5 limits, pointwise without multiplicity correction.
-Paired quantities are differenced within image before resampling. Foil
-comparisons resample within fixed $A/A^+$; repair-cost intervals condition
-on actual repairs. Exact $q_i$ is primary; 100 seeded draws check it.
+Target boxes are mapped by $224/\min(W_{\rm img},H_{\rm img})$ and center-crop offsets,
+where $W_{\rm img},H_{\rm img}$ are the image width and height~\cite{gomez2022metrics}.
 
 \clearpage
-\section{Results}
+\section{Results and Analysis}
 \noindent\begin{minipage}{\columnwidth}
 \centering
 \captionof{table}{Fixed baseline $A$: full-foil, annotation-absent, and exact cardinality-matched random failure rates (\%). $\Delta_A$ is absent minus random in percentage points, with paired 95\% CI.}
 \label{tab:screens}
-\small\renewcommand{\arraystretch}{1.22}\setlength{\tabcolsep}{1.1pt}
+\small\renewcommand{\arraystretch}{1.15}\setlength{\tabcolsep}{1.1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
 \toprule
 Setting & Full & Absent & Random & $\Delta_A$\\
@@ -210,7 +213,7 @@ Setting & Full & Absent & Random & $\Delta_A$\\
 \tabinput{tables/restricted_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{8pt}
+\end{minipage}\par\vspace{6pt}
 
 \paragraph{Failure persists after annotation exclusion.}
 The fixed screen $A$ contains 17,726, 17,848, 1,209, and 1,227 images
@@ -237,7 +240,7 @@ categories have COCO annotation-absent failure of 63.39/64.95\%.
 at $\epsilon=.02$. Counts in $C_0,C_1,C_2,r$ are mutually exclusive;
 $C_2+r$ is the feasible-oracle count.}
 \label{tab:oracle}
-\small\renewcommand{\arraystretch}{1.22}\setlength{\tabcolsep}{1.4pt}
+\small\renewcommand{\arraystretch}{1.15}\setlength{\tabcolsep}{1.4pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrrr@{}}
 \toprule
 Setting & $|B|$ & $C_0$ & $C_1$ & $C_2$ & $r$\\
@@ -245,16 +248,18 @@ Setting & $|B|$ & $C_0$ & $C_1$ & $C_2$ & $r$\\
 \tabinput{tables/oracle_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{8pt}
+\end{minipage}\par\vspace{6pt}
 
 \paragraph{Candidate and budget bottlenecks differ by dataset.}
-No candidate passes for 92.16--93.75\% of COCO screened failures $B$,
+Table~\ref{tab:oracle} shows that no candidate passes ($C_0$) for
+92.16--93.75\% of COCO screened failures $B$,
 versus 68.85--72.60\% on VOC (Table~\ref{tab:oracle}). Unrestricted
 sign-repair capacity is thus 6.25--7.84\% of COCO $B$ and
 27.40--31.15\% of VOC $B$ (Figure~\ref{fig:ident}). The $.02$ budget
 excludes 96.43--98.09\% of these opportunities, leaving feasible capacity
 of just 0.16--0.98\% of $B$. WF misses at most one feasible opportunity
-per setting ($C_2$ in Table~\ref{tab:oracle}).
+per setting ($C_2$ in Table~\ref{tab:oracle}). The circle-to-diamond gaps in
+Figure~\ref{fig:ident} visualize the budget-excluded opportunities ($C_1$).
 
 
 
@@ -268,14 +273,14 @@ Unrestricted: at least one of all eight candidates has $P\ge0$; feasible:
 at least one also meets $\epsilon=.02$. Percentages use each setting's own
 $|B|$ (Table~\ref{tab:oracle}) and are computed by exact enumeration.}
 \label{fig:ident}
-\end{minipage}\par\vspace{8pt}
+\end{minipage}\par\vspace{6pt}
 
 \par\addvspace{6pt}
 \noindent\begin{minipage}{\columnwidth}
 \centering
 \captionof{table}{Budget endpoints (C: COCO; V: VOC). Multi: percentage of all eligible images with multiple feasible candidates. $O_B,r_B$: oracle/actual sign-repair percentages of screened failures $B$. $\Delta d_t,\Delta b$: all-image raw-target and bbox changes (bbox in percentage points).}
 \label{tab:frontier}
-\small\renewcommand{\arraystretch}{1.22}\setlength{\tabcolsep}{1pt}
+\small\renewcommand{\arraystretch}{1.15}\setlength{\tabcolsep}{1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrrrr@{}}
 \toprule
 Set & $\epsilon$ & Multi & $O_B$ & $r_B$ & $\Delta d_t$ & $\Delta b$\\
@@ -283,10 +288,13 @@ Set & $\epsilon$ & Multi & $O_B$ & $r_B$ & $\Delta d_t$ & $\Delta b$\\
 \tabinput{tables/all_budget_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{8pt}
+\end{minipage}\par\vspace{6pt}
 
 \paragraph{Budget relaxation helps in every setting.}
-At $.02$, 95.21--95.60\% of images have only one feasible candidate
+Table~\ref{tab:frontier} reports oracle capacity $O_B=100N_O/|B|$ and
+achieved repair $r_B=100r/|B|$. The changes $\Delta d_t$ and $\Delta b$
+are WF minus CCI averages over all eligible images, with bbox change
+expressed in percentage points. At $.02$, 95.21--95.60\% of images have only one feasible candidate
 (Table~\ref{tab:frontier}); WF has little room to change the region.
 At $.20$, oracle sign-repair capacity rises to 1.57--2.05\% of COCO
 $B$ and 6.65--7.14\% of VOC $B$.
@@ -294,21 +302,15 @@ Raw-target changes become negative in all four settings, but bbox changes
 are negative on COCO and positive on VOC. Budget relaxation therefore has dataset-dependent locality effects.
 Each comparison uses the same checkpoint and fixed baseline population.
 
-\paragraph{Population-wide and sign-repair effects.}
-Table~\ref{tab:frontier} includes unchanged regions. In contrast,
-Table~\ref{tab:costs} conditions on actual sign repairs within fixed baseline $B$.
-The two tables describe population-wide changes and changes among
-successful sign repairs, respectively.
-
 \clearpage
 \par\addvspace{6pt}
 \noindent\begin{minipage}{\columnwidth}
 \centering
 \captionof{table}{Normalization sensitivity on fixed earlier-run $A_{\rm old}$
 and earlier-run CCI regions. Raw/Norm: failure rates (\%); Flip: percentage
-whose failure status differs. This audit uses the earlier-run population.}
+whose failure status differs. $A_{\rm old}$ denotes earlier-run screen-passers.}
 \label{tab:normalization}
-\small\renewcommand{\arraystretch}{1.90}\setlength{\tabcolsep}{1pt}
+\small\renewcommand{\arraystretch}{1.18}\setlength{\tabcolsep}{1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
 \toprule
 Setting & $|A_{\rm old}|$ & Raw & Norm & Flip\\
@@ -316,16 +318,18 @@ Setting & $|A_{\rm old}|$ & Raw & Norm & Flip\\
 \tabinput{tables/normalization_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{12pt}
+\end{minipage}\par\vspace{6pt}
 
 \paragraph{Normalization has a small effect on the fixed audit.}
 With earlier-run regions and $A_{\rm old}$ held fixed, raw and normalized
 failure rates differ by at most 0.083 percentage points; sign flips affect
 at most 0.107\% of this population (Table~\ref{tab:normalization}).
-The hardest foil agrees on 99.42--99.84\% of images. These paired
-comparisons preserve the high failure rate under both score definitions.
+The hardest foil agrees on 99.42--99.84\% of images. For example,
+COCO B/16 changes from 64.318\% to 64.369\%, while VOC B/32 stays
+at 41.157\%. Table~\ref{tab:normalization} therefore shows that normalization
+changes individual outcomes rarely and preserves the aggregate pattern.
 
-\par\addvspace{18pt}
+\par\addvspace{6pt}
 \noindent\begin{minipage}{\columnwidth}
 \centering
 \captionof{table}{Actual sign repairs \emph{within fixed baseline $B$}, $\epsilon=.02$.
@@ -333,7 +337,7 @@ $r$ counts repairs; $j$ counts those also satisfying $J$.
 WF$-$CCI means with repair-subset 95\% CIs. $\Delta d_t$ is raw
 held-out target-score change; only bbox change is in percentage points.}
 \label{tab:costs}
-\small\renewcommand{\arraystretch}{1.90}\setlength{\tabcolsep}{1.1pt}
+\small\renewcommand{\arraystretch}{1.25}\setlength{\tabcolsep}{1.1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
 \toprule
 Setting & $r$ & $j$ & $\Delta d_t$ & $100\Delta$bbox\\
@@ -341,12 +345,21 @@ Setting & $r$ & $j$ & $\Delta d_t$ & $100\Delta$bbox\\
 \tabinput{tables/endpoint_cost_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{12pt}
+\end{minipage}\par\vspace{6pt}
+
+\paragraph{Which images are averaged?}
+Table~\ref{tab:frontier} averages over all eligible images, including
+unchanged regions. Table~\ref{tab:costs} averages only over WF sign
+repairs within fixed baseline $B$.
 
 \paragraph{Target and locality changes after sign repair.}
-In every setting, some sign repairs fail to retain the locality/mean-foil
+Table~\ref{tab:costs} shows negative mean bbox changes in all four
+repair subsets: $-14.04$ to $-28.17$ percentage points. Target-score
+changes are positive on COCO and negative on VOC. Thus crossing the
+worst-foil threshold does not impose a common direction on target response
+or spatial overlap. In every setting, some sign repairs fail to retain the locality/mean-foil
 screen and positive target contribution ($j<r$ in Table~\ref{tab:costs}). The joint
-feasible-oracle counts are 12/26/3/2. VOC estimates are based on small sign-repair subsets.
+feasible-oracle counts are 12/26/3/2.
 Outside the screened population, sign transitions can also regress:
 COCO B/32 has four opposite-sign regressions among all baseline passes.
 Counts over all failures or all switched regions have different
@@ -358,10 +371,11 @@ denominators from the screened sign repairs reported here.
 \noindent\begin{minipage}{\columnwidth}
 \centering
 \captionof{table}{Nonzero-threshold sensitivity on fixed baseline $A$.
-Entries are percentages of screen-passers $A$ with $P<-\delta$ using the normalized aggregate margin.
+Entries are percentages of screen-passers $A$ with $P<-\delta$,
+where $\delta\ge0$ is the required failure magnitude in the normalized margin.
 Thresholds are evaluated post hoc in logit units.}
 \label{tab:threshold}
-\small\renewcommand{\arraystretch}{1.22}
+\small\renewcommand{\arraystretch}{1.15}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
 \toprule
 Setting & $\delta=0$ & $.01$ & $.10$ & $.50$\\
@@ -369,7 +383,7 @@ Setting & $\delta=0$ & $.01$ & $.10$ & $.50$\\
 \tabinput{tables/threshold_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{8pt}
+\end{minipage}\par\vspace{6pt}
 
 \paragraph{Failure persists at larger margin thresholds.}
 At $\delta=.10$, 59.49--60.22\% of COCO and 34.39--36.23\% of VOC
@@ -377,31 +391,31 @@ screen-passers $A$ still fail (Table~\ref{tab:threshold}). Rates fall further at
 $.50$, so the magnitude and threshold matter. The threshold sweep characterizes the magnitude of failure within
 the normalized aggregate score.
 
-\section{Interpretation and Limitations}
-\paragraph{Interpretation.}
-The audit identifies a persistent gap between locality/mean-foil screening
-and worst-foil specificity. Matched-cardinality controls separate annotation
-exclusion from foil-count reduction. Candidate enumeration attributes
-limited sign-repair capacity to candidate availability and the target-drop
-budget, with few additional opportunities missed by WF.
+\paragraph{What the comparisons establish.}
+Table~\ref{tab:screens} isolates the effect of removing annotated-present
+classes from the automatic benefit of reducing the foil count.
+Table~\ref{tab:oracle} and Figure~\ref{fig:ident} then separate candidate
+availability from budget feasibility: a better reranking rule alone can
+recover only the additional opportunities in $C_2$ at the fixed budget.
+Table~\ref{tab:frontier} shows how enlarging that feasible set changes the
+attainable repair rate. Together, these comparisons locate the main
+constraints on sign repair in the candidate set and target-drop tolerance.
 
-\paragraph{Scope.}
-The results concern CCI-top1, eight candidates, and the specified attention
-intervention. COCO/VOC differences combine foil count, target selection,
-and annotation conditions. Other candidate constructions and area-matched
-controls require further experiments. Bbox precision measures patch-center
-overlap. Semantic interpretation of hard foils requires annotation review
-and human validation. Small VOC sign-repair subsets limit precision of
-conditional endpoint estimates.
+\paragraph{Records and uncertainty.}
+The primary tables use one traceable release of candidate masks, selection
+responses, three-template held-out responses, and bbox records generated
+together. Checks verify patch partitions, bbox recomputation, response
+aggregation, candidate choices, and the failure decomposition.
+\href{https://github.com/jovial-liu/conway/tree/7ee2b6080aa6752790e17c910c5c8a3111235d4d/experiments/priority123_20260915}{The frozen release} includes candidate summaries, validation reports,
+configuration, and hashes; masks and full responses are retained locally.
+Table~\ref{tab:normalization} retains earlier-run regions and population;
+three images changed selected regions between runs.
 
-\paragraph{Traceable evidence.}
-\href{https://github.com/jovial-liu/conway/tree/7ee2b6080aa6752790e17c910c5c8a3111235d4d/experiments/priority123_20260915}{The frozen release} provides candidate summaries, validation reports,
-configuration, and hashes. Same-generation masks and full responses are
-retained locally. Three images changed selected regions from the earlier
-run. Primary results use the new records; Table~\ref{tab:normalization}
-fixes the earlier-run regions and population. Prompt holdout covers templates
-within the same images and models; cross-checkpoint budget calibration
-requires further evaluation.
+Confidence intervals (CIs) use 10,000 image bootstraps and percentile
+2.5/97.5 limits, pointwise without multiplicity correction. Paired effects
+are differenced within image before resampling. Foil comparisons resample
+within fixed $A$ or $A^+$; repair-cost intervals condition on actual
+repairs. Exact $q_i$ is primary; 100 seeded draws check it.
 
 \section{Conclusion}
 Locality and positive mean-foil contrast leave substantial worst-foil failure

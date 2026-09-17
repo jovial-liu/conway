@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "efaa32c728ae3b60cba0349bd1c615d065470a33c6243599059c8d8f99fe0b33",
+  "pdf_sha256": "f2e2ad3913faede44034dfdb4612489e30998edb842e793fefc7d32a0fea97d2",
   "pages_reviewed": [
     1,
     2,
@@ -8,5 +8,5 @@
     5
   ],
   "accepted_layout": true,
-  "findings": "Pages 1\u20134 visually reviewed after five requested wording and reference corrections. No clipping or overlap; five pages retained. Table 1 reference corrected; unused Mean and Max-.1 definitions removed; fixed baseline and earlier-run populations distinguished."
+  "findings": "All five pages visually reviewed. Author affiliation corrected; symbol explanations and Figure 1 walkthrough added; Results and Analysis discusses all figures and tables. Limitations discussion and IDEA citation removed. Compact table spacing, no clipping or overlap, original figures and all six numerical tables preserved. 13 bibliography entries match in-text citations."
 }

@@ -1,3 +1,5 @@
+当前修订：2026-09-17。PDF 为 submission/liu_readability_20260917.pdf；Zhenghao Wang 单位为南京理工大学泰州科技学院；已完成可读性、图表分析和 IDEA 删除修订。
+
 # Round-8: traceable experiment integration
 
 Current manuscript: `submission/liu_round8_traceable.pdf` (same bytes as `submission/liu.pdf`). Five pages: four technical pages plus references/ethics. Six author ORCIDs retained; no acknowledgments; original Figure 1 preserved.
