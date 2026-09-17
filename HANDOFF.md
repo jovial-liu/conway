@@ -1,3 +1,5 @@
+最新论文入口：paper/review_round8_20260915/submission/liu_prose_revised_20260917.pdf。2026-09-17 已重写摘要、引言、方法说明、结果分析与结论以改善可读性；当前源码仍为 paper/review_round8_20260915/source/。作者、图件和表格数据不变。
+
 # 当前状态更新：2026-09-17
 
 当前源码目录仍为 paper/review_round8_20260915/，最新 PDF 是 submission/liu_readability_20260917.pdf。Zhenghao Wang 与 Qihang Wu 同属南京理工大学泰州科技学院（单位 1）；下方旧记录中的独立南京理工大学单位已失效。正文已补定义、增加图表分析、改为 Results and Analysis、删除 limitations 段及 IDEA 正文与引用。详见 CHANGES_zh.md 最新条目。
