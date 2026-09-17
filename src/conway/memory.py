@@ -3,9 +3,11 @@ from __future__ import annotations
 from collections import deque
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
-import json
-from pathlib import Path
 from importlib import resources
+import json
+import os
+from pathlib import Path
+from typing import Any
 
 from platformdirs import user_data_dir
 
@@ -14,9 +16,13 @@ from platformdirs import user_data_dir
 class RuntimeState:
     cycle: int = 0
     status: str = "idle"
+    pid: int | None = None
+    brain: str | None = None
+    dry_run: bool = True
     last_action: str | None = None
     last_result: str | None = None
     last_rationale: str | None = None
+    last_observation: dict[str, Any] | None = None
     profile: str | None = None
     model: str | None = None
     error_count: int = 0
@@ -27,7 +33,8 @@ class RuntimeState:
 
 class FileMemory:
     def __init__(self, root: Path | None = None) -> None:
-        self.root = root or Path(user_data_dir("conway", appauthor=False))
+        env_root = os.environ.get("CONWAY_HOME")
+        self.root = root or (Path(env_root).expanduser() if env_root else Path(user_data_dir("conway", appauthor=False)))
         self.journal_dir = self.root / "journal"
         self.root.mkdir(parents=True, exist_ok=True)
         self.journal_dir.mkdir(parents=True, exist_ok=True)
@@ -85,8 +92,8 @@ class FileMemory:
         if clean in tail:
             return
         timestamp = datetime.now(timezone.utc).isoformat()
-        with self.memory_path.open("a", encoding="utf-8") as f:
-            f.write(f"\n- [{timestamp}] {clean}\n")
+        with self.memory_path.open("a", encoding="utf-8") as file:
+            file.write(f"\n- [{timestamp}] {clean}\n")
 
     def memory_bytes(self) -> int:
         try:
@@ -134,9 +141,9 @@ class FileMemory:
         state.updated_at = datetime.now(timezone.utc).isoformat()
         self.state_path.write_text(json.dumps(asdict(state), ensure_ascii=False, indent=2), encoding="utf-8")
 
-    def journal(self, event: dict) -> None:
+    def journal(self, event: dict[str, Any]) -> None:
         now = datetime.now(timezone.utc)
         path = self.journal_dir / f"{now.date().isoformat()}.jsonl"
         payload = {"time": now.isoformat(), **event}
-        with path.open("a", encoding="utf-8") as f:
-            f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+        with path.open("a", encoding="utf-8") as file:
+            file.write(json.dumps(payload, ensure_ascii=False) + "\n")
