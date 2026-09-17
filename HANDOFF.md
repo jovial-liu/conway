@@ -1,3 +1,5 @@
+最新论文：paper/review_round8_20260915/submission/liu_review_fixes_20260917.pdf。2026-09-17 已处理剩余文字、符号、单位与定义分页问题；相关工作改为方法导向表述。当前 source/ 和 arxiv_source/ 同步，五页。未新增实验或替代待作者确认事项。
+
 最新论文：paper/review_round8_20260915/submission/liu_formulas_explained_20260917.pdf。2026-09-17 已逐式补齐前置解释，八个编号公式、表格数据与图件不变；当前 source/ 与 arxiv_source/ 已同步。
 
 最新论文入口：paper/review_round8_20260915/submission/liu_prose_revised_20260917.pdf。2026-09-17 已重写摘要、引言、方法说明、结果分析与结论以改善可读性；当前源码仍为 paper/review_round8_20260915/source/。作者、图件和表格数据不变。

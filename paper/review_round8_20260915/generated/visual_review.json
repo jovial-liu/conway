@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "31996a54c3af8f144fe8dccfc7a5c24a6662c3fe5f24b75c0a7e561a9bcb23dc",
+  "pdf_sha256": "568affb8b9cd68ae3dbd43fc615e2e201dc3531dfc72f74fdb9c25df479422b8",
   "pages_reviewed": [
     1,
     2,
@@ -8,5 +8,5 @@
     5
   ],
   "accepted_layout": true,
-  "findings": "Pages 1\u20134 visually reviewed; references unchanged. Each of eight numbered equations has a preceding explanation of purpose and notation. Numbered equation bodies identical to prior revision. Normalization, image-index, set-count and repair-rate notation introduced before formulas; F condition kept unbroken. Five pages, no overflow. Data tables, figures and authors unchanged."
+  "findings": "Pages 1\u20134 visually reviewed; references unchanged. A/F/B/A+ definitions kept together on page 1. Equation 5 explicitly restricts R to candidate set. Table 1 column and caption report 100 Delta_A in percentage points. Table 5 prose distinguishes mean changes from intervals and states small VOC repair counts. Related-work prose uses method comparison instead of author-name lead. All numeric table rows, figure PDFs and authors unchanged; five pages and no overflow."
 }

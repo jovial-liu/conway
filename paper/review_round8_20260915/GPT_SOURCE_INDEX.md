@@ -1,3 +1,5 @@
+最新审阅修正版：submission/liu_review_fixes_20260917.pdf。已合并人群定义、明确候选域和百分点单位、补充置信区间解释并改写相关工作措辞。
+
 最新公式说明版：submission/liu_formulas_explained_20260917.pdf。每个编号公式前先说明含义与符号，计算定义不变。
 
 最新叙述重写版（2026-09-17）：submission/liu_prose_revised_20260917.pdf。摘要至结论已重写，作者、图件及表格数值不变。

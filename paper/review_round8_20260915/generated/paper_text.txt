@@ -11,53 +11,54 @@ BEYOND MEAN FOILS: AUDITING WORST-FOIL SPECIFICITY IN FROZEN CLIP REGION
                                ∗
                                  Equal contribution. † Corresponding author: Zhipeng Ye.
 
-                          ABSTRACT                                         For image x, let t be its target class and c any class. R(x)
-                                                                       contains K = 8 candidate patch regions R. sm (x, c) is check-
+                         ABSTRACT                                       For image x, let t be its target and c any class. The candi-
+                                                                    date set R(x) contains K = 8 patch regions R. Checkpoint m
 A region can overlap a target object yet contribute more to an-
-                                                                       point m’s pre-softmax image–text score, including its learned
+                                                                    gives pre-softmax score sm (x, c), including its learned logit
 other class. We test regions selected by Cluster-based Concept
-Importance (CCI) in frozen CLIP. Across COCO and VOC                   logit scale. Masking attention to R gives I(x, R). The drop
-with two checkpoints, 41.08–64.78% of regions that pass over-          dR (c) measures the region’s contribution to class c: origi-
-lap and mean-contrast checks fail against the strongest compet-        nal score minus intervened score. Positive values mean that
-ing class. Removing competitors annotated in the image leaves          masking lowers the score:
-39.69–63.64% failing. We then test all eight candidate regions
-per image. An alternative passes the test for 6.25–7.84% of                        dR (c) = sm (x, c) − sm (I(x, R), c).            (1)
-failures on COCO and 27.40–31.15% on VOC. Requiring it to              Superscript sel denotes “a photo of a {category}”. CCI-top1
-preserve the original target-score drop within ϵ = .02 reduces         chooses RCCI , the region with the largest target drop; arg max
-these rates to 0.16–0.98%. Available regions and target-drop           returns the maximizing region:
-tolerance constrain repair; relaxing the tolerance increases
-repair opportunities.                                                                   RCCI = arg max dsel
-                                                                                                        R (t).                      (2)
-                                                                                                      R∈R(x)
-Index Terms— CLIP, explanation auditing, class specificity,            Evaluating class specificity. We evaluate the selected region
-constrained region selection                                           with “a picture of the {category}”, “an image containing a
-                     1 INTRODUCTION                                    {category}”, and “the {category}”. Index the H = 3 prompts
-    Cluster-based Concept Importance (CCI) [2] explains                by h. Their unit-norm text embeddings are eh (c) and their
-CLIP [1] by grouping patches into regions and measuring                       P dR,h (c). The mean embedding has length nc =
-                                                                       drops are
-how masking them changes image–text scores. We examine                 ∥H −1 h eh (c)∥2 , where ∥ · ∥2 is Euclidean length. Dividing
-CCI-top1, the region whose removal most reduces the target             the mean drop by this length gives Pthe drop for a normalized
-score.                                                                 mean embedding: d¯c (R) = H −1 h dR,h (c)/nc .
-    A region may contribute more to another class than to the              A foil is a non-target class, and Ft is the set of all such
-target, even when its target drop exceeds the average compet-          classes. The margin P (R, t) subtracts the largest foil drop
-ing drop. We test the strongest competitor, or worst foil, and         from the target drop, with f indexing foils. A negative value
-ask whether another region can pass this test while preserving         means a foil loses more score than the target. With R implicit
-the target drop.                                                       in the drops,
-    Wang and Wang’s max contrast [3] uses the highest
-original-image non-target logit; our worst foil has the largest                           P (R, t) = d¯t − max d¯f .                (3)
-                                                                                                           f ∈Ft
-drop after masking a region. Related work covers corpus
-foils [4], class-sensitive saliency [5], CLIP attribution [6, 7, 8],   We call P < 0 a failure and a transition to P ≥ 0 a
-class contrast [9], and caption foils [10]. We control for             sign repair.    Target-response tables use the raw mean drop
-                                                                       H −1 h dR,h (t).
-                                                                              P
-competing objects and foil count, then examine all regions to
-locate constraints on repair.                                              Baseline set A contains images passing two checks: bbox
-                                                                       precision (the fraction of patch centers inside target boxes)
-        2 AUDIT AND REPAIR OPPORTUNITY                                 is at least .5, and the target drop exceeds the mean foil drop:
-     Figure 1 shows candidate construction (a), one-prompt             A = {bbox ≥ .5, d¯t > meanf ∈Ft d¯f }.
-selection (b), and three-prompt evaluation of the fixed region             For image i with target ti , write Pi (R) = P (R, ti ). Omit-
-(c).                                                                   ting R denotes CCI-top1. Failures form F = {i : Pi < 0}.
+Importance (CCI) in frozen CLIP. Across COCO and VOC                scale. Masking attention to R gives I(x, R). The response
+with two checkpoints, 41.08–64.78% of regions that pass over-       dR (c) is the original score minus the masked score; positive
+lap and mean-contrast checks fail against the strongest compet-     values mean a reduction:
+ing class. Removing competitors annotated in the image leaves
+39.69–63.64% failing. We then test all eight candidate regions                  dR (c) = sm (x, c) − sm (I(x, R), c).           (1)
+per image. An alternative passes the test for 6.25–7.84% of         Superscript sel denotes “a photo of a {category}”. CCI-top1
+failures on COCO and 27.40–31.15% on VOC. Requiring it to           chooses RCCI , the region with the largest target drop; arg max
+preserve the original target-score drop within ϵ = .02 reduces      returns the maximizing region:
+these rates to 0.16–0.98%. Available regions and target-drop
+tolerance constrain repair; relaxing the tolerance increases                         RCCI = arg max dsel
+                                                                                                     R (t).                     (2)
+                                                                                                  R∈R(x)
+repair opportunities.
+                                                                    Evaluating class specificity. We evaluate the selected region
+Index Terms— CLIP, explanation auditing, class specificity,         with “a picture of the {category}”, “an image containing a
+constrained region selection                                        {category}”, and “the {category}”. Index the H = 3 prompts
+                    1 INTRODUCTION                                  by h. Their unit-norm text embeddings are eh (c) and their
+    Cluster-based Concept Importance (CCI) [2] explains                    P dR,h (c). The mean embedding has length nc =
+                                                                    drops are
+CLIP [1] by grouping patches into regions and measuring             ∥H −1 h eh (c)∥2 , where ∥ · ∥2 is Euclidean length. Dividing
+how masking them changes image–text scores. We examine              the mean drop by this length gives Pthe drop for a normalized
+CCI-top1, the region whose removal most reduces the target          mean embedding: d¯c (R) = H −1 h dR,h (c)/nc .
+score.                                                                  A foil is a non-target class, and Ft is the set of all such
+    A region may contribute more to another class than to the       classes. With f indexing foils and R implicit in the drops,
+target, even when its target drop exceeds the average compet-       margin P (R, t) subtracts the largest foil drop from the target
+ing drop. We test the strongest competitor, or worst foil, and      drop. Negative values mean that a foil loses more score:
+ask whether another region can pass this test while preserving
+the target drop.                                                                      P (R, t) = d¯t − max d¯f .                (3)
+                                                                                                       f ∈Ft
+    Class-contrastive explanations [3] can choose a competi-
+tor by its score in the original image. Our audit instead           We call P < 0 a failure and a transition to P ≥ 0 a
+chooses the class whose score drops most when a region is           sign repair.   Target-response tables use the raw mean drop
+                                                                    H −1 h dR,h (t).
+                                                                         P
+masked. Related work covers corpus foils [4], class-sensitive
+saliency [5], CLIP attribution [6, 7, 8], class contrast [9], and   For baseline CCI-top1, A contains images passing both checks:
+caption foils [10]. We control for competing objects and foil       bbox precision (the fraction of patch centers inside target
+count, then examine all regions to locate constraints on repair.    boxes) is at least .5, and the target drop exceeds the mean foil
+                                                                    drop. For image i with target ti , write Pi (R) = P (R, ti ); Pi
+        2 AUDIT AND REPAIR OPPORTUNITY                              denotes its baseline margin. Failures form F = {i : Pi < 0},
+     Figure 1 shows candidate construction (a), one-prompt          so the screened failures are B = A ∩ F . These image sets
+selection (b), and three-prompt evaluation of the fixed region      stay fixed. The subset with positive target contribution is
+(c).                                                                A+ = A ∩ {d¯t > 0}.
 Patch-key masking
 Class token retained
 
@@ -65,42 +66,44 @@ Figure 1: Selection and held-out audit. A region is fixed using selection-stage 
 response, and locality. Schematic responses illustrate the selection rule.
 
 
-The failures within the baseline set form B = A ∩ F . Both                Controlling for competing objects. A foil may name an-
-sets stay fixed. Requiring positive target contribution gives             other object in the image. To measure its contribution, remove
-A+ = A ∩ {d¯t > 0}.                                                       all annotated-present classes from image i’s foil set, leaving
-Selecting an alternative region. Worst-foil (WF) reranking                Fiabs . The protocol holds RCCI and full-foil screen A fixed;
-allows a target-drop loss of at most ϵ ≥ 0 relative to CCI-top1           Fiabs tests d¯t − maxf ∈Fiabs d¯f < 0. Removing any foils can
-(Figure 1(b)). Its selection margin M sel subtracts the largest           reduce failure, so we compare this exclusion with randomly re-
-foil drop from the target drop under the selection prompt:                taining the same number of foils. For Ni full foils, ki = |Fiabs |,
-                                                                          and mi foils with d¯f > d¯t , let qibe the failure probability of a
+Selecting an alternative region. Worst-foil (WF) reranking                all annotated-present classes from image i’s foil set, leaving
+allows a target-drop loss of at most ϵ ≥ 0 relative to CCI-top1           Fiabs . The protocol holds RCCI and full-foil screen A fixed;
+(Figure 1(b)). Its selection margin M sel subtracts the largest           Fiabs tests d¯t − maxf ∈Fiabs d¯f < 0. Removing any foils can
+foil drop from the target drop under the selection prompt:                reduce failure, so we compare this exclusion with randomly re-
+                                                                          taining the same number of foils. For Ni full foils, ki = |Fiabs |,
              M sel (R, t) = dsel          sel
-                             R (t) − max dR (f ),                 (4)     uniform size-ki subset. With nk counting size-k subsets, one
-                                         f ∈Ft
-                                                                          minus the fraction containing no stronger foil gives
-The feasible set Rϵ retains candidates whose target drop is at
+                             R (t) − max dR (f ),                 (4)
+                                         f ∈Ft                            and mi foils with d¯f > d¯t , let qibe the failure probability of a
+The feasible set Rϵ contains candidates within the allowed                uniform size-ki subset. With nk counting size-k subsets, one
+target-drop loss:                                                         minus the fraction containing no stronger foil gives
                                                                                                               Ni −mi
                                                                                                                      
-least CCI-top1’s drop minus the tolerance:                                                                       ki
-                                                                                                  qi = 1 −       Ni
-                                                                                                                       .                    (8)
-              Rϵ = {R : dsel      sel
-                         R (t) ≥ dRCCI (t) − ϵ},                  (5)                                            ki
+         Rϵ = {R ∈ R(x) : dsel      sel
+                           R (t) ≥ dRCCI (t) − ϵ},                (5)                             qi = 1 −       ki
+                                                                                                                        .                    (8)
+                                                                                                                 Ni
+                                                                                                                    
+WF chooses RWF to maximize that margin within the feasible                                                       ki
 
-WF chooses RWF to maximize that margin within the feasible                The numerator is zero when ki > Ni −mi . To isolate the effect
-set:                                                                      of annotation-based removal, ∆A averages its failure indicator
-                 RWF = arg max M sel (R, t).                      (6)     minus the random-subsetP probability over the |A| baseline
-                                R∈Rϵ                                      images: ∆A = |A|−1 i∈A (1{Fiabs } − qi ). Negative ∆A
-We use ϵ = .02 logit units and sweep .01/.02/.05/.10/.20.                 favors annotation-based over random removal. Retained foil
-Locating the constraints on repair. An oracle counts im-                  sets are nonempty.
-ages in B having at least one feasible region with a nonnegative                 3 PROTOCOL AND REPRODUCIBILITY
-held-out margin. Denote this count by NO (B, ϵ) and image                     We evaluate 27,708 COCO val2014 [11] and 1,943
-i’s feasible set by Rϵ (i). The indicator 1{·} is one when its            VOC2007 test [12] images with CLIP B/16 and B/32 (16- and
-condition holds and zero otherwise:                                       32-pixel patches): 59,302 image–model records. The target is
-                        X                          
-                                                                          the largest instance by annotation area (COCO) or box area
-          NO (B, ϵ) =       1 max Pi (R) ≥ 0 .               (7)
-                                  R∈Rϵ (i)                                (VOC). Images require another category and 2–80% target
+set:                                                                      The numerator is zero when ki > Ni − mi . To isolate the
+                 RWF = arg max M sel (R, t).                      (6)     effect of annotation-based removal, ∆A averages its failure
+                                R∈Rϵ
+                                                                                                        P probability over the |A|
+                                                                          indicator minus the random-subset
+We use ϵ = .02 logit units and sweep .01/.02/.05/.10/.20.                 baseline images: ∆A = |A|−1 i∈A (1{Fiabs } − qi ). Nega-
+Locating the constraints on repair. An oracle tests whether               tive ∆A favors annotation-based removal. Retained foil sets
+any allowed alternative can repair a failure. It counts images in         are nonempty.
+B with a feasible region with a nonnegative held-out margin.                     3 PROTOCOL AND REPRODUCIBILITY
+Denote this count by NO (B, ϵ) and image i’s feasible set by
+                                                                              We evaluate 27,708 COCO val2014 [11] and 1,943
+Rϵ (i). The indicator 1{·} is one when its condition holds and
+                                                                          VOC2007 test [12] images with CLIP B/16 and B/32 (16- and
+zero otherwise:
+                                                                          32-pixel patches): 59,302 image–model records. The target is
+                       X                           
+         NO (B, ϵ) =       1 max Pi (R) ≥ 0 .                 (7)         the largest instance by annotation area (COCO) or box area
                          i∈B
+                                  R∈Rϵ (i)                                (VOC). Images require another category and 2–80% target
                                                                           area; COCO crowd annotations are excluded. Full foils are the
 The unrestricted oracle removes the budget constraint and                 other 79/19 classes.
 searches all K candidates. Each image in B falls into one of                  K-means uses normalized projected patch features, K = 8,
@@ -113,12 +116,14 @@ joint condition J additionally requires overlap and mean-foil             and ce
 checks and d¯t > 0; j counts WF repairs satisfying it within
 fixed B. WF selects using its selection prompt; only the oracle
 uses held-out scores.
+Controlling for competing objects. A foil may name an-
+other object in the image. To measure its contribution, remove
                4    RESULTS AND ANALYSIS                                        Unrestricted (8 candidates)
 Table 1: Fixed baseline A: full-foil, annotation-absent, and exact              Feasible (ε = 0.02)
-cardinality-matched random failure rates (%). ∆A is absent minus
+cardinality-matched random failure rates (%). 100∆A is absent minus
 random in percentage points, with paired 95% CI.                                                6.25
                                                                         COCO B/16
-Setting             Full     Absent      Random                  ∆A                          0.16
+Setting             Full     Absent      Random               100∆A                          0.16
                                                                                                      7.84
                                                                 -0.92   COCO B/32
 COCO B/16          64.37      63.17         64.09                                            0.27
@@ -221,23 +226,23 @@ VOC B/32           2             1
                                      [-0.115,-0.042]      [-78.57,22.22]       We obtain confidence intervals from 10,000 image-level
                                                                            bootstrap samples, using the 2.5th and 97.5th percentiles with-
 Repairing specificity can reduce spatial overlap. Table 5                  out multiplicity correction. Paired effects are differenced
-examines only the failures that WF repairs, whereas Table 3                within each image. Foil comparisons use fixed A or A+ ;
-averages over all eligible images. Among these repairs, mean               repair-cost intervals use only actual repairs. We use exact qi
-bbox precision falls by 14.04–28.17 percentage points. Mean                values, checked against 100 seeded random draws.
-target-score changes are positive on COCO and negative on
+considers only repaired failures; Table 3 uses all eligible im-            within each image. Foil comparisons use fixed A or A+ ;
+ages. Mean bbox precision falls by 14.04–28.17 percentage                  repair-cost intervals use only actual repairs. We use exact qi
+points among repairs. Its interval is below zero in three set-             values, checked against 100 seeded random draws.
+tings, but spans zero for VOC B/32. Mean target-score changes
                                                                                                 5 CONCLUSION
-VOC. Passing the worst-foil test therefore does not guarantee
-that the new region retains the original region’s overlap or                   A region can overlap the target and beat the average com-
-target response.                                                           peting class while contributing more to a single competitor.
-    The counts r and j make this distinction explicit. On                  This occurs frequently for CCI-top1, even after annotated com-
-COCO B/32, WF repairs 30 failures, but only 25 also satisfy                petitors are removed. Checking every candidate shows why
-the overlap, mean-foil, and positive-target checks in J. The               reranking repairs so few failures: many images have no pass-
-same inequality j < r holds in every setting. Even the feasible            ing alternative, and most remaining alternatives exceed the
-oracle finds only 12, 26, 3, and 2 repairs satisfying all checks           target-drop tolerance. Relaxing that tolerance makes more
-in table order. Changes can also go the other way: among                   repairs possible but also changes target response and overlap.
-all baseline passes on COCO B/32, four become worst-foil                   Worst-foil comparisons therefore add information that over-
-failures. These regressions are outside the fixed failure set B.           lap and mean contrast alone do not provide when evaluating
-                                                                           frozen CLIP region explanations.
+are positive on COCO and negative on VOC; their intervals
+span zero for both B/16 settings. Thus the direction of a mean                 A region can overlap the target and beat the average com-
+change is not always resolved by its interval. VOC estimates               peting class while contributing more to a single competitor.
+summarize just five and two repairs.                                       This occurs frequently for CCI-top1, even after annotated com-
+     A repaired margin also need not retain the other checks.              petitors are removed. Checking every candidate shows why
+On COCO B/32, 30 failures are repaired, but only 25 retain                 reranking repairs so few failures: many images have no pass-
+overlap, mean-foil contrast, and positive target contribution.             ing alternative, and most remaining alternatives exceed the
+This gap between repairs (r) and repairs passing all checks (j)            target-drop tolerance. Relaxing that tolerance makes more
+occurs in every setting. Even the oracle finds only 12, 26, 3,             repairs possible but also changes target response and overlap.
+and 2 feasible repairs passing all checks, in table order. Among           Worst-foil comparisons therefore add information that over-
+all baseline passes on COCO B/32, four instead become worst-               lap and mean contrast alone do not provide when evaluating
+foil failures; these regressions lie outside the fixed failure set.        frozen CLIP region explanations.
                     REFERENCES                                      [8] M. Dreyer, L. Hufe, J. Berend, T. Wiegand, S. La-
 [1] A. Radford, J. W. Kim, C. Hallacy, A. Ramesh, G. Goh,               puschkin, and W. Samek, “From what to how: Attribut-
     S. Agarwal, G. Sastry, A. Askell, P. Mishkin, J. Clark,             ing CLIP’s latent components reveals unexpected seman-

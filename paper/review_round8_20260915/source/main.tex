@@ -59,9 +59,9 @@ when its target drop exceeds the average competing drop. We test the
 strongest competitor, or worst foil, and ask whether another region can
 pass this test while preserving the target drop.
 
-Wang and Wang's max contrast~\cite{wang2022whynot} uses the highest
-original-image non-target logit; our worst foil has the largest drop
-after masking a region.
+Class-contrastive explanations~\cite{wang2022whynot} can choose a
+competitor by its score in the original image. Our audit instead chooses
+the class whose score drops most when a region is masked.
 Related work covers corpus foils~\cite{lin2023cocoa}, class-sensitive
 saliency~\cite{williamson2025case}, CLIP
 attribution~\cite{wang2023m2ib,li2023clipsurgery,dreyer2025cliplatent},
@@ -82,13 +82,12 @@ and locality. Schematic responses illustrate the selection rule.}
 Figure~\ref{fig:method} shows candidate construction (a), one-prompt
 selection (b), and three-prompt evaluation of the fixed region (c).
 
-For image $x$, let $t$ be its target class and $c$ any class.
-$\regions(x)$ contains $K=8$ candidate patch regions $R$.
-$s_m(x,c)$ is checkpoint $m$'s pre-softmax image--text score, including
-its learned logit scale. Masking attention
-to $R$ gives $\mathcal I(x,R)$. The drop $d_R(c)$ measures the region's
-contribution to class $c$: original score minus intervened score. Positive
-values mean that masking lowers the score:
+For image $x$, let $t$ be its target and $c$ any class. The candidate set
+$\regions(x)$ contains $K=8$ patch regions $R$. Checkpoint $m$ gives
+pre-softmax score $s_m(x,c)$, including its learned logit scale.
+Masking attention to $R$ gives $\mathcal I(x,R)$. The response $d_R(c)$
+is the original score minus the masked score; positive values mean
+a reduction:
 
 \begin{equation}
 d_R(c)=s_m(x,c)-s_m(\mathcal I(x,R),c).
@@ -112,9 +111,9 @@ Dividing the mean drop by this length gives the drop for a normalized
 mean embedding: $\bar d_c(R)=H^{-1}\sum_h d_{R,h}(c)/n_c$.
 
 A foil is a non-target class, and $\foils_t$ is the set of all such classes.
-The margin $P(R,t)$ subtracts the largest foil drop from the target drop,
-with $f$ indexing foils. A negative value means a foil loses more score
-than the target. With $R$ implicit in the drops,
+With $f$ indexing foils and $R$ implicit in the drops, margin $P(R,t)$
+subtracts the largest foil drop from the target drop. Negative values
+mean that a foil loses more score:
 
 \begin{equation}
 P(R,t)=\bar d_t-\max_{f\in\foils_t}\bar d_f.
@@ -123,17 +122,15 @@ P(R,t)=\bar d_t-\max_{f\in\foils_t}\bar d_f.
 We call $P<0$ a failure and a transition to $P\ge0$ a sign repair.
 Target-response tables use the raw mean drop $H^{-1}\sum_h d_{R,h}(t)$.
 
-Baseline set $A$ contains images passing two checks: bbox precision
-(the fraction of patch centers inside target boxes) is at least $.5$,
-and the target drop exceeds the mean foil drop:
-$A=\{\mathrm{bbox}\ge.5,\ \bar d_t>\mathrm{mean}_{f\in\foils_t}\bar d_f\}$.
-
-
-For image $i$ with target $t_i$, write $P_i(R)=P(R,t_i)$.
-Omitting $R$ denotes CCI-top1. Failures form \mbox{$F=\{i:P_i<0\}$}.
-The failures within the baseline set form $B=A\cap F$.
-Both sets stay fixed. Requiring positive target contribution gives
-$A^+=A\cap\{\bar d_t>0\}$.
+\noindent\begin{minipage}{\columnwidth}
+For baseline CCI-top1, $A$ contains images passing both checks: bbox
+precision (the fraction of patch centers inside target boxes) is at least
+$.5$, and the target drop exceeds the mean foil drop. For image $i$ with
+target $t_i$, write $P_i(R)=P(R,t_i)$; $P_i$ denotes its baseline margin.
+Failures form $F=\{i:P_i<0\}$, so the screened failures are $B=A\cap F$.
+These image sets stay fixed. The subset with positive target contribution
+is $A^+=A\cap\{\bar d_t>0\}$.
+\end{minipage}\par
 
 \paragraph{Selecting an alternative region.}
 Worst-foil (WF) reranking allows a target-drop loss of at most
@@ -143,10 +140,10 @@ from the target drop under the selection prompt:
 \begin{equation}
 M^{\rm sel}(R,t)=d_R^{\rm sel}(t)-\max_{f\in\foils_t}d_R^{\rm sel}(f),
 \end{equation}
-The feasible set $\regions_\epsilon$ retains candidates whose target
-drop is at least CCI-top1's drop minus the tolerance:
+The feasible set $\regions_\epsilon$ contains candidates within the
+allowed target-drop loss:
 \begin{equation}
-\regions_\epsilon=\{R:d_R^{\rm sel}(t)\ge d_{R_{\rm CCI}}^{\rm sel}(t)-\epsilon\},
+\regions_\epsilon=\{R\in\regions(x):d_R^{\rm sel}(t)\ge d_{R_{\rm CCI}}^{\rm sel}(t)-\epsilon\},
 \label{eq:feasible}
 \end{equation}
 WF chooses $R_{\rm WF}$ to maximize that margin within the feasible set:
@@ -157,7 +154,8 @@ R_{\rm WF}=\arg\max_{R\in\regions_\epsilon}M^{\rm sel}(R,t).
 We use $\epsilon=.02$ logit units and sweep $.01/.02/.05/.10/.20$.
 
 \paragraph{Locating the constraints on repair.}
-An oracle counts images in $B$ having at least one feasible region
+An oracle tests whether any allowed alternative can repair a failure.
+It counts images in $B$ with a feasible region
 with a nonnegative held-out margin. Denote this count by $N_O(B,\epsilon)$
 and image $i$'s feasible set by $\regions_\epsilon(i)$. The indicator
 $\mathbf1\{\cdot\}$ is one when its condition holds and zero otherwise:
@@ -196,8 +194,7 @@ The numerator is zero when $k_i>N_i-m_i$. To isolate the effect of
 annotation-based removal, $\Delta_A$ averages its failure indicator minus
 the random-subset probability over the $|A|$ baseline images:
 $\Delta_A=|A|^{-1}\sum_{i\in A}(\mathbf1\{F_i^{\rm abs}\}-q_i)$.
-Negative $\Delta_A$ favors annotation-based over random removal.
-Retained foil sets are nonempty.
+Negative $\Delta_A$ favors annotation-based removal. Retained foil sets are nonempty.
 
 \section{Protocol and Reproducibility}
 We evaluate 27,708 COCO val2014~\cite{lin2014coco} and 1,943 VOC2007
@@ -217,12 +214,12 @@ Boxes follow the 224-pixel short-side resize and center crop~\cite{gomez2022metr
 \section{Results and Analysis}
 \noindent\begin{minipage}{\columnwidth}
 \centering
-\captionof{table}{Fixed baseline $A$: full-foil, annotation-absent, and exact cardinality-matched random failure rates (\%). $\Delta_A$ is absent minus random in percentage points, with paired 95\% CI.}
+\captionof{table}{Fixed baseline $A$: full-foil, annotation-absent, and exact cardinality-matched random failure rates (\%). $100\Delta_A$ is absent minus random in percentage points, with paired 95\% CI.}
 \label{tab:screens}
 \small\renewcommand{\arraystretch}{1.15}\setlength{\tabcolsep}{1.1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
 \toprule
-Setting & Full & Absent & Random & $\Delta_A$\\
+Setting & Full & Absent & Random & $100\Delta_A$\\
 \midrule
 \tabinput{tables/restricted_rows.tex}
 \bottomrule
@@ -360,20 +357,21 @@ Setting & $r$ & $j$ & $\Delta d_t$ & $100\Delta$bbox\\
 \end{minipage}\par\vspace{6pt}
 
 \paragraph{Repairing specificity can reduce spatial overlap.}
-Table~\ref{tab:costs} examines only the failures that WF repairs, whereas
-Table~\ref{tab:frontier} averages over all eligible images. Among these
-repairs, mean bbox precision falls by 14.04--28.17 percentage points.
-Mean target-score changes are positive on COCO and negative on VOC.
-Passing the worst-foil test therefore does not guarantee that the new
-region retains the original region's overlap or target response.
+Table~\ref{tab:costs} considers only repaired failures; Table~\ref{tab:frontier}
+uses all eligible images. Mean bbox precision falls by 14.04--28.17
+percentage points among repairs. Its interval is below zero in three
+settings, but spans zero for VOC B/32. Mean target-score changes are
+positive on COCO and negative on VOC; their intervals span zero for both
+B/16 settings. Thus the direction of a mean change is not always resolved
+by its interval. VOC estimates summarize just five and two repairs.
 
-The counts $r$ and $j$ make this distinction explicit. On COCO B/32,
-WF repairs 30 failures, but only 25 also satisfy the overlap, mean-foil,
-and positive-target checks in $J$. The same inequality $j<r$ holds in
-every setting. Even the feasible oracle finds only 12, 26, 3, and 2 repairs
-satisfying all checks in table order. Changes can also go the other way:
-among all baseline passes on COCO B/32, four become worst-foil failures.
-These regressions are outside the fixed failure set $B$.
+A repaired margin also need not retain the other checks. On COCO B/32,
+30 failures are repaired, but only 25 retain overlap, mean-foil contrast,
+and positive target contribution. This gap between repairs ($r$) and
+repairs passing all checks ($j$) occurs in every setting. Even the oracle
+finds only 12, 26, 3, and 2 feasible repairs passing all checks, in table
+order. Among all baseline passes on COCO B/32, four instead become
+worst-foil failures; these regressions lie outside the fixed failure set.
 
 \newpage
 \par\addvspace{6pt}
