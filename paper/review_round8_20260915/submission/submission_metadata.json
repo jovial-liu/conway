@@ -1,7 +1,7 @@
 {
   "title": "BEYOND MEAN FOILS: AUDITING WORST-FOIL SPECIFICITY IN FROZEN CLIP REGION EXPLANATIONS",
-  "abstract": "A region can overlap the target object and still contribute more to another class. We study this mismatch in frozen CLIP using regions selected by Cluster-based Concept Importance (CCI). Across COCO and VOC with two checkpoints, 41.08-64.78% of regions that pass overlap and mean-contrast checks fail against the strongest competing class. Removing competitors annotated in the image leaves 39.69-63.64% failing. To understand whether region selection can resolve these failures, we examine all eight candidates per image. An alternative passes the test for 6.25-7.84% of failures on COCO and 27.40-31.15% on VOC. Requiring it to preserve the original target-score drop within epsilon = 0.02 reduces these rates to 0.16-0.98%. The main constraints are therefore the available regions and the target-drop tolerance; relaxing the tolerance increases repair opportunities.",
-  "abstract_word_count": 126,
+  "abstract": "A region can overlap a target object yet contribute more to another class. We test regions selected by Cluster-based Concept Importance (CCI) in frozen CLIP. Across COCO and VOC with two checkpoints, 41.08-64.78% of regions that pass overlap and mean-contrast checks fail against the strongest competing class. Removing competitors annotated in the image leaves 39.69-63.64% failing. We then test all eight candidate regions per image. An alternative passes the test for 6.25-7.84% of failures on COCO and 27.40-31.15% on VOC. Requiring it to preserve the original target-score drop within epsilon = 0.02 reduces these rates to 0.16-0.98%. Available regions and target-drop tolerance constrain repair; relaxing the tolerance increases repair opportunities.",
+  "abstract_word_count": 110,
   "keywords": [
     "CLIP",
     "explanation auditing",

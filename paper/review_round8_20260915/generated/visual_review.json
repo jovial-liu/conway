@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "ef4b5e4b048c658c9978cb3884d13c121cac3804a9e1a83b693c17bc20bd4177",
+  "pdf_sha256": "31996a54c3af8f144fe8dccfc7a5c24a6662c3fe5f24b75c0a7e561a9bcb23dc",
   "pages_reviewed": [
     1,
     2,
@@ -8,5 +8,5 @@
     5
   ],
   "accepted_layout": true,
-  "findings": "Rewritten prose visually reviewed on pages 1\u20134; references unchanged. Five pages retained; no clipping or overlap. Abstract and introduction explain the question before the measures; methods introduce concepts before notation; results interpret figure markers and table counts. All numerical table files, figure PDFs and author block match the prior revision. Citation keys and bibliography match."
+  "findings": "Pages 1\u20134 visually reviewed; references unchanged. Each of eight numbered equations has a preceding explanation of purpose and notation. Numbered equation bodies identical to prior revision. Normalization, image-index, set-count and repair-rate notation introduced before formulas; F condition kept unbroken. Five pages, no overflow. Data tables, figures and authors unchanged."
 }

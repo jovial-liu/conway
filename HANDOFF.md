@@ -1,3 +1,5 @@
+最新论文：paper/review_round8_20260915/submission/liu_formulas_explained_20260917.pdf。2026-09-17 已逐式补齐前置解释，八个编号公式、表格数据与图件不变；当前 source/ 与 arxiv_source/ 已同步。
+
 最新论文入口：paper/review_round8_20260915/submission/liu_prose_revised_20260917.pdf。2026-09-17 已重写摘要、引言、方法说明、结果分析与结论以改善可读性；当前源码仍为 paper/review_round8_20260915/source/。作者、图件和表格数据不变。
 
 # 当前状态更新：2026-09-17
