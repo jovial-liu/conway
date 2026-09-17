@@ -5,30 +5,35 @@ import time
 
 from .actions import validate_action
 from .brain import Brain
-from .computer import Computer
 from .memory import FileMemory
+from .tools import ToolExecutor
 
 
 class ConwayLoop:
     def __init__(
         self,
         brain: Brain,
-        computer: Computer,
+        executor: ToolExecutor,
         memory: FileMemory,
         *,
         dry_run: bool = False,
         interval: float = 0.5,
         max_steps: int = 0,
+        screenshot_keep: int = 30,
+        memory_compaction_bytes: int = 64_000,
     ) -> None:
         self.brain = brain
-        self.computer = computer
+        self.executor = executor
+        self.computer = executor.computer
         self.memory = memory
         self.dry_run = dry_run
         self.interval = max(0.0, interval)
         self.max_steps = max_steps
+        self.screenshot_keep = max(1, screenshot_keep)
+        self.memory_compaction_bytes = max(8000, memory_compaction_bytes)
 
     def _compact_memory(self, constitution: str, state) -> None:
-        if not self.memory.needs_compaction():
+        if not self.memory.needs_compaction(self.memory_compaction_bytes):
             return
         try:
             summary = self.brain.compact_memory(constitution, self.memory.compaction_source())
@@ -55,8 +60,10 @@ class ConwayLoop:
                 }
             )
 
-        # Keep an absolute upper bound even if the model cannot summarize memory.
-        self.memory.compact_if_needed(max_bytes=256_000, keep_lines=500)
+        self.memory.compact_if_needed(
+            max_bytes=max(self.memory_compaction_bytes * 4, 256_000),
+            keep_lines=500,
+        )
 
     def run(self) -> None:
         state = self.memory.load_state()
@@ -70,17 +77,18 @@ class ConwayLoop:
         try:
             while self.max_steps <= 0 or completed < self.max_steps:
                 state.cycle += 1
-                observation = self.computer.observe(state.cycle)
+                observation = None
                 constitution = self.memory.constitution()
-                recalled = self.memory.recall()
-
                 try:
+                    observation = self.computer.observe(state.cycle)
+                    state.last_observation = observation.summary()
+                    recalled = self.memory.recall()
                     decision = self.brain.decide(constitution, recalled, observation)
                     action = validate_action(decision.action, observation.width, observation.height)
                     if self.dry_run:
                         result = f"observation-only: would execute {action}"
                     else:
-                        result = self.computer.execute(action, observation)
+                        result = self.executor.execute(action, observation)
 
                     consecutive_errors = 0
                     state.last_action = str(action)
@@ -102,22 +110,21 @@ class ConwayLoop:
                     consecutive_errors += 1
                     state.error_count += 1
                     state.last_result = f"error: {type(exc).__name__}: {exc}"
-                    self.memory.journal(
-                        {
-                            "cycle": state.cycle,
-                            "observation": observation.summary(),
-                            "error": state.last_result,
-                        }
-                    )
-                    # Back off after repeated model/server/desktop failures instead of
-                    # hot-looping and burning compute.
-                    time.sleep(min(15.0, max(1.0, self.interval) * consecutive_errors))
+                    event = {
+                        "cycle": state.cycle,
+                        "error": state.last_result,
+                    }
+                    if observation is not None:
+                        event["observation"] = observation.summary()
+                    self.memory.journal(event)
+                    time.sleep(min(30.0, max(1.0, self.interval or 1.0) * consecutive_errors))
 
-                self.computer.prune_screenshots()
+                self.computer.prune_screenshots(keep=self.screenshot_keep)
                 self.memory.save_state(state)
                 completed += 1
                 if self.interval:
                     time.sleep(self.interval)
         finally:
             state.status = "stopped"
+            state.pid = None
             self.memory.save_state(state)

@@ -4,11 +4,13 @@ import base64
 from dataclasses import dataclass
 import json
 from pathlib import Path
+import time
 from typing import Any
 
 import httpx
 
 from .computer import Observation
+from .opencua import parse_opencua_action
 
 
 @dataclass(slots=True)
@@ -26,19 +28,27 @@ class Brain:
         """Optionally rewrite accumulated file memory into a compact rolling summary."""
         return None
 
+    def close(self) -> None:
+        return None
+
 
 class OpenAICompatibleVLM(Brain):
-    """Multimodal brain for local OpenAI-compatible servers such as llama.cpp/vLLM."""
+    """Multimodal brain for OpenAI-compatible local servers such as llama.cpp/vLLM."""
 
     def __init__(
         self,
         base_url: str = "http://127.0.0.1:8042/v1",
         model: str = "local-model",
         timeout: float = 180.0,
+        tool_manifest: str | None = None,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.model = model
+        self.tool_manifest = tool_manifest or '- wait: {"seconds": 1}'
         self.client = httpx.Client(timeout=timeout)
+
+    def close(self) -> None:
+        self.client.close()
 
     @staticmethod
     def _image_data_url(path: Path) -> str:
@@ -89,10 +99,21 @@ class OpenAICompatibleVLM(Brain):
             "max_tokens": max_tokens,
             "messages": messages,
         }
-        response = self.client.post(f"{self.base_url}/chat/completions", json=payload)
-        response.raise_for_status()
-        data = response.json()
-        return self._content_text(data["choices"][0]["message"]["content"])
+        last_error: Exception | None = None
+        for attempt in range(3):
+            try:
+                response = self.client.post(f"{self.base_url}/chat/completions", json=payload)
+                if response.status_code == 429 or response.status_code >= 500:
+                    response.raise_for_status()
+                response.raise_for_status()
+                data = response.json()
+                return self._content_text(data["choices"][0]["message"]["content"])
+            except (httpx.HTTPError, KeyError, IndexError, TypeError, ValueError) as exc:
+                last_error = exc
+                if attempt >= 2:
+                    break
+                time.sleep(0.5 * (2**attempt))
+        raise RuntimeError(f"Model request failed after retries: {last_error}") from last_error
 
     def decide(self, constitution: str, memory: str, observation: Observation) -> Decision:
         active = observation.active_app or "unknown"
@@ -107,16 +128,19 @@ OBSERVATION METADATA:
 - active app: {active}
 - active window: {window}
 
-Inspect the screenshot and choose exactly one next GUI action that best advances the objectives in the constitution. Verify prior results from the context before retrying an action.
+Choose exactly one next action that best advances the constitution. Prefer a direct system/file tool when it is more reliable than manipulating the same thing through a GUI. Use screenshot-driven GUI actions when the task is only available through the interface or visual state matters. Verify prior results from context before retrying an action.
+
+AVAILABLE ACTIONS:
+{self.tool_manifest}
 
 Return JSON only with this exact shape:
 {{
-  "action": {{"type": "wait|click|double_click|move|type|press|hotkey|scroll|drag", "args": {{}}}},
+  "action": {{"type": "one enabled action", "args": {{}}}},
   "rationale": "one concise sentence",
   "memory_note": "optional concise durable fact, or null"
 }}
 
-Coordinates MUST be absolute pixels in the screenshot you received, not OS logical coordinates. Conway will map screenshot pixels to the host input coordinate system. click/double_click/move/drag use args.x and args.y. hotkey uses args.keys. press uses args.key. type uses args.text. scroll uses args.amount. wait may use args.seconds. If the state is ambiguous or no useful action is justified, choose wait. Do not output private chain-of-thought."""
+For GUI coordinates, use absolute pixels in the screenshot you received, not OS logical coordinates. Conway maps screenshot pixels to the host input coordinate system. If the state is ambiguous or no useful action is justified, choose wait. Do not output private chain-of-thought."""
 
         raw = self._chat(
             [
@@ -132,7 +156,7 @@ Coordinates MUST be absolute pixels in the screenshot you received, not OS logic
                     ],
                 },
             ],
-            max_tokens=512,
+            max_tokens=700,
             temperature=0.1,
         )
         parsed = self._extract_json(raw)
@@ -178,6 +202,48 @@ MEMORY TO COMPACT:\n{memory}
                 lines = lines[:-1]
             text = "\n".join(lines).strip()
         return text or None
+
+
+class OpenCUABrain(OpenAICompatibleVLM):
+    """Adapter for OpenCUA's native pyautogui-style grounding output."""
+
+    def decide(self, constitution: str, memory: str, observation: Observation) -> Decision:
+        active = observation.active_app or "unknown"
+        window = observation.active_window or "unknown"
+        instruction = f"""Act as an autonomous computer-use agent under the constitution.
+
+CURRENT CONTEXT:\n{memory}\n
+CURRENT DESKTOP:
+- active app: {active}
+- active window: {window}
+
+Inspect the screenshot and output exactly one pyautogui action in your native OpenCUA coordinate convention, for example:
+pyautogui.click(x=960, y=324)
+
+Use only one of click, doubleClick, moveTo, dragTo, write, press, hotkey, scroll, or sleep. Do not emit prose or executable multi-line Python."""
+        raw = self._chat(
+            [
+                {"role": "system", "content": constitution},
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": instruction},
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": self._image_data_url(observation.screenshot_path)},
+                        },
+                    ],
+                },
+            ],
+            max_tokens=256,
+            temperature=0.0,
+        )
+        action = parse_opencua_action(raw, observation.width, observation.height)
+        return Decision(action=action, rationale=f"OpenCUA selected {action['type']}.")
+
+    def compact_memory(self, constitution: str, memory: str) -> str | None:
+        # OpenCUA is optimized for GUI grounding rather than durable-state summarization.
+        return None
 
 
 class MockBrain(Brain):
