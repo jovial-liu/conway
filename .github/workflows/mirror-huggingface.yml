@@ -2,28 +2,36 @@ name: Mirror repository to Hugging Face
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: huggingface-source-publication
+  cancel-in-progress: false
+
 jobs:
   mirror:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Checkout GitHub repository
+      - name: Checkout source snapshot
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-
-      - name: Push main branch to Hugging Face
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install publication client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Validate source selection without credentials
+        run: python scripts/publish_hf.py --dry-run
+      - name: Publish and verify source snapshot
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          test -n "$HF_TOKEN" || (echo "Missing repository secret HF_TOKEN" && exit 1)
-          git config user.name "Conway mirror"
-          git config user.email "conway-mirror@users.noreply.github.com"
-          git remote add huggingface "https://oauth2:${HF_TOKEN}@huggingface.co/jnjnkj/conway"
-          git push huggingface HEAD:main --force
+        run: python scripts/publish_hf.py --repo jnjnkj/conway
