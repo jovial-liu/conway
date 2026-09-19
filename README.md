@@ -1,263 +1,154 @@
+---
+license: mit
+tags:
+  - computer-use
+  - agent
+  - code
+---
 # Conway
 
-Conway is a **local-first, headless autonomous computer-use agent harness**. It does not need a chat box in its control loop: after startup it repeatedly observes the desktop, asks a pluggable vision-language model for one next action, executes that action, records the result, and observes again.
+**A local autonomous computer-use harness. No chat box. No database. A replaceable VLM.**
 
-> Status: v0.4 — functional autonomous-agent MVP with cross-platform CI. APIs may still evolve.
+[中文使用说明](README.zh-CN.md) · [Installation](docs/INSTALL.md) · [Configuration](docs/CONFIGURATION.md) · [Validation and limitations](docs/VALIDATION.md) · [Changelog](CHANGELOG.md)
 
-## What Conway does
+Conway loads a constitution, observes the desktop, asks a VLM for one next action, dispatches it, records the outcome, and observes again. The model can choose direct file/system tools or screenshot-driven GUI interaction. GitHub hosts development; Hugging Face distributes source and references existing model weights. This repository is **not a newly trained model** and does not run a hosted agent.
 
-- Continuous **observe → decide → act → verify** loop with no per-step human prompt.
-- Screenshot-first VLM perception plus best-effort foreground app/window metadata.
-- HiDPI/Retina-aware mapping from screenshot pixels to real OS mouse coordinates.
-- GUI actions: click, double-click, move, drag, type/paste, key press, hotkeys, scroll, wait.
-- Native current-user tools: shell command, text file read/write, directory listing, URL open.
-- Tool-first behavior: the generic VLM is instructed to prefer direct system/file tools when more reliable and fall back to GUI when the interface is the only practical route.
-- File-only state and memory: Markdown + JSON + JSONL; no SQL or vector database.
-- Rolling VLM memory compaction with a bounded fallback.
-- Automatic 2B/4B/8B local VLM selection from detected RAM/VRAM/unified memory.
-- llama.cpp local runtime support and arbitrary OpenAI-compatible multimodal endpoints.
-- Native **OpenCUA-7B action adapter** with safe AST parsing and Qwen2.5-VL smart-resize coordinate conversion.
-- Single-instance lock per state directory.
-- `CONWAY_HOME` override for portable/test installations.
-- macOS, Windows, and Linux CI.
+**Status: v0.5.0 engineering release candidate.** Offline protocol/lifecycle tests are not evidence of real-model GUI accuracy. Native accessibility adapters remain experimental. Read the validation matrix before unattended use.
 
-## Architecture
+## Start
 
-```text
-constitution.md + config.yaml
-          │
-          ▼
-   Autonomous Loop ───── Rolling memory.md / JSONL journal
-          │
-   ┌──────┴─────────┐
-   ▼                ▼
-VLM Brain        Tool Executor
-   │                │
-   │        ┌───────┴────────┐
-   ▼        ▼                ▼
-Generic / GUI Computer   System Tools
-OpenCUA   screenshot      shell / files /
-          input           open URL
-```
+Requires Python 3.11 or newer. In a virtual environment, from this repository:
 
-Conway is the harness. Models are replaceable.
-
-## Install
-
-Requires Python 3.11+.
-
-```bash
-git clone https://github.com/jovial-liu/conway.git
-cd conway
-python -m venv .venv
-```
-
-macOS/Linux:
-
-```bash
-source .venv/bin/activate
-pip install -e .
-```
-
-Windows PowerShell:
-
-```powershell
-.venv\Scripts\Activate.ps1
-pip install -e .
-```
-
-Initialize local state/config:
-
-```bash
+```sh
+python -m pip install -e .
 conway init
-```
-
-## Hardware and models
-
-```bash
 conway doctor
-conway models
-```
-
-Bundled model profiles:
-
-| Profile | Model | Brain adapter | Approx. minimum effective memory |
-| --- | --- | --- | ---: |
-| `tiny` | `mradermacher/Qwen3-VL-2B-Instruct-abliterated-GGUF` | generic JSON | 5 GB |
-| `small` | `mradermacher/Qwen3-VL-4B-Instruct-abliterated-GGUF` | generic JSON | 8 GB |
-| `standard` | `mradermacher/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF` | generic JSON | 14 GB |
-| `computer-use` | `xlangai/OpenCUA-7B` | OpenCUA native | external server |
-
-The abliterated Qwen checkpoints are community-modified open model artifacts, not official Qwen safety-tuned releases. OpenCUA is a separate MIT-licensed computer-use model. None of these weights are part of Conway itself.
-
-For automatic local startup, install a current llama.cpp build so `llama-server` or `llama` is on `PATH`. Conway uses llama.cpp's `-hf` model pull path on first launch.
-
-## Run
-
-Smoke-test the loop without downloading a real model:
-
-```bash
 conway start --mock --max-steps 3
 ```
 
-Start with automatic local model selection in observation-only mode:
+The mock command is genuinely offline: synthetic PNG, no VLM download, no desktop permissions, and no computer actions. Edit the `constitution.md` path printed by `conway init` to establish the ongoing goal and scope.
 
-```bash
-conway start
-```
+For real local inference, install a compatible `llama-server` first. Then:
 
-Allow Conway to execute enabled actions for the running process:
-
-```bash
+```sh
+conway probe
+conway start --max-steps 3
 conway start --execute
 ```
 
-Run GUI-only if you do not want shell/filesystem/URL tools in that session:
+`probe` sends a synthetic PNG and checks the model protocol; it never touches your desktop. `start` without `--execute` captures real screenshots and plans but does not dispatch actions. `--execute` enables the configured current-user tools for the process; there is no per-action approval dialog.
 
-```bash
-conway start --execute --gui-only
+For an existing multimodal server, auto-discover its served model ID:
+
+```sh
+conway probe --endpoint http://127.0.0.1:8000/v1
+conway start --endpoint http://127.0.0.1:8000/v1 --execute
 ```
 
-Connect an existing OpenAI-compatible multimodal model server:
+With multiple served models, pass `--model` using a returned `/v1/models` ID. An API's model alias need not equal its Hugging Face repository ID.
 
-```bash
-conway start \
-  --endpoint http://127.0.0.1:8000/v1 \
-  --model your-model-name \
-  --brain generic \
-  --execute
-```
-
-Use OpenCUA through a compatible endpoint:
-
-```bash
-conway start \
-  --profile computer-use \
-  --endpoint http://127.0.0.1:8000/v1 \
-  --model xlangai/OpenCUA-7B \
-  --brain opencua \
-  --execute
-```
-
-`Ctrl+C` stops the process. PyAutoGUI's corner-of-screen failsafe remains enabled.
-
-## OpenCUA grounding
-
-OpenCUA-7B emits pyautogui-style calls such as:
+## Runtime design
 
 ```text
-pyautogui.click(x=960, y=324)
+constitution.md + rolling file context
+                  |
+      observe -> decide -> validate -> record intent -> act
+         ^                                        |
+         +----------- next observation <--- record result
+
+Brain: generic JSON VLM | OpenCUA literal action adapter
+Tools: GUI | shell | read/write/list files | open URL | finish
+State: Markdown + atomic JSON + append-only JSONL
+Control: pause / resume / stop + step/time/error budgets
 ```
 
-Those coordinates are in the model's Qwen2.5-VL **smart-resized image**, not directly in the original screenshot. Conway v0.4 reproduces the smart-resize geometry, maps the model point back to the screenshot, then applies its normal screenshot-to-OS HiDPI conversion.
+Conway does not evaluate OpenCUA-generated Python. Its AST parser translates one allowlisted literal call into the same normalized action schema used by the generic VLM. Smart-resized image coordinates are mapped back to screenshot pixels, then to the host input coordinate space. Server-specific processor limits must match the configured OpenCUA pixel limits.
 
-The generated string is **not executed as Python**. Conway parses exactly one allowlisted literal call with Python's AST and translates it into the normal validated action schema.
+## Operating controls
 
-## Config
-
-The first `conway init` creates `config.yaml` in the local state directory. Inspect it with:
-
-```bash
-conway config
-```
-
-Default shape:
-
-```yaml
-profile: auto
-brain: auto
-endpoint: null
-model: null
-port: 8042
-interval: 0.5
-screenshot_keep: 30
-memory_compaction_bytes: 64000
-tools:
-  gui: true
-  shell: true
-  filesystem: true
-  open_url: true
-  max_shell_seconds: 45.0
-  max_output_chars: 12000
-```
-
-CLI flags override the relevant runtime choices. To relocate all local state:
-
-```bash
-export CONWAY_HOME=/path/to/conway-state
-```
-
-## Native tools
-
-The generic brain can select one action per cycle from the enabled tool set.
-
-GUI:
-
-```text
-click / double_click / move / drag / type / press / hotkey / scroll / wait
-```
-
-Local current-user tools:
-
-```text
-shell / read_file / write_file / list_dir / open_url
-```
-
-Shell commands run with the same OS account and environment that launched Conway, with bounded time and captured output. File tools are text-oriented and size-bounded. Conway does not contain a privilege-escalation mechanism.
-
-## Local state and memory
-
-```text
-conway/
-├── config.yaml
-├── constitution.md
-├── memory.md
-├── state.json
-├── instance.lock
-├── llama-runtime.log
-├── journal/
-│   └── YYYY-MM-DD.jsonl
-└── screenshots/
-```
-
-Inspect state without a chat UI:
-
-```bash
+```sh
 conway status
+conway pause
+conway resume
+conway stop
+conway config --check
+conway models
+conway start --execute --max-steps 100 --max-seconds 600
 ```
 
-`memory.md` is a rolling durable state. The VLM can add concise durable notes during normal cycles. Once the file exceeds the configured threshold, Conway asks the generic VLM to compact it into objectives, durable facts, unfinished work, and recurring failures. Raw trajectories remain in JSONL for future continual-learning work.
+Controls are cooperative and scoped to one session. A stop arriving during inference prevents its returned action from dispatching; an in-flight native operation still needs to return. `Ctrl+C` and the PyAutoGUI corner failsafe remain available. `--max-seconds` is not an OS-enforced hard deadline.
 
-## OS behavior
+An intent record is written **before** a side effect. If the process crashes or dispatch raises after partial work, Conway records an uncertain outcome and does not automatically replay the action. A restarted session obtains a fresh observation. A model's `finish` declaration is recorded separately from independently verified task success.
 
-- **macOS:** grant normal Accessibility and Screen Recording permissions when requested. Foreground app/window metadata is queried through System Events when available.
-- **Windows:** foreground-window metadata uses Win32 APIs. Conway otherwise runs with the privileges of the account that launched it.
-- **Linux:** X11/XWayland currently gives the broadest compatibility. If `xdotool` is installed Conway records foreground-window metadata. Wayland input/screenshot behavior depends on compositor policy.
+## Models and hardware
 
-Screenshot perception is the universal fallback when structured desktop metadata is unavailable.
+| Profile | Reference | Execution |
+|---|---|---|
+| `tiny` | `mradermacher/Qwen3-VL-2B-Instruct-abliterated-GGUF` | local GGUF, Q4_K_M |
+| `small` | `mradermacher/Qwen3-VL-4B-Instruct-abliterated-GGUF` | local GGUF, Q4_K_M |
+| `standard` | `mradermacher/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF` | local GGUF, Q4_K_M |
+| `computer-use` | `xlangai/OpenCUA-7B` | compatible external multimodal server |
 
-## Security boundary
+The resolver uses available RAM or free memory on one NVIDIA GPU, reserves headroom, and refuses an estimated non-fitting local model. Apple Silicon uses a unified-memory budget. Memory thresholds are estimates, not measured throughput or guaranteed capacity. AMD/Intel GPU acceleration is not auto-verified; use a compatible external backend or CPU fallback. The runtime binary is not installed automatically.
 
-`--execute` is a one-time process-level opt-in; Conway does not add a confirmation dialog before each action. It also does **not** implement privilege escalation, UAC/TCC/sudo bypass, credential harvesting, stealth persistence, or security-control evasion. The operating system's permission model is the outer boundary.
+A community `abliterated` label concerns refusal behavior; it is not a promise of GUI accuracy, reliability, or any specific training method. Referenced weights retain their own upstream licenses.
 
-## Development
+## GUI and direct tools
 
-```bash
-pip install -e ".[dev]"
-pytest
+Primary-display screenshot, click, double-click, movement, drag, text, key, hotkey and scroll are implemented through PyAutoGUI. HiDPI input mapping is tested with fixtures; monitor rotation, multiple displays, and live OS sessions require device validation. Native Wayland input is not implemented.
+
+Optional read-only accessibility snapshots add foreground-window labels through macOS AX, Windows UIA or Linux AT-SPI. They are disabled by default, run in a time-limited subprocess, and fall back to screenshots on failure. These adapters do not yet provide element-ID actions.
+
+Direct tools provide bounded file reads, atomic text replacement, append, directory listing, browser opening and current-user shell commands. Shell output is bounded and command descendants are cleaned up on timeout. Tool configuration and `--gui-only` are routing preferences, **not a sandbox**: a GUI-capable agent may still operate a terminal under your account.
+
+## File state
+
+```text
+CONWAY_HOME/
+  constitution.md         owner-defined goals; existing file is preserved
+  config.yaml             validated configuration; no API keys
+  memory.md               rolling summary
+  memory.previous.md      previous summary excerpt
+  state.json              current state and pending action
+  state.previous.json     recoverable prior state
+  control.json            session-scoped control request
+  instance.lock           single-instance OS file lock
+  journal/*.jsonl          intents, results, errors and recovery events
+  screenshots/*.png       bounded recent screenshots
+  llama-runtime.log       local inference startup diagnostics
 ```
 
-CI compiles, tests, and runs `conway doctor` on Ubuntu, Windows, and macOS. GitHub is the primary repository; `jnjnkj/conway` on Hugging Face mirrors `main` automatically.
+Use `CONWAY_HOME`, or put `--home PATH` **before** the subcommand. Memory compaction is bounded by both the configured threshold and the context budget; fallback truncation is explicitly marked. No online weight updates or continual training occur. Journals are retained locally and rotated by size, not silently uploaded.
 
-## Next engineering targets
+```sh
+conway export --output ./trajectory.jsonl
+```
 
-1. Native accessibility/UI-tree snapshots in addition to screenshot + active-window metadata.
-2. Better multi-monitor and Wayland-native backends.
-3. Automated llama.cpp bootstrap/install assistance.
-4. Model-specific adapters beyond generic JSON and OpenCUA.
-5. Trajectory scoring/export for future continual learning.
-6. Signed desktop packaging and release artifacts.
+Export excludes dry runs by default, omits image bytes and leaves task-success labels unknown. Review file contents, action text and logs for private information before sharing.
 
-## License
+## Development and publication
 
-MIT
+```sh
+python -m pip install -e '.[dev]'
+python -m pytest -q
+python -m compileall -q src
+python -m pip wheel . --no-deps -w dist
+```
+
+The test suite exercises parsing, HTTP failures, lifecycle, crash recovery, file/shell I/O, coordinate conversion, UI fallback and a local HTTP fixture-to-tools pipeline. The fixture is not a real model. Existing GitHub CI runs on Linux, Windows and macOS.
+
+HF publication uses a **source snapshot**, not a force-pushed Git history. Tracked source, tests, docs and examples are selected by `scripts/publish_hf.py`; experiment data, runtime state, secrets, binaries and model weights are excluded. `_source_commit.json` records the GitHub commit and per-file hashes and is read back from the HF publication commit. GitHub's existing experiment files and history remain untouched.
+
+## Boundary
+
+Conway runs with the current account's OS permissions. It does not implement OS-permission bypass, privilege escalation, stealth startup or network self-propagation. Do not assume a prompt or config flag provides isolation. Start on a disposable desktop/account and make backups before granting write-capable tools to an autonomous model.
+
+## References
+
+- [OpenCUA-7B model card](https://huggingface.co/xlangai/OpenCUA-7B)
+- [llama.cpp multimodal documentation](https://github.com/ggml-org/llama.cpp/blob/master/docs/multimodal.md)
+- [llama.cpp server documentation](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md)
+- [PyAutoGUI documentation](https://pyautogui.readthedocs.io/en/latest/)
+- [Hugging Face upload documentation](https://huggingface.co/docs/huggingface_hub/guides/upload)
+
+MIT for Conway's code; model licenses are separate.

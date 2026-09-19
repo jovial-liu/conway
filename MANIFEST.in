@@ -1,0 +1,11 @@
+include README.md README.zh-CN.md LICENSE CHANGELOG.md
+recursive-include src/conway *.py *.yaml *.md
+recursive-include docs *.md
+recursive-include examples *.yaml *.md
+recursive-include tests *.py
+recursive-include scripts *.py
+prune experiments
+prune .github
+prune build
+prune dist
+global-exclude __pycache__ *.py[cod] .DS_Store

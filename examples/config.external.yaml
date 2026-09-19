@@ -1,0 +1,12 @@
+# Merge selected fields into the config printed by `conway init`.
+# This file contains no credentials; omit api_key_env for unauthenticated local servers.
+endpoint: http://127.0.0.1:8000/v1
+model: null
+brain: auto
+interval: 1.0
+ui_tree: false
+tools:
+  gui: true
+  shell: false
+  filesystem: true
+  open_url: false

@@ -1,38 +1,31 @@
 profiles:
   tiny:
-    description: "Lowest-memory multimodal fallback"
+    description: Lowest-memory community VLM
     backend: llama_cpp
     brain: generic
     repo: mradermacher/Qwen3-VL-2B-Instruct-abliterated-GGUF
     quant: Q4_K_M
     min_effective_memory_gb: 5
-
   small:
-    description: "Balanced low-memory multimodal default"
+    description: Balanced community VLM
     backend: llama_cpp
     brain: generic
     repo: mradermacher/Qwen3-VL-4B-Instruct-abliterated-GGUF
     quant: Q4_K_M
     min_effective_memory_gb: 8
-
   standard:
-    description: "Higher-capacity multimodal default"
+    description: Higher-capacity community VLM
     backend: llama_cpp
     brain: generic
     repo: mradermacher/Huihui-Qwen3-VL-8B-Instruct-abliterated-GGUF
     quant: Q4_K_M
     min_effective_memory_gb: 14
-
   computer-use:
-    description: "OpenCUA computer-use model served by a compatible external endpoint"
+    description: OpenCUA served by a compatible external endpoint
     backend: external_openai
     brain: opencua
     repo: xlangai/OpenCUA-7B
     quant: null
     min_effective_memory_gb: 16
-
 selection:
-  default_order:
-    - standard
-    - small
-    - tiny
+  default_order: [standard, small, tiny]
