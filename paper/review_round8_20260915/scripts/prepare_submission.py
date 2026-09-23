@@ -15,7 +15,7 @@ for n,e,a,addr,oid,corr in [('Kaixin Liu','24107880127@nustti.edu.cn',aff1,a1,'h
  authors.append(dict(order=len(authors)+1,name=n,email=e,affiliation=a,mailing_address=addr,orcid=oid,corresponding=corr))
 with (out/'authors.csv').open('w',newline='') as f:
  w=csv.DictWriter(f,fieldnames=list(authors[0]),lineterminator="\n");w.writeheader();w.writerows(authors)
-metadata=dict(title=title,abstract=abstract,abstract_word_count=len(abstract.split()),keywords=keywords.split(', '),authors=authors,ready_to_submit=False,pending=['Author-confirmed conflicts-of-interest statement to insert on page 5','Author confirmation of ethical-compliance statement; final author approval'],review_category=None,funding='This work was supported by the Young Scientific and Technological Talent Support Program under the Taizhou Fengcheng Talent Plan.',conflicts_of_interest=None,acknowledgments_in_pdf=False)
+metadata=dict(title=title,abstract=abstract,abstract_word_count=len(abstract.split()),keywords=keywords.split(', '),authors=authors,ready_to_submit=False,pending=['Author confirmation of ethical-compliance statement; final author approval'],review_category=None,funding='This work was supported by the Young Scientific and Technological Talent Support Program under the Taizhou Fengcheng Talent Plan.',conflicts_of_interest='The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.',acknowledgments_in_pdf=True)
 (out/'submission_metadata.json').write_text(json.dumps(metadata,indent=2)+'\n')
 shutil.copy2(root/'generated/ccf0_round8_20260915.pdf',out/'liu.pdf')
 shutil.copy2(out/'liu.pdf',out/'liu_five_authors_20260923.pdf')

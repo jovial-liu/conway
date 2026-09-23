@@ -57,11 +57,10 @@
   ],
   "ready_to_submit": false,
   "pending": [
-    "Author-confirmed conflicts-of-interest statement to insert on page 5",
     "Author confirmation of ethical-compliance statement; final author approval"
   ],
   "review_category": null,
   "funding": "This work was supported by the Young Scientific and Technological Talent Support Program under the Taizhou Fengcheng Talent Plan.",
-  "conflicts_of_interest": null,
-  "acknowledgments_in_pdf": false
+  "conflicts_of_interest": "The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.",
+  "acknowledgments_in_pdf": true
 }

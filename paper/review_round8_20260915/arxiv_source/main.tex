@@ -1,5 +1,5 @@
 \documentclass[10pt]{article}
-\pdfminorversion=7
+\ifdefined\pdfminorversion\pdfminorversion=7\fi
 \usepackage{icassp2027_paperkit}
 \usepackage{amsmath,amssymb,booktabs,graphicx,microtype,url}
 \usepackage[T1]{fontenc}
@@ -327,7 +327,7 @@ Setting & $|A_{\rm old}|$ & Raw & Norm & Flip\\
 \tabinput{tables/normalization_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{6pt}
+\end{minipage}\par\vspace{3pt}
 
 \paragraph{Normalization rarely changes the outcome.}
 Table~\ref{tab:normalization} compares raw and normalized scores while
@@ -338,7 +338,7 @@ between passing and failing. The worst foil is unchanged on
 to 64.369\% failure, while VOC B/32 stays at 41.157\%. The high failure
 rate is therefore present under both score definitions.
 
-\par\addvspace{6pt}
+\par\addvspace{3pt}
 \noindent\begin{minipage}{\columnwidth}
 \centering
 \captionof{table}{Actual sign repairs \emph{within fixed baseline $B$}, $\epsilon=.02$.
@@ -346,7 +346,7 @@ $r$ counts repairs; $j$ counts those also satisfying $J$.
 WF$-$CCI means with repair-subset 95\% CIs. $\Delta d_t$ is raw
 held-out target-score change; only bbox change is in percentage points.}
 \label{tab:costs}
-\small\renewcommand{\arraystretch}{1.25}\setlength{\tabcolsep}{1.1pt}
+\small\renewcommand{\arraystretch}{1.10}\setlength{\tabcolsep}{1.1pt}
 \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lrrrr@{}}
 \toprule
 Setting & $r$ & $j$ & $\Delta d_t$ & $100\Delta$bbox\\
@@ -354,7 +354,7 @@ Setting & $r$ & $j$ & $\Delta d_t$ & $100\Delta$bbox\\
 \tabinput{tables/endpoint_cost_rows.tex}
 \bottomrule
 \end{tabular*}
-\end{minipage}\par\vspace{6pt}
+\end{minipage}\par\vspace{3pt}
 
 \paragraph{Repairing specificity can reduce spatial overlap.}
 Table~\ref{tab:costs} considers only repaired failures; Table~\ref{tab:frontier}
@@ -374,7 +374,7 @@ order. Among all baseline passes on COCO B/32, four instead become
 worst-foil failures; these regressions lie outside the fixed failure set.
 
 \newpage
-\par\addvspace{6pt}
+\par\addvspace{3pt}
 \noindent\begin{minipage}{\columnwidth}
 \centering
 \captionof{table}{Nonzero-threshold sensitivity on fixed baseline $A$.
@@ -441,4 +441,8 @@ provide when evaluating frozen CLIP region explanations.
 This work analyses publicly released COCO and PASCAL VOC images and
 annotations. No participants were recruited and no new human or animal
 experiments were conducted.
+\section*{Acknowledgments}
+This work was supported by the Young Scientific and Technological Talent Support Program under the Taizhou Fengcheng Talent Plan.
+
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
 \end{document}

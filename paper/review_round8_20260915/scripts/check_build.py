@@ -7,6 +7,11 @@ arxiv=fitz.open(root/'generated/build/arxiv_source/main.pdf')
 assert len(pdf)==len(arxiv)==5
 texts=[p.get_text() for p in pdf]
 assert 'REFERENCES' in texts[4] and 'CONCLUSION' in texts[3]
+assert 'ACKNOWLEDGMENTS' in texts[4]
+page5 = ' '.join(texts[4].split())
+assert page5.count('This work was supported by') == 1
+assert page5.count('The authors declare that they have no known competing') == 1
+assert 'Taizhou Fengcheng Talent Plan' in page5
 for token in ['1817e166','6a52e8f3','ccf0-round4','Frozen-archive','Figure 3','released five-budget','four-setting sweep is released','portable check']:
  assert token not in '\n'.join(texts),token
 assert 'Table 6:' in texts[3] and 'Figure 2:' in texts[2]

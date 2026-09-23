@@ -20,13 +20,13 @@
 
 单位 1 为 Taizhou Institute of Science and Technology, Nanjing University of Science and Technology, Taizhou 225300, Jiangsu, China。Qiufeng Wang 已从当前论文署名、单位、邮箱、ORCID 和投稿表单移除。旧六作者 PDF 别名已从当前分支移除；历史提交未改写。
 
-## 资助与尚待作者确认的声明
+## 资助与利益冲突声明（已按用户提供的老师原文加入）
 
-资助原文保存在 `submission/submission_metadata.json`：
+This work was supported by the Young Scientific and Technological Talent Support Program under the Taizhou Fengcheng Talent Plan.
 
-> This work was supported by the Young Scientific and Technological Talent Support Program under the Taizhou Fengcheng Talent Plan.
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
 
-按先前要求，论文 PDF 中没有 ACKNOWLEDGMENTS。`conflicts_of_interest` 保持 `null`，`ready_to_submit` 保持 `false`；未替作者推定无利益冲突。投稿类别、伦理说明和最终作者审核也待作者确认。具体见 `submission/DECLARATIONS_TO_CONFIRM.md`。
+两段均写入 PDF 第 5 页 Acknowledgments，利益冲突仅保留一次，并同步到投稿元数据。现有伦理声明保留；投稿类别和最终作者审核未在本次操作中确认，ready_to_submit 仍为 false。
 
 ## 实验与重建
 
@@ -40,3 +40,11 @@ python paper/review_round8_20260915/scripts/prepare_submission.py
 ```
 
 `build.sh` 同步并分别编译 `source/` 与 `arxiv_source/`，`check_build.py` 检查五页、字体、引用、溢出和两份源码的渲染一致性。仅在确实需要重新整合实验时再运行 `scripts/integrate_traceable.py`。没有向会议或 arXiv 实际提交，也没有合并 main。
+
+## 本次声明更新的编译与实验历史核对
+
+本次使用 Tectonic 0.16.9（XeTeX）编译，两份源码渲染一致；原 pdflatex 的 PDF 版本设置增加条件保护。为保持四页技术正文，微调表 5 行距及表 4/5 附近留白，字号、页边距、表格数据和图件不变。
+
+可使用 `tectonic --keep-logs --outdir generated/build/source source/main.tex` 编译（从本论文目录运行；先创建输出目录），arxiv_source 同理。完整检查见 generated/build_checks.json 与 generated/visual_review.json。
+
+旧运行与新完整重跑使用相同种子规则；没有发现多组 base seed 完整重复实验的证据。详见 EXPERIMENT_HISTORY_REVIEW_20260923.md，内含给老师的准确回复。
