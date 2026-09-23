@@ -1,3 +1,9 @@
+## 2026-09-23 五作者交接
+
+Qiufeng Wang 已从本轮 `source/authors.tex`、PDF 元数据、作者 CSV 与 JSON 删除，同时移除其西交利物浦大学单位、邮箱与 ORCID。当前五位作者及顺序见 `GITHUB_HANDOFF_20260923.md`。旧六作者 PDF 别名从当前 HEAD 清理，历史提交保留。生成脚本只输出当前五作者 PDF 与 `liu.pdf`。表格数值、图 1/图 2 和实验来源不变；资助事实保留在 JSON，利益冲突待作者确认。
+
+## 历史修订记录（下文所述旧 PDF/作者状态已过时）
+
 ## 2026-09-17 剩余审阅问题修正
 
 最新 PDF：submission/liu_review_fixes_20260917.pdf。

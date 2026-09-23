@@ -1,59 +1,15 @@
-# Expanded file index
+# Current expanded file index
 
-- [CHANGES_zh.md](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/CHANGES_zh.md)
-- [GPT_SOURCE_INDEX.md](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/GPT_SOURCE_INDEX.md)
-- [README.md](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/README.md)
-- [arxiv_source/authors.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/arxiv_source/authors.tex)
-- [arxiv_source/figures/figure1_method_clean.pdf](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/arxiv_source/figures/figure1_method_clean.pdf)
-- [arxiv_source/figures/figure1_method_clean.svg](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/arxiv_source/figures/figure1_method_clean.svg)
-- [arxiv_source/figures/figure2_repair_capacity.pdf](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/arxiv_source/figures/figure2_repair_capacity.pdf)
-- [arxiv_source/icassp2027_paperkit.sty](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/arxiv_source/icassp2027_paperkit.sty)
-- [arxiv_source/main.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/arxiv_source/main.tex)
-- [arxiv_source/references.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/arxiv_source/references.tex)
-- [arxiv_source/tables/all_budget_rows.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/arxiv_source/tables/all_budget_rows.tex)
-- [arxiv_source/tables/endpoint_cost_rows.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/arxiv_source/tables/endpoint_cost_rows.tex)
-- [arxiv_source/tables/normalization_rows.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/arxiv_source/tables/normalization_rows.tex)
-- [arxiv_source/tables/oracle_rows.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/arxiv_source/tables/oracle_rows.tex)
-- [arxiv_source/tables/restricted_rows.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/arxiv_source/tables/restricted_rows.tex)
-- [arxiv_source/tables/threshold_rows.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/arxiv_source/tables/threshold_rows.tex)
-- [generated/SHA256SUMS.txt](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/generated/SHA256SUMS.txt)
-- [generated/arxiv_source_build.log](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/generated/arxiv_source_build.log)
-- [generated/build_checks.json](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/generated/build_checks.json)
-- [generated/ccf0_round8_20260915.pdf](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/generated/ccf0_round8_20260915.pdf)
-- [generated/evidence_checks.json](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/generated/evidence_checks.json)
-- [generated/paired_difference_ci_10000.csv](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/generated/paired_difference_ci_10000.csv)
-- [generated/paper_text.txt](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/generated/paper_text.txt)
-- [generated/pdffonts.txt](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/generated/pdffonts.txt)
-- [generated/pdfinfo.txt](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/generated/pdfinfo.txt)
-- [generated/source_build.log](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/generated/source_build.log)
-- [scripts/build.sh](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/scripts/build.sh)
-- [scripts/check_build.py](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/scripts/check_build.py)
-- [scripts/integrate_traceable.py](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/scripts/integrate_traceable.py)
-- [scripts/prepare_submission.py](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/scripts/prepare_submission.py)
-- [source/authors.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/authors.tex)
-- [source/figures/figure1_method_clean.pdf](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/figures/figure1_method_clean.pdf)
-- [source/figures/figure1_method_clean.svg](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/figures/figure1_method_clean.svg)
-- [source/figures/figure2_repair_capacity.pdf](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/figures/figure2_repair_capacity.pdf)
-- [source/figures/figure2_repair_capacity.png](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/figures/figure2_repair_capacity.png)
-- [source/figures/figure2_repair_capacity.svg](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/figures/figure2_repair_capacity.svg)
-- [source/icassp2027_paperkit.sty](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/icassp2027_paperkit.sty)
-- [source/main.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/main.tex)
-- [source/references.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/references.tex)
-- [source/tables/all_budget_rows.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/tables/all_budget_rows.tex)
-- [source/tables/endpoint_cost_rows.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/tables/endpoint_cost_rows.tex)
-- [source/tables/normalization_rows.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/tables/normalization_rows.tex)
-- [source/tables/oracle_rows.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/tables/oracle_rows.tex)
-- [source/tables/restricted_rows.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/tables/restricted_rows.tex)
-- [source/tables/threshold_rows.tex](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/source/tables/threshold_rows.tex)
-- [submission/DECLARATIONS_TO_CONFIRM.md](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/DECLARATIONS_TO_CONFIRM.md)
-- [submission/SHA256SUMS.txt](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/SHA256SUMS.txt)
-- [submission/START_HERE_zh.md](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/START_HERE_zh.md)
-- [submission/abstract.txt](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/abstract.txt)
-- [submission/authors.csv](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/authors.csv)
-- [submission/keywords.txt](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/keywords.txt)
-- [submission/liu.pdf](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/liu.pdf)
-- [submission/liu_round8_traceable.pdf](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/liu_round8_traceable.pdf)
-- [submission/submission_metadata.json](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/submission_metadata.json)
-- [submission/title.txt](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/title.txt)
+Work on branch `paper/verified-rerun-integration`. All paths below are relative to `paper/review_round8_20260915/`. The authoritative guide is `GITHUB_HANDOFF_20260923.md`.
 
-- [Six-author PDF](https://github.com/jovial-liu/conway/blob/paper/verified-rerun-integration/paper/review_round8_20260915/submission/liu_round8_six_authors.pdf)
+| Purpose | Ordinary GitHub file or folder |
+| --- | --- |
+| Current five-author PDF | `submission/liu_five_authors_20260923.pdf` |
+| PDF submission alias | `submission/liu.pdf` |
+| Editable LaTeX | `source/main.tex`, `source/authors.tex`, `source/references.tex`, `source/tables/`, `source/figures/`, `source/icassp2027_paperkit.sty` |
+| Expanded upload source | `arxiv_source/` |
+| Form fields and declarations | `submission/authors.csv`, `submission/submission_metadata.json`, `submission/DECLARATIONS_TO_CONFIRM.md` |
+| Checksums and layout verification | `submission/SHA256SUMS.txt`, `generated/SHA256SUMS.txt`, `generated/build_checks.json` |
+| Experiment evidence | `experiments/priority123_20260915/` (repository-root relative) |
+
+Former six-author PDFs are available through Git history and are not current deliverables. No ZIP is required.

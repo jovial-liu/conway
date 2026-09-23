@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "568affb8b9cd68ae3dbd43fc615e2e201dc3531dfc72f74fdb9c25df479422b8",
+  "pdf_sha256": "d88a85b47b2e7ccad3f2e2ae9065d0cd03e0509153e0426a16813931be9bceed",
   "pages_reviewed": [
     1,
     2,
@@ -8,5 +8,5 @@
     5
   ],
   "accepted_layout": true,
-  "findings": "Pages 1\u20134 visually reviewed; references unchanged. A/F/B/A+ definitions kept together on page 1. Equation 5 explicitly restricts R to candidate set. Table 1 column and caption report 100 Delta_A in percentage points. Table 5 prose distinguishes mean changes from intervals and states small VOC repair counts. Related-work prose uses method comparison instead of author-name lead. All numeric table rows, figure PDFs and authors unchanged; five pages and no overflow."
+  "findings": "Five-author revision. Title page and all five pages visually reviewed; removed former fourth author, former affiliation, email, ORCID. Maintained five pages with no clipping or overlap, original figures and unchanged numerical rows."
 }

@@ -1,25 +1,14 @@
-最新审阅修正版：submission/liu_review_fixes_20260917.pdf。已合并人群定义、明确候选域和百分点单位、补充置信区间解释并改写相关工作措辞。
+# Current paper: five-author revision, 2026-09-23
 
-最新公式说明版：submission/liu_formulas_explained_20260917.pdf。每个编号公式前先说明含义与符号，计算定义不变。
+Read `GITHUB_HANDOFF_20260923.md` for the current state and submission caveats. The editable source is `source/`; the expanded arXiv mirror is `arxiv_source/`. Current PDFs are `submission/liu_five_authors_20260923.pdf` and its identical submission alias `submission/liu.pdf`.
 
-最新叙述重写版（2026-09-17）：submission/liu_prose_revised_20260917.pdf。摘要至结论已重写，作者、图件及表格数值不变。
-
-当前修订：2026-09-17。PDF 为 submission/liu_readability_20260917.pdf；Zhenghao Wang 单位为南京理工大学泰州科技学院；已完成可读性、图表分析和 IDEA 删除修订。
-
-# Round-8: traceable experiment integration
-
-Current manuscript: `submission/liu_round8_traceable.pdf` (same bytes as `submission/liu.pdf`). Five pages: four technical pages plus references/ethics. Six author ORCIDs retained; no acknowledgments; original Figure 1 preserved.
-
-Primary numerical source: experiments/priority123_20260915 at experiment commit 7ee2b6080aa6752790e17c910c5c8a3111235d4d; handoff commit 78387d76f271d84b508373c603a5eff75c09299b. Tables 1–3,5–6 and Figure 2 use new same-generation records. Table 4 alone fixes the older regions and normalized A, explicitly labeled A_old. Original-logit versus intervention-drop foil distinction and NeurIPS 2022 reference retained.
+The paper has five pages: four technical pages and a fifth page of references/ethical-compliance text. All five authors have affiliation 1, Taizhou Institute of Science and Technology, Nanjing University of Science and Technology. The main result tables and Figure 2 derive from the same-generation experiment records at `experiments/priority123_20260915/`. Table 4 alone is explicitly an earlier-run fixed-population normalization check. Figure 1 is the original selection/held-out schematic.
 
 Run from repository root:
 
 ```bash
-python paper/review_round8_20260915/scripts/integrate_traceable.py
 bash paper/review_round8_20260915/scripts/build.sh
 python paper/review_round8_20260915/scripts/prepare_submission.py
 ```
 
-The integration checks CSV-level counts, choices, normalization rows and supplied paired estimates. Masks/full tensors remain on the author's machine; same-record PASS reports are supplied by the experiment runner, not independently re-executed here. Table 5 CIs are recomputed from new per-image paired endpoint differences with 10,000 bootstrap resamples; seeds documented in generated/evidence_checks.json. The supplied WF–Mean/Max-.1 paired CI file is retained in generated/ for review, outside the six manuscript tables.
-
-Remaining submission facts: conflicts-of-interest confirmation, final author approval and submission category. No conference/arXiv submission or main merge has been performed. No ZIP is needed.
+`generated/build_checks.json` checks the page limit, font embedding, references, overfull boxes, and source/arXiv render identity. `generated/SHA256SUMS.txt` and `submission/SHA256SUMS.txt` cover current build and submission files. Funding is recorded in `submission/submission_metadata.json`; COI and final author approvals remain open in `submission/DECLARATIONS_TO_CONFIRM.md`. No ZIP or actual conference/arXiv submission was made.

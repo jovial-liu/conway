@@ -1,13 +1,7 @@
-最新审阅修正版：liu_review_fixes_20260917.pdf。已合并人群定义、明确候选域和百分点单位、补充置信区间解释并改写相关工作措辞。
+# 投稿材料入口：五作者版（2026-09-23）
 
-最新公式说明版：liu_formulas_explained_20260917.pdf。每个编号公式前先说明含义与符号，计算定义不变。
+- 论文：`liu_five_authors_20260923.pdf`；`liu.pdf` 是同一份 PDF 的投稿命名副本。
+- 作者与投稿字段：`authors.csv`、`submission_metadata.json`、`title.txt`、`abstract.txt`、`keywords.txt`。
+- 核验：`SHA256SUMS.txt`。可编辑源码与展开的 arXiv 文件分别在上级目录的 `source/`、`arxiv_source/`。
 
-最新叙述重写版（2026-09-17）：liu_prose_revised_20260917.pdf。摘要至结论已重写，作者、图件及表格数值不变。
-
-当前修订：2026-09-17。PDF 为 liu_readability_20260917.pdf；Zhenghao Wang 单位为南京理工大学泰州科技学院；已完成可读性、图表分析和 IDEA 删除修订。
-
-# Round-8 提交准备文件
-
-当前 PDF：liu_round8_traceable.pdf；liu.pdf 为同内容投稿命名副本。title.txt、abstract.txt、keywords.txt、authors.csv 和 submission_metadata.json 对应本版。六位作者 ORCID 已齐；仍待确认利益冲突、投稿类别和最终作者审阅。尚未实际提交。
-
-Table 4 使用明确标记的旧固定 A；其余主表与图 2 使用新 traceable 记录。不要混用旧版 PDF 或数值。
+当前五位作者依次为 Kaixin Liu、Zhipeng Ye、Feng Jiang、Zhenghao Wang、Qihang Wu；单位均为南京理工大学泰州科技学院。原资助说明已保存在投稿元数据中；论文无 ACKNOWLEDGMENTS。利益冲突、伦理说明、投稿类别和最终作者审核待确认。请读 `DECLARATIONS_TO_CONFIRM.md`；现在尚未实际投稿。

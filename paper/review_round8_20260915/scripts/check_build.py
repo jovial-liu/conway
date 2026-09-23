@@ -16,7 +16,9 @@ assert 'RESULTS AND ANALYSIS' in texts[2]
 assert 'Nonzero-threshold sensitivity' in texts[3]
 assert 'Budget endpoints' in texts[2]
 assert '254807' not in '\n'.join(texts)
-assert 'Qihang Wu' in texts[0] and 'Hao Li' not in texts[0]
+assert all(n in texts[0] for n in ['Kaixin Liu','Zhipeng Ye','Feng Jiang','Zhenghao Wang','Qihang Wu'])
+assert all(n not in '\n'.join(texts) for n in ['Qiufeng Wang','Hao Li','Xi\'an Jiaotong-Liverpool University','qiufeng.wang@xjtlu.edu.cn','0000-0002-0918-4606'])
+assert texts[0].index('Kaixin Liu') < texts[0].index('Zhipeng Ye') < texts[0].index('Feng Jiang') < texts[0].index('Zhenghao Wang') < texts[0].index('Qihang Wu')
 for tree in ['source','arxiv_source']:
  log=(root/f'generated/build/{tree}/main.log').read_text()
  for pattern in ['Overfull', 'undefined references', 'Citation .* undefined', 'LaTeX Error']:

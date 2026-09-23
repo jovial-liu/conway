@@ -38,15 +38,6 @@
     },
     {
       "order": 4,
-      "name": "Qiufeng Wang",
-      "email": "qiufeng.wang@xjtlu.edu.cn",
-      "affiliation": "Department of Intelligence Science, Xi'an Jiaotong-Liverpool University",
-      "mailing_address": "Suzhou 215123, Jiangsu, China",
-      "orcid": "https://orcid.org/0000-0002-0918-4606",
-      "corresponding": false
-    },
-    {
-      "order": 5,
       "name": "Zhenghao Wang",
       "email": "wangzhenghao2002@outlook.com",
       "affiliation": "Taizhou Institute of Science and Technology, Nanjing University of Science and Technology",
@@ -55,7 +46,7 @@
       "corresponding": false
     },
     {
-      "order": 6,
+      "order": 5,
       "name": "Qihang Wu",
       "email": "24107880128@nustti.edu.cn",
       "affiliation": "Taizhou Institute of Science and Technology, Nanjing University of Science and Technology",
