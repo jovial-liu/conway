@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "a6b0260c07785494826cec9eebc98f7833149007609196ec38c05ce49b9e1114",
+  "pdf_sha256": "14b2a2ec9d61a2e5d046e7de9598393f4fd7f4b587b6ffbeef46f70196623d17",
   "pages_reviewed": [
     1,
     2,
@@ -8,5 +8,5 @@
     5
   ],
   "accepted_layout": true,
-  "findings": "Five authors. Funding and competing-interest statements added once on page 5. Ethics statement retained. Table 5 row spacing and adjacent whitespace adjusted for Tectonic line breaks; font sizes and margins unchanged. Five pages; no clipping or overlap. Table data and source figures unchanged."
+  "findings": "Explicit absent-foil failure event E replaces ambiguous F notation. Fully recorded rerun and same seed rule clarified; bootstrap intervals exclude base-seed variability. Table 4 remains a separate earlier-run normalization comparison. Five pages; four technical pages; no clipping or overlap. Tables, figures, authors, and declarations unchanged."
 }

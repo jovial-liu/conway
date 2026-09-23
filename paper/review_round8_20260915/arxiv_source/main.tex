@@ -179,7 +179,7 @@ WF selects using its selection prompt; only the oracle uses held-out scores.
 A foil may name another object in the image. To measure its contribution,
 remove all annotated-present classes from image $i$'s foil set, leaving
 $\foils_i^{\rm abs}$. The protocol holds $R_{\rm CCI}$ and full-foil screen $A$ fixed;
-$F_i^{\rm abs}$ tests $\bar d_t-\max_{f\in\foils_i^{\rm abs}}\bar d_f<0$.
+the failure event is $E_i^{\rm abs}=\{\bar d_t-\max_{f\in\foils_i^{\rm abs}}\bar d_f<0\}$.
 Removing any foils can reduce failure, so we compare this exclusion with
 randomly retaining the same number of foils. For $N_i$ full
 foils, $k_i=|\foils_i^{\rm abs}|$, and $m_i$ foils with $\bar d_f>\bar d_t$,
@@ -193,7 +193,7 @@ q_i=1-\frac{\binom{N_i-m_i}{k_i}}{\binom{N_i}{k_i}}.
 The numerator is zero when $k_i>N_i-m_i$. To isolate the effect of
 annotation-based removal, $\Delta_A$ averages its failure indicator minus
 the random-subset probability over the $|A|$ baseline images:
-$\Delta_A=|A|^{-1}\sum_{i\in A}(\mathbf1\{F_i^{\rm abs}\}-q_i)$.
+$\Delta_A=|A|^{-1}\sum_{i\in A}(\mathbf1\{E_i^{\rm abs}\}-q_i)$.
 Negative $\Delta_A$ favors annotation-based removal. Retained foil sets are nonempty.
 
 \section{Protocol and Reproducibility}
@@ -330,13 +330,12 @@ Setting & $|A_{\rm old}|$ & Raw & Norm & Flip\\
 \end{minipage}\par\vspace{3pt}
 
 \paragraph{Normalization rarely changes the outcome.}
-Table~\ref{tab:normalization} compares raw and normalized scores while
-holding the earlier-run regions and images fixed. Failure rates differ
-by at most 0.083 percentage points, and at most 0.107\% of images switch
-between passing and failing. The worst foil is unchanged on
-99.42--99.84\% of images. For example, COCO B/16 moves from 64.318\%
-to 64.369\% failure, while VOC B/32 stays at 41.157\%. The high failure
-rate is therefore present under both score definitions.
+Table~\ref{tab:normalization} isolates normalization by fixing earlier-run
+regions and images; these records are not pooled with rerun results.
+Failure rates differ by at most 0.083 percentage points, and at most
+0.107\% of images switch between passing and failing. The worst foil
+is unchanged on 99.42--99.84\% of images. The high failure rate
+therefore persists under both score definitions.
 
 \par\addvspace{3pt}
 \noindent\begin{minipage}{\columnwidth}
@@ -410,15 +409,16 @@ opportunities in $C_2$. Improving repair therefore requires attention to
 which regions are proposed and how much target-drop loss is allowed.
 
 \paragraph{Reproducibility and uncertainty.}
-The primary tables come from one run that saved candidate masks, selection
-and evaluation responses, and bbox records together. Validation checks
-reconstruct the regions, scores, choices, and failure counts.
-\href{https://github.com/jovial-liu/conway/tree/7ee2b6080aa6752790e17c910c5c8a3111235d4d/experiments/priority123_20260915}{The released records} include candidate summaries, checks, configuration,
-and hashes; masks and full responses remain local. Table~\ref{tab:normalization}
-uses earlier-run records. Three images changed selected regions between runs.
+Main results use a fully recorded rerun of the earlier seed rule, not
+independent base-seed repetitions. Checks reconstruct regions, scores,
+choices, and failures from saved masks, responses, and bbox records.
+\href{https://github.com/jovial-liu/conway/tree/7ee2b6080aa6752790e17c910c5c8a3111235d4d/experiments/priority123_20260915}{Released records} include summaries, checks, configuration, and hashes;
+masks and full responses remain local. Table~\ref{tab:normalization}
+uses earlier-run records. Selected regions changed in three images.
 
 We obtain confidence intervals from 10,000 image-level bootstrap samples,
-using the 2.5th and 97.5th percentiles without multiplicity correction.
+using the 2.5th and 97.5th percentiles without multiplicity correction
+or coverage of base-seed variability.
 Paired effects are differenced within each image. Foil comparisons use
 fixed $A$ or $A^+$; repair-cost intervals use only actual repairs.
 We use exact $q_i$ values, checked against 100 seeded random draws.

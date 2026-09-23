@@ -3,7 +3,7 @@ Keywords:        CLIP, explanation auditing, fixed-population foil controls, rep
 Author:          Kaixin Liu; Zhipeng Ye; Feng Jiang; Zhenghao Wang; Qihang Wu
 Creator:         LaTeX with hyperref
 Producer:        xdvipdfmx (0.1)
-CreationDate:    Wed Sep 23 12:08:29 2026 CST
+CreationDate:    Wed Sep 23 12:30:23 2026 CST
 Custom Metadata: no
 Metadata Stream: no
 Tagged:          no
@@ -15,6 +15,6 @@ Pages:           5
 Encrypted:       no
 Page size:       612 x 792 pts (letter)
 Page rot:        0
-File size:       259123 bytes
+File size:       259208 bytes
 Optimized:       no
 PDF version:     1.5

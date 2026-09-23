@@ -30,7 +30,7 @@ The authors declare that they have no known competing financial interests or per
 
 ## 实验与重建
 
-主表和图 2 来源为 `experiments/priority123_20260915/`（证据提交 `7ee2b6080aa6752790e17c910c5c8a3111235d4d`）。表 4 的旧固定人群单独标明 earlier-run。当前更改仅涉及署名与交接，实验数值、原 Figure 1、Figure 2 和表格内容保持不变。
+主表和图 2 来源为 `experiments/priority123_20260915/`（证据提交 `7ee2b6080aa6752790e17c910c5c8a3111235d4d`）。表 4 的旧固定人群单独标明 earlier-run。当前更改涉及署名、声明及实验说明澄清；实验数值、原 Figure 1、Figure 2 和表格内容保持不变。
 
 从仓库根目录运行：
 
@@ -48,3 +48,10 @@ python paper/review_round8_20260915/scripts/prepare_submission.py
 可使用 `tectonic --keep-logs --outdir generated/build/source source/main.tex` 编译（从本论文目录运行；先创建输出目录），arxiv_source 同理。完整检查见 generated/build_checks.json 与 generated/visual_review.json。
 
 旧运行与新完整重跑使用相同种子规则；没有发现多组 base seed 完整重复实验的证据。详见 EXPERIMENT_HISTORY_REVIEW_20260923.md，内含给老师的准确回复。
+
+## 投稿前表述修订
+
+- 用明确事件 $E_i^{abs}$ 定义 annotation-absent 失败判定，再用于指示函数；原稿普通 F 已有失败判定说明，本次消除其与花体 foil 集合的视觉歧义，并非更改统计计算。
+- 主结果明确来自沿用原种子规则的一次完整重跑，不声称多组独立 base seed 重复实验；bootstrap 区间不反映 base-seed 变异。
+- 表 4 固定早期运行区域和图像，以隔离归一化影响，并明确不与重跑结果混算。
+- 重新编译及逐页视觉检查通过，仍为五页。没有运行新实验或更改表格数据。

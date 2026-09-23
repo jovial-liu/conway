@@ -28,10 +28,10 @@
       704.69677734375
     ],
     [
-      54.076515197753906,
+      54.096466064453125,
       72.6636962890625,
       560.7418823242188,
-      702.0640869140625
+      714.019287109375
     ],
     [
       59.40653991699219,
@@ -40,8 +40,5 @@
       655.5081787109375
     ]
   ],
-  "note": "Glyph bounds allow small font-metric protrusions; visual inspection is recorded separately.",
-  "compiler": "Tectonic 0.16.9 (XeTeX)",
-  "funding_statement_count": 1,
-  "conflicts_statement_count": 1
+  "note": "Glyph bounds allow small font-metric protrusions; visual inspection is recorded separately."
 }

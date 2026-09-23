@@ -65,45 +65,40 @@ Figure 1: Selection and held-out audit. A region is ﬁxed using selection-stage
 response, and locality. Schematic responses illustrate the selection rule.
 
 
-foil drop from the target drop under the selection prompt:               can reduce failure, so we compare this exclusion with ran-
-                                                                         domly retaining the same number of foils. For Ni full foils,
+foil drop from the target drop under the selection prompt:               moving any foils can reduce failure, so we compare this exclu-
+                                                                         sion with randomly retaining the same number of foils. For
                                  R (t) − max dR (f ),
                  sel
              M         (R, t) = dsel           sel
                                                                  (4)
-                                         f ∈Ft                           ki = |Fiabs |, and mi foils with d¯f > d¯t , let qi be
-                                                                                                                             ( )the failure
-The feasible set Rϵ contains candidates within the allowed               probability of a uniform size-ki subset. With nk counting
-target-drop loss:                                                        size-k subsets, one minus the fraction containing no stronger
-                                                                         foil gives
-                                                                                                        (Ni −mi )
+                                         f ∈Ft                           Ni full foils, ki = |Fiabs |, and mi foils with d¯f > d¯t , let qi(be)
+The feasible set Rϵ contains candidates within the allowed               the failure probability of a uniform size-ki subset. With nk
+target-drop loss:                                                        counting size-k subsets, one minus the fraction containing no
+                                                                         stronger foil gives
                            R (t) ≥ dRCCI (t) − ϵ},
          Rϵ = {R ∈ R(x) : dsel      sel
-                                                                 (5)
+                                                                 (5)                                       (Ni −mi )
                                                                                                                ki
 WF chooses RWF to maximize that margin within the feasible                                       qi = 1 −     (N i
                                                                                                                    ) .                     (8)
-                                                                                                                ki
-set:
-                                                                         The numerator is zero when ki > Ni − mi . To isolate the
-                 RWF = arg max M sel (R, t).                     (6)     effect of annotation-based removal, ∆A averages its failure
-                                 R∈Rϵ
+set:                                                                                                            ki
 
-We use ϵ = .02 logit units and sweep .01/.02/.05/.10/.20.                                              ∑ probability over the |A|
-                                                                         indicator minus the random-subset
-                                                                         baseline images: ∆A = |A|−1 i∈A (1{Fiabs } − qi ). Nega-
-Locating the constraints on repair. An oracle tests whether
-                                                                         tive ∆A favors annotation-based removal. Retained foil sets
-any allowed alternative can repair a failure. It counts images
-                                                                         are nonempty.
-in B with a feasible region with a nonnegative held-out mar-
+                 RWF = arg max M sel (R, t).                     (6)     The numerator is zero when ki > Ni − mi . To isolate the
+                                 R∈Rϵ                                    effect of annotation-based removal, ∆A averages its failure
+                                                                                                       ∑ probability over the |A|
+We use ϵ = .02 logit units and sweep .01/.02/.05/.10/.20.                indicator minus the random-subset
+Locating the constraints on repair. An oracle tests whether              baseline images: ∆A = |A|−1 i∈A (1{Eiabs } − qi ). Nega-
+any allowed alternative can repair a failure. It counts images           tive ∆A favors annotation-based removal. Retained foil sets
+in B with a feasible region with a nonnegative held-out mar-             are nonempty.
 gin. Denote this count by NO (B, ϵ) and image i’s feasible set                  3 PROTOCOL AND REPRODUCIBILITY
-by Rϵ (i). The indicator 1{·} is one when its condition holds                We evaluate 27,708 COCO val2014 [11] and 1,943
-and zero otherwise:                                                      VOC2007 test [12] images with CLIP B/16 and B/32 (16-
-                       ∑ {                         }                     and 32-pixel patches): 59,302 image–model records. The
-         NO (B, ϵ) =       1 max Pi (R) ≥ 0 .              (7)           target is the largest instance by annotation area (COCO) or
-                                  R∈Rϵ (i)
-                           i∈B                                           box area (VOC). Images require another category and 2–80%
+by Rϵ (i). The indicator 1{·} is one when its condition holds
+                                                                             We evaluate 27,708 COCO val2014 [11] and 1,943
+and zero otherwise:
+                       ∑ {                         }                     VOC2007 test [12] images with CLIP B/16 and B/32 (16-
+         NO (B, ϵ) =       1 max Pi (R) ≥ 0 .              (7)           and 32-pixel patches): 59,302 image–model records. The
+                           i∈B
+                                  R∈Rϵ (i)                               target is the largest instance by annotation area (COCO) or
+                                                                         box area (VOC). Images require another category and 2–80%
 The unrestricted oracle removes the budget constraint and                target area; COCO crowd annotations are excluded. Full foils
 searches all K candidates. Each image in B falls into one                are the other 79/19 classes.
 of four groups: no candidate has P ≥ 0 (C0 ); a candidate                    K-means uses normalized projected patch features, K =
@@ -119,7 +114,7 @@ Controlling for competing objects. A foil may name an-
 other object in the image. To measure its contribution, remove
 all annotated-present classes from image i’s foil set, leaving
 Fiabs . The protocol holds RCCI and full-foil screen A ﬁxed;
-Fiabs tests d¯t − maxf ∈Fiabs d¯f < 0. Removing any foils
+the failure event is Eiabs = {d¯t − maxf ∈Fiabs d¯f < 0}. Re-
                4    RESULTS AND ANALYSIS                                        Unrestricted (8 candidates)
 Table 1: Fixed baseline A: full-foil, annotation-absent, and exact              Feasible (ε = 0.02)
 cardinality-matched random failure rates (%). 100∆A is absent mi-
@@ -199,56 +194,63 @@ COCO B/32           17,847           64.762        64.778          0.073    COCO
 VOC B/16             1,209           42.184        42.266          0.083    VOC B/16            42.27         41.44        36.23         13.73
 VOC B/32             1,227           41.157        41.157          0.000    VOC B/32            41.08         40.26        34.39         11.90
 
-Normalization rarely changes the outcome. Table 4 com-                      The failures are not conﬁned to margins near zero. Ta-
-pares raw and normalized scores while holding the earlier-run               ble 6 tightens the test from P < 0 to P < −δ. At δ = .10,
-regions and images ﬁxed. Failure rates differ by at most 0.083              59.49–60.22% of COCO screen-passers and 34.39–36.23%
-percentage points, and at most 0.107% of images switch be-                  of VOC screen-passers still fail. Rates decline further at .50.
-tween passing and failing. The worst foil is unchanged on                   Thus many failures survive a stricter margin requirement, al-
-99.42–99.84% of images. For example, COCO B/16 moves                        though their prevalence depends on the chosen threshold.
-from 64.318% to 64.369% failure, while VOC B/32 stays at                    Implications for region selection. The comparisons point
-41.157%. The high failure rate is therefore present under both              to two distinct changes. Table 2 identiﬁes images that need a
-score deﬁnitions.                                                           better candidate region (C0 ) and images that already have a
-Table 5: Actual sign repairs within ﬁxed baseline B, ϵ = .02. r             passing region outside the budget (C1 ). Figure 2 shows how
-counts repairs; j counts those also satisfying J. WF−CCI means
-                                                                            sharply the budget narrows the available choices, and Table 3
-with repair-subset 95% CIs. ∆dt is raw held-out target-score change;
-                                                                            shows the effect of relaxing it. Changing the ranking rule
+Normalization rarely changes the outcome. Table 4 iso-                      The failures are not conﬁned to margins near zero. Ta-
+lates normalization by ﬁxing earlier-run regions and images;                ble 6 tightens the test from P < 0 to P < −δ. At δ = .10,
+these records are not pooled with rerun results. Failure rates              59.49–60.22% of COCO screen-passers and 34.39–36.23%
+differ by at most 0.083 percentage points, and at most 0.107%               of VOC screen-passers still fail. Rates decline further at .50.
+of images switch between passing and failing. The worst foil                Thus many failures survive a stricter margin requirement, al-
+is unchanged on 99.42–99.84% of images. The high failure                    though their prevalence depends on the chosen threshold.
+rate therefore persists under both score deﬁnitions.                        Implications for region selection. The comparisons point
+Table 5: Actual sign repairs within ﬁxed baseline B, ϵ = .02. r             to two distinct changes. Table 2 identiﬁes images that need a
+counts repairs; j counts those also satisfying J. WF−CCI means              better candidate region (C0 ) and images that already have a
+with repair-subset 95% CIs. ∆dt is raw held-out target-score change;        passing region outside the budget (C1 ). Figure 2 shows how
 only bbox change is in percentage points.
+                                                                            sharply the budget narrows the available choices, and Table 3
+Setting            r             j             ∆dt            100∆bbox      shows the effect of relaxing it. Changing the ranking rule
                                                                             alone can recover only the additional feasible opportunities in
-Setting            r             j             ∆dt            100∆bbox      C2 . Improving repair therefore requires attention to which re-
-                                                                            gions are proposed and how much target-drop loss is allowed.
-                                               0.029              -19.53
-COCO B/16         18        12                                              Reproducibility and uncertainty. The primary tables come
-                                      [-0.096,0.148]       [-38.12,-1.32]
-                                               0.094              -14.04    from one run that saved candidate masks, selection and evalu-
-COCO B/32         30        25                                              ation responses, and bbox records together. Validation checks
+                                               0.029              -19.53    C2 . Improving repair therefore requires attention to which re-
+COCO B/16         18        12
+                                      [-0.096,0.148]       [-38.12,-1.32]   gions are proposed and how much target-drop loss is allowed.
+                                               0.094              -14.04
+COCO B/32         30        25                                              Reproducibility and uncertainty. Main results use a fully
                                        [0.036,0.148]       [-27.70,-1.74]
-                                              -0.021              -16.87    reconstruct the regions, scores, choices, and failure counts.
-VOC B/16           5             3                                          The released records include candidate summaries, checks,
+                                                                            recorded rerun of the earlier seed rule, not independent base-
+                                              -0.021              -16.87
+VOC B/16           5             3                                          seed repetitions. Checks reconstruct regions, scores, choices,
                                       [-0.170,0.182]       [-26.11,-7.00]
-                                              -0.078              -28.17    conﬁguration, and hashes; masks and full responses remain
-VOC B/32           2             1                                          local. Table 4 uses earlier-run records. Three images changed
+                                                                            and failures from saved masks, responses, and bbox records.
+                                              -0.078              -28.17
+VOC B/32           2             1                                          Released records include summaries, checks, conﬁguration,
                                      [-0.115,-0.042]      [-78.57,22.22]
-                                                                            selected regions between runs.
-Repairing speciﬁcity can reduce spatial overlap. Table 5                        We obtain conﬁdence intervals from 10,000 image-level
-considers only repaired failures; Table 3 uses all eligible                 bootstrap samples, using the 2.5th and 97.5th percentiles
-images. Mean bbox precision falls by 14.04–28.17 percent-                   without multiplicity correction. Paired effects are differenced
-age points among repairs. Its interval is below zero in three               within each image. Foil comparisons use ﬁxed A or A+ ;
-settings, but spans zero for VOC B/32. Mean target-score                    repair-cost intervals use only actual repairs. We use exact qi
-changes are positive on COCO and negative on VOC; their                     values, checked against 100 seeded random draws.
-intervals span zero for both B/16 settings. Thus the direction
-                                                                                                 5 CONCLUSION
-of a mean change is not always resolved by its interval. VOC
-estimates summarize just ﬁve and two repairs.                                   A region can overlap the target and beat the average com-
-    A repaired margin also need not retain the other checks.                peting class while contributing more to a single competitor.
-On COCO B/32, 30 failures are repaired, but only 25 retain                  This occurs frequently for CCI-top1, even after annotated
-overlap, mean-foil contrast, and positive target contribution.              competitors are removed. Checking every candidate shows
-This gap between repairs (r) and repairs passing all checks                 why reranking repairs so few failures: many images have no
-(j) occurs in every setting. Even the oracle ﬁnds only 12,                  passing alternative, and most remaining alternatives exceed
-26, 3, and 2 feasible repairs passing all checks, in table or-              the target-drop tolerance. Relaxing that tolerance makes more
-der. Among all baseline passes on COCO B/32, four instead                   repairs possible but also changes target response and overlap.
-become worst-foil failures; these regressions lie outside the               Worst-foil comparisons therefore add information that over-
-ﬁxed failure set.                                                           lap and mean contrast alone do not provide when evaluating
+                                                                            and hashes; masks and full responses remain local. Table 4
+Repairing speciﬁcity can reduce spatial overlap. Table 5                    uses earlier-run records. Selected regions changed in three
+considers only repaired failures; Table 3 uses all eligible                 images.
+images. Mean bbox precision falls by 14.04–28.17 percent-                       We obtain conﬁdence intervals from 10,000 image-level
+age points among repairs. Its interval is below zero in three               bootstrap samples, using the 2.5th and 97.5th percentiles with-
+settings, but spans zero for VOC B/32. Mean target-score                    out multiplicity correction or coverage of base-seed variabil-
+changes are positive on COCO and negative on VOC; their                     ity. Paired effects are differenced within each image. Foil
+intervals span zero for both B/16 settings. Thus the direction              comparisons use ﬁxed A or A+ ; repair-cost intervals use only
+of a mean change is not always resolved by its interval. VOC                actual repairs. We use exact qi values, checked against 100
+estimates summarize just ﬁve and two repairs.                               seeded random draws.
+    A repaired margin also need not retain the other checks.                                     5 CONCLUSION
+On COCO B/32, 30 failures are repaired, but only 25 retain
+                                                                                A region can overlap the target and beat the average com-
+overlap, mean-foil contrast, and positive target contribution.
+                                                                            peting class while contributing more to a single competitor.
+This gap between repairs (r) and repairs passing all checks
+                                                                            This occurs frequently for CCI-top1, even after annotated
+(j) occurs in every setting. Even the oracle ﬁnds only 12,
+                                                                            competitors are removed. Checking every candidate shows
+26, 3, and 2 feasible repairs passing all checks, in table or-
+                                                                            why reranking repairs so few failures: many images have no
+der. Among all baseline passes on COCO B/32, four instead
+                                                                            passing alternative, and most remaining alternatives exceed
+become worst-foil failures; these regressions lie outside the
+                                                                            the target-drop tolerance. Relaxing that tolerance makes more
+ﬁxed failure set.
+                                                                            repairs possible but also changes target response and overlap.
+                                                                            Worst-foil comparisons therefore add information that over-
+                                                                            lap and mean contrast alone do not provide when evaluating
                                                                             frozen CLIP region explanations.
                     REFERENCES                                        2025. [Online]. Available: https://arxiv.org/abs/2505.
 [1] A. Radford, J. W. Kim, C. Hallacy, A. Ramesh, G. Goh,             20229.
