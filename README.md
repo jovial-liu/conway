@@ -7,29 +7,91 @@ tags:
 ---
 # Conway
 
-**Open models and runtime research toward digital life.**
+**An open architecture for persistent digital agents.**
 
-A persistent autonomous loop, a replaceable visual policy, file memory, MCP tools and Agent Skills. No chat window.
+Model and runtime research toward digital life: an agent that keeps observing,
+acting and retaining experience, guided by durable goals.
 
-[中文使用说明](README.zh-CN.md) · [Installation](docs/INSTALL.md) · [Configuration](docs/CONFIGURATION.md) · [Validation and limitations](docs/VALIDATION.md) · [Changelog](CHANGELOG.md) · [Architecture and research](docs/ARCHITECTURE.md) · [Ecosystem](docs/ECOSYSTEM.md) · [Model development](docs/MODELS.md)
+[中文介绍](README.zh-CN.md) · [Architecture](docs/ARCHITECTURE.md) · [Model research](docs/MODELS.md) · [Get started](docs/INSTALL.md) · [Evidence and limitations](docs/VALIDATION.md)
 
-Conway loads a constitution, observes the desktop, asks a VLM for one next action, dispatches it, records the outcome, and observes again. The model can choose direct file/system tools or screenshot-driven GUI interaction. GitHub hosts development; Hugging Face distributes source and references existing model weights. This repository is **not a newly trained model** and does not run a hosted agent.
+## The idea
 
-**Status: v0.10.0 engineering release.** `conway run` is the continuous autonomous entry point: no conversation window, input prompt or per-action user turn. It chooses work from the constitution and observations, continues beyond subgoal completion, and paces idle/recovery cycles. Offline tests are not evidence of real-model GUI accuracy. Native accessibility adapters remain experimental.
+Conway explores a question: **what should we build around a model so that it can
+participate continuously in a digital environment?**
 
-## Minimal core, replaceable model
+Its basic unit is an ongoing action loop. The owner defines goals and scope;
+the model chooses the next action from observations and memory; the runtime
+executes it, records the result and brings new evidence into the next decision.
+Useful work can continue across subgoals without a new conversation turn.
 
-Conway keeps a single acting loop. Owner rules live in `constitution.md`, current work in hot-read `goals.md`, and progress in file memory. Optional `Brain.feedback(Transition)` exposes executed action/result/next-observation evidence to future learning adapters; today's inference-only adapters perform no training or weight updates. Tool descriptions now use parameter definitions instead of fixed example coordinates.
+The long-term research goal is digital life: agents that develop more capable
+behavior through experience, adapt to changing environments and eventually
+support measured continual learning and recursive improvement. Today's work
+builds the running architecture and the experimental path toward that goal.
 
-[Digital-life gaps and research milestones](docs/DIGITAL_LIFE.md) · [Future-model boundary and simple architecture](docs/FUTURE.md) · [Digital-life goals example](examples/goals.digital-life.md) · [Recorded small-model acceptance](docs/validation/2026-09-26-small-models.md)
+## How the architecture fits together
 
-## Two tracks: runtime and policy
+```mermaid
+flowchart TD
+    G["Goals and scope"] --> H["Harness: continuous loop"]
+    H -->|observation and context| M["Replaceable model"]
+    M -->|next action| H
+    H -->|tools and GUI actions| E["Digital environment"]
+    E -->|new observations and results| H
+    H -->|record experience| F["File memory"]
+    F -->|durable context| H
+```
 
-**Conway Runtime** runs continuously from a constitution and observations. Version 0.8 adds a real official-SDK MCP stdio client and local Agent Skills discovery/loading to the generic policy. Existing file/GUI tools, recovery and stop semantics remain available. See [compatibility and setup](docs/ECOSYSTEM.md).
+| Part | What it contributes |
+|---|---|
+| Goals | `constitution.md` defines identity and scope; `goals.md` holds ongoing work and is reread each cycle. |
+| Model | A local or external visual policy interprets the environment and selects the next action. |
+| Harness | One continuous loop handles observation, action validation, execution, results, recovery and lifecycle controls. |
+| Environment | GUI, files and Shell provide direct interaction; optional MCP tools and Agent Skills connect existing capabilities. |
+| Memory | Markdown, JSON and JSONL retain progress, decisions and results across context windows and restarts. |
 
-**Conway Policy** is the model research track: opt-in screenshot/context/action episodes, independent review, integrity-checked multimodal dataset export, and an experimental TRL/PEFT LoRA entry point. Dataset validation is tested; GPU training has not been run and no Conway-trained weights are released. See [the model workflow](docs/MODELS.md).
+The default architecture has one acting model and one loop. It runs without a
+chat window. Its core stays small so more capable models can take on more of the
+reasoning while reusing the same tools, memory and runtime boundaries.
 
-Digital life is the research direction. Persistence, tool use and file memory do not by themselves establish consciousness, general intelligence or learned self-improvement. The [architecture](docs/ARCHITECTURE.md) states measurable milestones and references the official designs that informed this release.
+## Two development tracks
+
+**Conway Runtime** is the executable harness. It provides continuous operation,
+computer and tool interfaces, file memory, lifecycle controls and independently
+checkable task reports. It is the environment in which policies can be tried.
+
+**Conway Policy** is the model research track. Existing open VLMs are the starting
+point. Optional visual episodes, independent review, dataset export and an
+experimental offline fine-tuning script create a path from experience to
+candidate policies. Model and harness revisions can be compared separately.
+
+The action loop is implemented. The learning path is under development: current
+adapters run inference, and the optional feedback interface is available for
+future stateful or learning models. Candidate evaluation and replacement are
+separate experimental steps.
+
+[Runtime semantics](docs/AUTONOMOUS.md) · [MCP and Skills](docs/ECOSYSTEM.md) · [Model/data workflow](docs/MODELS.md) · [Future model interfaces](docs/FUTURE.md)
+
+## Why build this now?
+
+A useful research foundation can be built before small models reliably handle
+long-horizon work. Clear goals, inspectable experience, replaceable policies and
+repeatable evaluation make it possible to test each new model against the same
+running system. As capabilities improve, Conway can evolve through those
+replacement points and measured experiments.
+
+The project welcomes contributors working on small-model tool use, GUI grounding,
+reusable tools and skills, experience datasets, and evaluations of retained and
+new capabilities.
+
+**Current stage: v0.10.0 research prototype.** The runtime, ecosystem connections,
+file memory, experience export and acceptance tools are implemented. Small-model
+checks have exposed substantial task-reliability gaps. Conway-trained weights,
+online learning and recursive self-improvement are research goals, not released
+capabilities. See the [measured results](docs/validation/2026-09-26-feedback-recheck.md)
+and [digital-life milestones](docs/DIGITAL_LIFE.md).
+
+[GitHub development](https://github.com/jovial-liu/conway) · [Hugging Face source distribution](https://huggingface.co/jnjnkj/conway) · [Configuration](docs/CONFIGURATION.md) · [Changelog](CHANGELOG.md)
 
 ## Start
 

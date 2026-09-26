@@ -1,5 +1,7 @@
 # Conway: models and harnesses toward digital life
 
+[中文项目介绍](OVERVIEW.zh-CN.md) · [Public introduction draft](ANNOUNCEMENT.zh-CN.md) · [Runtime documentation](AUTONOMOUS.md)
+
 Research/design review: **2026-09-26**. The goal is an open research system for persistent autonomous digital agents. Artificial/digital life is the long-term research direction; persistence and tool use alone do not establish life, consciousness, general autonomy or self-improvement.
 
 The public project has two development tracks: **Conway Runtime**, the executable harness, and **Conway Policy**, a planned family of learned visual/action policies. The runtime is released. The policy data/export and experimental LoRA entry point are implemented; no Conway-trained checkpoint has been produced or evaluated by this release.
@@ -46,7 +48,7 @@ flowchart TD
 | Learning | Produce and compare new candidate policies | Experimental offline LoRA script; data validation tested, GPU training unperformed |
 | Release | Select a policy based on reproducible evidence | Evaluation proposal and device checks; no automatic checkpoint promotion |
 
-An autonomous runtime should act without per-turn conversation. Its objective and scope still come from the constitution. Stop is a lifecycle command; completion is a subgoal report. No input box, chat queue or stdin prompt is introduced by ecosystem support. MCP elicitation/sampling is not exposed as a user-conversation channel.
+An autonomous runtime should act without per-turn conversation. Its scope comes from the constitution and its current objectives from hot-read goals.md. Stop is a lifecycle command; completion is a subgoal report. No input box, chat queue or stdin prompt is introduced by ecosystem support. MCP elicitation/sampling is not exposed as a user-conversation channel.
 
 ## Making the digital-life goal measurable
 
@@ -73,8 +75,8 @@ Perpetual activity, self-replication and self-modification are not used as subst
 
 ## Public positioning
 
-English: **Conway — open models and runtime research toward digital life.**
+English: **Conway — an open architecture for persistent digital agents.**
 
-中文：**Conway：通向数字生命的开放模型与自主运行时。**
+中文：**Conway：面向数字生命的开放 Agent 架构。**
 
 The short explanation is: a persistent agent that observes, acts and accumulates inspectable experience without a chat window, with an open path from experience to candidate policies. Release materials should identify runtime version, base model, evaluation setting and whether weights are actually available. Avoid “already alive,” “self-evolving,” “fully autonomous in any environment,” or borrowed benchmark scores without corresponding evidence.
