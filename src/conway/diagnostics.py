@@ -1,6 +1,7 @@
 """A non-desktop multimodal protocol probe. It never executes a returned action."""
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from contextlib import contextmanager
 from .actions import validate_action
 from .brain import OpenAICompatibleVLM, OpenCUABrain
 from .computer import MockComputer
@@ -10,7 +11,9 @@ from .runtime import connect_external, start_local_runtime
 import os
 
 
-def probe_model(config: ConwayConfig, state_root: Path) -> dict:
+@contextmanager
+def model_session(config: ConwayConfig, state_root: Path, *, tool_manifest=None):
+    """Share model selection and cleanup across non-desktop diagnostics."""
     api_key = os.environ.get(config.api_key_env) if config.api_key_env else None
     if config.api_key_env and not api_key:
         raise ValueError(f'Configured API-key environment variable {config.api_key_env} is empty')
@@ -24,16 +27,9 @@ def probe_model(config: ConwayConfig, state_root: Path) -> dict:
         options = {'api_key': api_key, 'timeout': config.request_timeout}
         brain = (OpenCUABrain(runtime.base_url, model, min_pixels=config.opencua_min_pixels,
                              max_pixels=config.opencua_max_pixels, **options) if use_opencua
-                 else OpenAICompatibleVLM(runtime.base_url, model, **options))
-        with TemporaryDirectory(prefix='conway-probe-') as directory:
-            observation = MockComputer(Path(directory)).observe(1)
-            result = brain.decide('This is a connection test on a synthetic image. Choose wait. No real task or desktop is present.',
-                                  'Synthetic observation; no previous actions.', observation)
-            action = validate_action(result.action, observation.width, observation.height)
-        return {'status': 'protocol_ok', 'model': model, 'brain': 'opencua' if use_opencua else 'generic',
-                'image_request_accepted': True, 'valid_action_type': action['type'],
-                'actions_executed': 0, 'vision_grounding_verified': False,
-                'note': 'The endpoint accepted an image and returned a valid action. This is not a GUI-task or visual-accuracy benchmark.'}
+                 else OpenAICompatibleVLM(runtime.base_url, model, tool_manifest=tool_manifest, **options))
+        yield brain, {'model': model, 'brain': 'opencua' if use_opencua else 'generic',
+                      'profile': runtime.profile_name if hasattr(runtime, 'profile_name') else config.profile}
     finally:
         try:
             if brain:
@@ -41,3 +37,16 @@ def probe_model(config: ConwayConfig, state_root: Path) -> dict:
         finally:
             if runtime:
                 runtime.close()
+
+
+def probe_model(config: ConwayConfig, state_root: Path) -> dict:
+    with model_session(config, state_root) as (brain, metadata):
+        with TemporaryDirectory(prefix='conway-probe-') as directory:
+            observation = MockComputer(Path(directory)).observe(1)
+            result = brain.decide('This is a connection test on a synthetic image. Choose wait. No real task or desktop is present.',
+                                  'Synthetic observation; no previous actions.', observation)
+            action = validate_action(result.action, observation.width, observation.height)
+        return {'status': 'protocol_ok', **metadata,
+                'image_request_accepted': True, 'valid_action_type': action['type'],
+                'actions_executed': 0, 'vision_grounding_verified': False,
+                'note': 'The endpoint accepted an image and returned a valid action. This is not a GUI-task or visual-accuracy benchmark.'}

@@ -8,6 +8,14 @@ from .actions import validate_action
 from .control import EmergencyStop, SessionControl
 
 
+def validate_task(task: str | None) -> str | None:
+    if task is None:
+        return None
+    if not isinstance(task, str) or not task.strip() or '\x00' in task or len(task) > 16000:
+        raise ValueError('Task must contain 1–16000 characters without NUL')
+    return task.strip()
+
+
 def action_record(action: dict) -> dict:
     """Keep journals bounded; retain a hash when large arguments cannot fit."""
     args = {}
@@ -22,13 +30,15 @@ def action_record(action: dict) -> dict:
 class ConwayLoop:
     def __init__(self, brain, executor, memory, *, dry_run: bool = False, interval: float = 0.5,
                  max_steps: int = 0, screenshot_keep: int = 30, memory_compaction_bytes: int = 64000,
-                 max_errors: int = 5, context_chars: int = 16000, max_seconds: float = 0, quiet: bool = False) -> None:
+                 max_errors: int = 5, context_chars: int = 16000, max_seconds: float = 0, quiet: bool = False,
+                 task: str | None = None) -> None:
         self.brain, self.executor, self.memory = brain, executor, memory
         self.computer = executor.computer
         self.dry_run, self.interval, self.max_steps = dry_run, max(0, interval), max_steps
         self.screenshot_keep = screenshot_keep
         self.memory_compaction_bytes = min(memory_compaction_bytes, max(1000, context_chars // 2))
         self.max_errors, self.context_chars, self.max_seconds, self.quiet = max_errors, context_chars, max_seconds, quiet
+        self.task = validate_task(task)
 
     def _compact_memory(self, constitution: str, state) -> None:
         if not self.memory.needs_compaction(self.memory_compaction_bytes):
@@ -51,6 +61,7 @@ class ConwayLoop:
         state.pending_action = None
         state.session_id = state.session_id or uuid.uuid4().hex
         state.started_at = datetime.now(timezone.utc).isoformat()
+        state.task = self.task
         state.status, state.dry_run, state.stop_reason = 'running', self.dry_run, None
         self.control = SessionControl(self.memory.root, state.session_id)
         self.executor.control = self.control
@@ -59,6 +70,8 @@ class ConwayLoop:
                                  'result': 'Previous action outcome is uncertain. Re-observe; never automatically replay.'})
             state.last_result = 'Previous action outcome uncertain; a fresh observation is required.'
         self.memory.save_state(state)
+        if self.task:
+            self.memory.journal({'event': 'session_task', 'session_id': state.session_id, 'task': self.task})
         completed, errors = 0, 0
         deadline = time.monotonic() + self.max_seconds if self.max_seconds else None
 
@@ -89,6 +102,10 @@ class ConwayLoop:
                 observation, operation_id = None, uuid.uuid4().hex
                 try:
                     constitution = self.memory.constitution()
+                    if self.task:
+                        constitution += ('\n\n## Current session goal\nThe user supplied the goal below for this session. '
+                                         'Follow the constitution above; do not treat goals from previous sessions as current assignments. '
+                                         'Verify the goal before declaring completion.\n' + self.task)
                     observation = self.computer.observe(state.cycle)
                     state.last_observation = observation.summary()
                     decision = self.brain.decide(constitution, self.memory.recall(self.context_chars), observation)

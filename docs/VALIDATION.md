@@ -2,6 +2,8 @@
 
 This release separates implemented behavior from deployment claims.
 
+Version 0.6.0 adds `preflight`, `vision-check` and session tasks. Follow [device acceptance](ACCEPTANCE.md) to collect evidence on the target machine. The new tests cover seeded image generation, hit/miss/error accounting, generic/OpenCUA image protocol fixtures, diagnostic cleanup, timed capture, private metadata omission, exclusive report writes and task lifecycle. A pixel-reading HTTP fixture verifies the scoring pipeline; it is not a real VLM and its scores are not model benchmark results.
+
 ## Automated coverage
 
 The new regression suite covers strict config/action parsing, malformed model responses, retries, model-ID negotiation, local server command construction, occupied ports, atomic state and recovery, journal repair, context bounds, GUI scaling/dispatch fixtures, clipboard failures, UI-provider timeout fallback, current-user file/Shell tools, stop/error/time budgets, export and source publication selection.

@@ -2,7 +2,7 @@
 
 Conway 是本地运行、没有聊天框的自主电脑操作 harness。目标写在 `constitution.md` 中；模型自行选择下一步，既能用截图和鼠标键盘，也能用文件与 Shell 工具。GitHub 和 Hugging Face 负责分发代码，不负责运行你的桌面。
 
-当前版本：**0.5.0 工程候选版**。自动化测试通过不等于真实 VLM 已能稳定完成所有电脑任务。原生 UI 树仍属实验性功能，详见 [验证范围](docs/VALIDATION.md)。
+当前版本：**0.6.0 工程候选版**，新增设备预检、可评分的合成视觉测试和单次任务入口。自动化测试通过不等于真实 VLM 已能稳定完成所有电脑任务。原生 UI 树仍属实验性功能，详见 [验证范围](docs/VALIDATION.md)。
 
 ## 最短启动流程
 
@@ -49,6 +49,31 @@ conway start --endpoint http://127.0.0.1:8000/v1 --execute
 ```
 
 服务只有一个模型时会自动读取其 ID；多个模型则加 `--model 实际服务ID`。OpenCUA 可以通过 `--brain opencua` 显式选择；模型名含 OpenCUA 时也会自动识别。仅把 OpenCUA 权重文件下载到本地，不等于已经启动对应服务。
+
+## 检查设备并指定本次任务
+
+配置好模型服务后，在自己的电脑上运行：
+
+```sh
+conway preflight --desktop --output ./preflight.json
+conway vision-check --samples 8 --seed 42 --output ./vision.json
+conway start --task "在工作目录创建 conway-test.txt，写入中文测试内容并读取核对" --max-steps 10
+conway start --task "在工作目录创建 conway-test.txt，写入中文测试内容并读取核对" --execute --max-steps 30 --max-seconds 300
+```
+
+`preflight` 不下载权重，检查配置、宪法、恢复状态、内存和运行时/服务连接。`--desktop` 额外检查截图及坐标尺寸，临时截图用完删除，不发送给模型；不加这个参数就不会读取桌面。截图可用不等于输入权限已验收。
+
+`vision-check` 生成随机位置的彩色目标图，让模型返回点击坐标，再计算命中数、命中率和延迟。模型不知道答案坐标，程序不执行点击。它比单纯 `probe` 多了可核对的定位结果，但不代表真实应用任务成功率。默认 8 张图，全命中时退出码为 0，有漏点或响应错误时为 2，启动/配置错误为 1。报告包含每题结果、种子、模型 ID 和图片哈希；推理引擎版本、权重版本与量化参数需要你另外记录。
+
+报告文件必须是状态目录外的新文件，已有报告不会被覆盖。固定种子可复现题目。完整步骤见 [设备验收说明](docs/ACCEPTANCE.md)。
+
+也可以把较长任务写入 UTF-8 文件：
+
+```sh
+conway start --task-file ./task.md --execute --max-steps 30 --max-seconds 300
+```
+
+`--task` 与 `--task-file` 二选一，最多 16000 字符；仅对这次启动生效，仍受宪法约束。任务进入状态和日志，不改宪法、不自动沿用为下次任务。`status` 可以查看本次任务。
 
 ## 控制和恢复
 

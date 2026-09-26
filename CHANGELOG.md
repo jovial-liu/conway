@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0
+
+- Add `preflight` for constitution/recovery, hardware, runtime/service and GUI-dependency checks without downloading weights; optional timed desktop capture removes its temporary screenshot and omits private window/UI labels.
+- Add `vision-check` with seeded synthetic color targets, independent coordinate scoring, per-case image hashes, hit rate, latency and explicit non-desktop scope. Returned actions are never executed.
+- Support both generic JSON and OpenCUA adapters through the existing model session, with cleanup on failures.
+- Add `start --task` / `--task-file`; validate before runtime startup, retain the task in state/journal and supply it each cycle without rewriting the constitution or automatically reusing the assignment.
+- Add exclusive local JSON report output, meaningful diagnostic exit codes, device-acceptance documentation and regression tests.
+- Preserve v0.5.0 config/state compatibility, file-only memory, source snapshot publication and existing experiment history.
+
 ## 0.5.0
 
 - Validate configuration types, duplicate keys and numeric ranges; fix quoted `false` being truthy.

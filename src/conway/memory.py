@@ -28,6 +28,7 @@ class RuntimeState:
     brain: str | None = None
     dry_run: bool = True
     session_id: str | None = None
+    task: str | None = None
     pending_action: dict[str, Any] | None = None
     stop_reason: str | None = None
     last_action: str | None = None
@@ -168,7 +169,7 @@ class FileMemory:
                 raise ValueError(f'invalid {key} in state')
         if 'schema_version' in data and data['schema_version'] != 1:
             raise ValueError('unsupported state schema')
-        for key in ('status', 'session_id', 'brain', 'last_result', 'stop_reason'):
+        for key in ('status', 'session_id', 'task', 'brain', 'last_result', 'stop_reason'):
             if key in data and data[key] is not None and not isinstance(data[key], str):
                 raise ValueError(f'invalid {key} in state')
         if data.get('pending_action') is not None and not isinstance(data['pending_action'], dict):

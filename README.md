@@ -13,7 +13,7 @@ tags:
 
 Conway loads a constitution, observes the desktop, asks a VLM for one next action, dispatches it, records the outcome, and observes again. The model can choose direct file/system tools or screenshot-driven GUI interaction. GitHub hosts development; Hugging Face distributes source and references existing model weights. This repository is **not a newly trained model** and does not run a hosted agent.
 
-**Status: v0.5.0 engineering release candidate.** Offline protocol/lifecycle tests are not evidence of real-model GUI accuracy. Native accessibility adapters remain experimental. Read the validation matrix before unattended use.
+**Status: v0.6.0 engineering release candidate.** Includes deployment preflight, scored synthetic vision checks and session goals. Offline protocol/lifecycle tests are not evidence of real-model GUI accuracy. Native accessibility adapters remain experimental. Read the validation matrix before unattended use.
 
 ## Start
 
@@ -46,6 +46,21 @@ conway start --endpoint http://127.0.0.1:8000/v1 --execute
 ```
 
 With multiple served models, pass `--model` using a returned `/v1/models` ID. An API's model alias need not equal its Hugging Face repository ID.
+
+## Check your device and give it a task
+
+```sh
+conway preflight --desktop --output ./preflight.json
+conway vision-check --samples 8 --seed 42 --output ./vision.json
+conway start --task "Create a disposable note and verify its contents" --max-steps 10
+conway start --task-file ./task.md --execute --max-steps 30 --max-seconds 300
+```
+
+`preflight` checks configuration, the constitution, recovery state, available memory and runtime/model-service readiness. It never downloads weights. `--desktop` adds a time-bounded screenshot check; the temporary image is deleted and is never sent to a model. Input permissions still need a real action test. Without `--desktop`, the report explicitly leaves desktop readiness unchecked.
+
+`vision-check` sends generated color-target images to the configured model and scores the proposed clicks without executing them. Each report includes per-case hits, target bounds, image hashes, latency and model ID. The seed reproduces the suite; this small synthetic check does not measure real application task success. Exit codes: `0` for all targets hit, `2` for misses/errors, `1` for setup errors. Reports must be new files outside the state directory. See [device acceptance](docs/ACCEPTANCE.md).
+
+`--task` or a UTF-8 `--task-file` sets the goal for this invocation, subject to the constitution. It appears in `status` and the journal, does not edit the constitution and is not automatically reused on the next start. Existing file memory remains intact.
 
 ## Runtime design
 

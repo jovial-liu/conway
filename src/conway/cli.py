@@ -54,6 +54,16 @@ def build_parser() -> argparse.ArgumentParser:
     probe.add_argument('--endpoint')
     probe.add_argument('--model')
     probe.add_argument('--brain', choices=_BRAIN_CHOICES)
+    preflight = sub.add_parser('preflight', help='Check deployment readiness without loading weights or executing actions')
+    preflight.add_argument('--desktop', action='store_true', help='Temporarily capture the local desktop; no image is sent to a model')
+    preflight.add_argument('--output', type=Path, help='Save JSON to a new file outside the state directory')
+    vision = sub.add_parser('vision-check', help='Score synthetic visual target localization without desktop actions')
+    vision.add_argument('--endpoint')
+    vision.add_argument('--model')
+    vision.add_argument('--brain', choices=_BRAIN_CHOICES)
+    vision.add_argument('--samples', type=int, default=8)
+    vision.add_argument('--seed', type=int, default=0)
+    vision.add_argument('--output', type=Path, help='Save JSON to a new file outside the state directory')
     for name in ('stop', 'pause', 'resume'):
         sub.add_parser(name, help=f'Cooperatively {name} the current session')
     export = sub.add_parser('export', help='Export local trajectory events, without screenshots or uploading')
@@ -72,6 +82,9 @@ def build_parser() -> argparse.ArgumentParser:
     start.add_argument('--max-seconds', type=_positive, default=0)
     start.add_argument('--interval', type=_positive)
     start.add_argument('--quiet', action='store_true')
+    task = start.add_mutually_exclusive_group()
+    task.add_argument('--task', help='Goal for this session, subject to constitution.md')
+    task.add_argument('--task-file', type=Path, help='UTF-8 file containing this session goal (at most 16000 characters)')
     return parser
 
 
@@ -126,6 +139,13 @@ def show_models() -> int:
 
 
 def start_conway(args: argparse.Namespace) -> int:
+    task = getattr(args, 'task', None)
+    task_file = getattr(args, 'task_file', None)
+    if task_file:
+        with task_file.expanduser().open(encoding='utf-8') as file:
+            task = file.read(16001)
+    from .loop import validate_task
+    task = validate_task(task)
     memory = FileMemory(args.home)
     config = load_config(memory.root)
     overrides = {name: getattr(args, name) for name in ('profile', 'brain', 'endpoint', 'model', 'port', 'interval')
@@ -172,7 +192,7 @@ def start_conway(args: argparse.Namespace) -> int:
             runner = ConwayLoop(brain, executor, memory, dry_run=not args.execute,
                 interval=config.interval, max_steps=args.max_steps, screenshot_keep=config.screenshot_keep,
                 memory_compaction_bytes=config.memory_compaction_bytes, max_errors=config.max_errors,
-                context_chars=config.context_chars, max_seconds=args.max_seconds, quiet=args.quiet)
+                context_chars=config.context_chars, max_seconds=args.max_seconds, quiet=args.quiet, task=task)
             return 1 if runner.run() == 'error' else 0
         except Exception as exc:
             state = memory.load_state()
@@ -257,6 +277,25 @@ def main(argv: list[str] | None = None) -> int:
             with InstanceLock(memory.root / 'instance.lock'):
                 print(json.dumps(probe_model(config, memory.root), indent=2))
             return 0
+        if args.command in {'preflight', 'vision-check'}:
+            from .reports import report_path, write_report
+            memory = FileMemory(args.home)
+            config = load_config(memory.root)
+            if args.output:
+                report_path(args.output, memory.root)  # Reject invalid destinations before model startup.
+            with InstanceLock(memory.root / 'instance.lock'):
+                if args.command == 'preflight':
+                    from .preflight import preflight
+                    report = preflight(config, memory.root, desktop=args.desktop)
+                else:
+                    from .evaluation import vision_check
+                    overrides = {name: getattr(args, name) for name in ('endpoint', 'model', 'brain') if getattr(args, name) is not None}
+                    config = _merge_dataclass(config, overrides)
+                    report = vision_check(config, memory.root, samples=args.samples, seed=args.seed)
+                if args.output:
+                    write_report(args.output, report, memory.root)
+            print(json.dumps(report, ensure_ascii=False, indent=2))
+            return 0 if report['status'] == 'passed' else 2
         if args.command == 'models':
             return show_models()
         if args.command in {'stop', 'pause', 'resume'}:
