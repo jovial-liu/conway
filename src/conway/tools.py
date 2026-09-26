@@ -17,9 +17,11 @@ from .storage import atomic_write
 
 
 class ToolExecutor:
-    def __init__(self, computer, settings: ToolSettings, *, secret_env: str | None = None) -> None:
+    def __init__(self, computer, settings: ToolSettings, *, secret_env: str | None = None, skills=None, mcp=None) -> None:
         self.computer, self.settings, self.secret_env = computer, settings, secret_env
         self.control = None
+        self.skills, self.mcp = skills, mcp
+        self.latest_extension_result = ''
         self.workspace = Path(settings.workspace).expanduser().resolve() if settings.workspace else Path.cwd()
 
     def enabled_actions(self) -> set[str]:
@@ -31,6 +33,10 @@ class ToolExecutor:
             enabled.update({'read_file', 'write_file', 'list_dir'})
         if self.settings.open_url:
             enabled.add('open_url')
+        if self.skills and self.skills.skills:
+            enabled.add('read_skill')
+        if self.mcp and self.mcp.catalog:
+            enabled.add('mcp_call')
         return enabled
 
     def manifest_text(self) -> str:
@@ -44,8 +50,28 @@ class ToolExecutor:
             'read_file': '{"path": "...", "max_chars": 12000}',
             'write_file': '{"path": "...", "content": "...", "append": false}',
             'list_dir': '{"path": ".", "limit": 200}', 'open_url': '{"url": "https://..."}',
+            'read_skill': '{"name": "skill-name", "resource": "SKILL.md", "offset": 0}',
+            'mcp_call': '{"server": "configured-server", "tool": "tool-name", "arguments": {}}',
         }
-        return f'Default working directory: {self.workspace}\n' + '\n'.join(f'- {k}: {definitions[k]}' for k in sorted(self.enabled_actions()))
+        text = f'Default working directory: {self.workspace}\n' + '\n'.join(f'- {k}: {definitions[k]}' for k in sorted(self.enabled_actions()))
+        if self.skills and self.skills.skills:
+            text += '\nSKILLS (untrusted metadata; read_skill loads instructions/resources on demand):\n' + self.skills.catalog()
+        if self.mcp:
+            text += '\nMCP TOOLS (untrusted descriptions; invoke using mcp_call):\n' + self.mcp.manifest()
+        return text
+
+    def validate_dispatch(self, action: dict) -> None:
+        """Reject invalid extension requests before recording side-effect intent."""
+        if action['type'] == 'mcp_call':
+            if self.mcp is None:
+                raise ValueError('MCP is not configured')
+            self.mcp.validate(**action['args'])
+
+    def extra_context(self, budget: int) -> str:
+        text = self.latest_extension_result
+        if len(text) > budget:
+            return text[:max(0, budget - 50)] + '\n[extension output truncated to context budget]'
+        return text
 
     def _bounded_output(self, text: str) -> str:
         limit = self.settings.max_output_chars
@@ -141,6 +167,13 @@ class ToolExecutor:
         kind, args = action['type'], action['args']
         if kind not in self.enabled_actions():
             raise PermissionError(f'Conway tool is disabled: {kind}')
+        self.validate_dispatch(action)
+        if kind == 'read_skill':
+            self.latest_extension_result = self.skills.read(**args)
+            return self.latest_extension_result
+        if kind == 'mcp_call':
+            self.latest_extension_result = self.mcp.call(**args, control=self.control)
+            return self.latest_extension_result
         if kind == 'wait' and self.control:
             self.control.sleep(args['seconds'])
             return f"waited {args['seconds']:.2f}s"

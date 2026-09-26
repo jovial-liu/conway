@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "conway-agent"
-version = "0.7.0"
-description = "Local-first headless autonomous computer-use agent harness"
+version = "0.8.0"
+description = "Open model and harness research for persistent autonomous digital agents"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
@@ -19,6 +19,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<9", "coverage>=7,<8"]
+mcp = ["mcp>=2.2,<3", "jsonschema>=4.23,<5"]
+training = ["trl[vlm]==1.14.0", "transformers==5.17.0", "peft>=0.18,<1", "datasets>=4.7,<6"]
 accessibility = [
   "pywinauto>=0.6.8,<0.7; sys_platform == 'win32'",
   "pyobjc-framework-ApplicationServices>=10; sys_platform == 'darwin'",

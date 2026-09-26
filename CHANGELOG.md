@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.0
+
+- Add optional official MCP SDK 2.2 stdio clients with persistent sessions, paginated discovery, explicit tool/environment allowlists, schema validation, bounded output and cancellation cleanup. Uncertain calls are never replayed.
+- Add local Agent Skills metadata discovery and paginated instruction/resource loading, with a reserved extension-result context budget and no script auto-execution.
+- Add opt-in visual episodes sharing the runtime prompt builder, independent-review requirements, integrity-checked multimodal training export and episode/image split checks. Mock and dry-run samples cannot become training demonstrations.
+- Add an experimental TRL/PEFT LoRA entry point and a no-model dataset-validation mode. GPU training and Conway-trained checkpoints remain unperformed/unreleased.
+- Document a model-plus-harness architecture, official ecosystem references and measurable digital-life research milestones; update English/Chinese positioning.
+- Extend cross-platform CI to test the real MCP subprocess protocol and reviewed-data workflow.
+
 ## 0.7.0
 
 - Make `conway run` the continuous autonomous entry point: executes enabled tools from the constitution, never reads stdin, and opens no chat UI. `--observe` supports continuous planning only; `start` retains single-session compatibility.

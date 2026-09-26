@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import json
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -10,10 +11,10 @@ class ActionValidationError(ValueError):
 
 
 GUI_ACTIONS = frozenset({'wait', 'click', 'double_click', 'move', 'type', 'press', 'hotkey', 'scroll', 'drag'})
-SYSTEM_ACTIONS = frozenset({'shell', 'read_file', 'write_file', 'list_dir', 'open_url'})
+SYSTEM_ACTIONS = frozenset({'shell', 'read_file', 'write_file', 'list_dir', 'open_url', 'read_skill', 'mcp_call'})
 CONTROL_ACTIONS = frozenset({'finish'})
 ALL_ACTIONS = GUI_ACTIONS | SYSTEM_ACTIONS | CONTROL_ACTIONS
-SIDE_EFFECT_ACTIONS = (GUI_ACTIONS - {'wait'}) | {'shell', 'write_file', 'open_url'}
+SIDE_EFFECT_ACTIONS = (GUI_ACTIONS - {'wait'}) | {'shell', 'write_file', 'open_url', 'mcp_call'}
 
 
 def _number(args: dict[str, Any], key: str) -> float:
@@ -111,6 +112,22 @@ def validate_action(action: dict[str, Any], width: int, height: int) -> dict[str
         except ValueError as exc:
             raise ActionValidationError('open_url requires http(s) without embedded credentials') from exc
         out = {'url': url}
+    elif kind == 'read_skill':
+        out = {'name': _text(args, 'name', max_len=64),
+               'resource': _text({'resource': args.get('resource', 'SKILL.md')}, 'resource', max_len=4096),
+               'offset': int(_bounded(args, 'offset', 0, 0, 64000))}
+    elif kind == 'mcp_call':
+        arguments = args.get('arguments', {})
+        if not isinstance(arguments, dict):
+            raise ActionValidationError('MCP arguments must be a JSON object')
+        try:
+            encoded = json.dumps(arguments, allow_nan=False)
+        except (TypeError, ValueError, RecursionError) as exc:
+            raise ActionValidationError('Invalid MCP JSON arguments') from exc
+        if len(encoded) > 16000:
+            raise ActionValidationError('MCP arguments exceed 16000 characters')
+        out = {'server': _text(args, 'server', max_len=64), 'tool': _text(args, 'tool', max_len=256),
+               'arguments': json.loads(encoded)}
     else:
         raise ActionValidationError(f'Unhandled action: {kind}')
     return {'type': kind, 'args': out}

@@ -7,13 +7,23 @@ tags:
 ---
 # Conway
 
-**A local autonomous computer-use harness. No chat box. No database. A replaceable VLM.**
+**Open models and runtime research toward digital life.**
 
-[中文使用说明](README.zh-CN.md) · [Installation](docs/INSTALL.md) · [Configuration](docs/CONFIGURATION.md) · [Validation and limitations](docs/VALIDATION.md) · [Changelog](CHANGELOG.md)
+A persistent autonomous loop, a replaceable visual policy, file memory, MCP tools and Agent Skills. No chat window.
+
+[中文使用说明](README.zh-CN.md) · [Installation](docs/INSTALL.md) · [Configuration](docs/CONFIGURATION.md) · [Validation and limitations](docs/VALIDATION.md) · [Changelog](CHANGELOG.md) · [Architecture and research](docs/ARCHITECTURE.md) · [Ecosystem](docs/ECOSYSTEM.md) · [Model development](docs/MODELS.md)
 
 Conway loads a constitution, observes the desktop, asks a VLM for one next action, dispatches it, records the outcome, and observes again. The model can choose direct file/system tools or screenshot-driven GUI interaction. GitHub hosts development; Hugging Face distributes source and references existing model weights. This repository is **not a newly trained model** and does not run a hosted agent.
 
-**Status: v0.7.0 engineering release candidate.** `conway run` is the continuous autonomous entry point: no conversation window, input prompt or per-action user turn. It chooses work from the constitution and observations, continues beyond subgoal completion, and paces idle/recovery cycles. Offline tests are not evidence of real-model GUI accuracy. Native accessibility adapters remain experimental.
+**Status: v0.8.0 engineering release.** `conway run` is the continuous autonomous entry point: no conversation window, input prompt or per-action user turn. It chooses work from the constitution and observations, continues beyond subgoal completion, and paces idle/recovery cycles. Offline tests are not evidence of real-model GUI accuracy. Native accessibility adapters remain experimental.
+
+## Two tracks: runtime and policy
+
+**Conway Runtime** runs continuously from a constitution and observations. Version 0.8 adds a real official-SDK MCP stdio client and local Agent Skills discovery/loading to the generic policy. Existing file/GUI tools, recovery and stop semantics remain available. See [compatibility and setup](docs/ECOSYSTEM.md).
+
+**Conway Policy** is the model research track: opt-in screenshot/context/action episodes, independent review, integrity-checked multimodal dataset export, and an experimental TRL/PEFT LoRA entry point. Dataset validation is tested; GPU training has not been run and no Conway-trained weights are released. See [the model workflow](docs/MODELS.md).
+
+Digital life is the research direction. Persistence, tool use and file memory do not by themselves establish consciousness, general intelligence or learned self-improvement. The [architecture](docs/ARCHITECTURE.md) states measurable milestones and references the official designs that informed this release.
 
 ## Start
 

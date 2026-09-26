@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field, fields
 import math
 from pathlib import Path
+import re
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -23,6 +24,15 @@ class ToolSettings:
     max_shell_seconds: float = 45.0
     max_output_chars: int = 12000
     workspace: str | None = None
+
+
+@dataclass(slots=True)
+class MCPServerConfig:
+    command: str
+    args: list[str] = field(default_factory=list)
+    allowed_tools: list[str] = field(default_factory=list)
+    env_keys: list[str] = field(default_factory=list)
+    timeout: float = 30.0
 
 
 @dataclass(slots=True)
@@ -53,6 +63,8 @@ class ConwayConfig:
     recovery_max_seconds: float = 300.0
     repeat_action_limit: int = 3
     tools: ToolSettings = field(default_factory=ToolSettings)
+    skill_dirs: list[str] = field(default_factory=list)
+    mcp_servers: dict[str, MCPServerConfig] = field(default_factory=dict)
 
 
 def endpoint_url(value: str) -> str:
@@ -84,6 +96,39 @@ def _merge_dataclass(config: ConwayConfig, raw: dict[str, Any]) -> ConwayConfig:
     unknown = set(raw) - {f.name for f in fields(config)}
     if unknown:
         raise ConfigError(f'Unknown settings: {", ".join(sorted(map(str, unknown)))}')
+    if 'skill_dirs' in raw:
+        value = raw['skill_dirs']
+        if not isinstance(value, list) or len(value) > 16 or not all(isinstance(p, str) and p.strip() and '\x00' not in p for p in value):
+            raise ConfigError('skill_dirs must be a list of at most 16 directory paths')
+        config.skill_dirs = value
+    if 'mcp_servers' in raw:
+        servers = raw['mcp_servers']
+        if not isinstance(servers, dict) or len(servers) > 8:
+            raise ConfigError('mcp_servers must be a mapping of at most 8 named stdio servers')
+        parsed = {}
+        for name, value in servers.items():
+            if not isinstance(name, str) or not re.fullmatch(r'[a-zA-Z0-9_-]{1,64}', name) or not isinstance(value, dict):
+                raise ConfigError('Invalid MCP server name or settings')
+            if set(value) - {f.name for f in fields(MCPServerConfig)}:
+                raise ConfigError(f'Unknown MCP settings for {name}')
+            command = value.get('command')
+            if not isinstance(command, str) or not command.strip() or '\x00' in command or len(command) > 4096:
+                raise ConfigError('MCP command must be a non-empty executable path or name')
+            server = MCPServerConfig(command)
+            for key in ('args', 'allowed_tools', 'env_keys'):
+                vals = value.get(key, [])
+                if not isinstance(vals, list) or len(vals) > 64 or not all(isinstance(v, str) and '\x00' not in v and len(v) <= 4096 for v in vals):
+                    raise ConfigError(f'MCP {key} must be a bounded list of strings')
+                if key != 'args' and (len(set(vals)) != len(vals) or any(not v.strip() or v == '*' for v in vals)):
+                    raise ConfigError(f'MCP {key} requires distinct, explicit names')
+                setattr(server, key, vals)
+            if not server.allowed_tools:
+                raise ConfigError('Every MCP server needs at least one allowed_tools entry')
+            if any(not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', k) for k in server.env_keys):
+                raise ConfigError('MCP env_keys must contain environment variable names')
+            server.timeout = _number(value.get('timeout', 30), 'MCP timeout', 1, 300)
+            parsed[name] = server
+        config.mcp_servers = parsed
     for name in ('profile', 'brain'):
         if name in raw:
             choices = {'auto', 'tiny', 'small', 'standard', 'computer-use'} if name == 'profile' else {'auto', 'generic', 'opencua'}

@@ -1,8 +1,29 @@
-# Conway 使用说明
+# Conway：通向数字生命的开放模型与自主运行时
 
 Conway 是本地持续运行的自主电脑操作 Agent。用 `conway run` 启动，长期目标写在 `constitution.md` 中；Agent 从环境和记忆里自行选择工作、行动、验证结果、继续下一轮。没有对话窗口，不读取聊天输入，也不需要用户逐条派任务。它既能用截图和鼠标键盘，也能用文件与 Shell 工具。GitHub 和 Hugging Face 负责分发代码，不负责运行你的桌面。
 
-当前版本：**0.7.0 工程候选版**，重点是持续自主 loop：子目标结束后继续、空闲退避、临时故障自动重试、重复动作抑制。自动化测试通过不等于真实 VLM 已能稳定完成所有电脑任务。原生 UI 树仍属实验性功能，详见 [验证范围](docs/VALIDATION.md)。
+当前版本：**0.8.0 工程版**。持续自主 loop 已接入 MCP stdio 工具与 Agent Skills，并增加模型训练所需的视觉轨迹、独立审核、数据导出和实验性微调入口。自动化测试通过不等于真实 VLM 已能稳定完成所有电脑任务。原生 UI 树仍属实验性功能，详见 [验证范围](docs/VALIDATION.md)。
+
+## 模型与 harness 两条线
+
+**Conway Runtime** 是持续自主行动的 harness：观察环境、选择动作、调用工具、记录结果、继续下一轮。通用 JSON 模型现在可以通过标准 MCP 使用已配置的外部工具，并按需加载本地 `SKILL.md` 技能。没有新增用户对话窗口。
+
+**Conway Policy** 是模型研发线：从现有开放 VLM 出发，通过可复查的图像—动作数据、独立审核、离线微调和留出任务评测改进策略。当前已经实现记录/导出和数据验证，提供 TRL/PEFT LoRA 训练脚本；**尚未执行 GPU 训练，也没有发布 Conway 自有策略权重**。
+
+人工生命、数字生命是长期研究目标。我们用持续性、实际任务成效、环境适应和可测量的学习进步逐步验证，不把持续运行直接等同于已经实现生命或意识。
+
+[架构与主流设计借鉴](docs/ARCHITECTURE.md) · [MCP / Agent Skills 接入](docs/ECOSYSTEM.md) · [模型、数据与训练路线](docs/MODELS.md)
+
+安装可选 MCP 支持后，可检查已配置的服务：
+
+```sh
+python -m pip install -e '.[mcp]'
+conway skills
+conway mcp-check
+conway run
+```
+
+`mcp-check` 会启动你在配置中指定的服务器程序，列出允许使用的工具，不调用工具。正常运行由 Agent 自行选择何时调用；`--mock`、`--observe`、`--gui-only` 和原生 OpenCUA 适配器不启动 MCP 服务。详见兼容性说明。
 
 ## 最短启动流程
 

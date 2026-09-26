@@ -2,6 +2,8 @@
 
 This release separates implemented behavior from deployment claims.
 
+Version 0.8.0 adds official-SDK MCP stdio and Agent Skills support plus reviewed visual-policy data export. Tests run a real MCP subprocess, verify stateful calls, allowlists/schema validation, environment forwarding, timeouts, cancellation and cleanup; a scripted autonomous policy reads a skill and invokes tools across a subgoal boundary. Dataset tests exercise prompt alignment, hashes, evidence requirements, split leakage and the training script's no-model validation path. These use synthetic fixtures, not actual VLM decisions or real training demonstrations. No GPU training step or third-party production MCP service was tested.
+
 Version 0.7.0 adds the [continuous autonomous loop](AUTONOMOUS.md). New lifecycle tests verify continued operation after subgoal completion/failure, transient recovery, repeated-action suppression, interruptible backoff, no stdin dependency and cooperative SIGTERM cleanup. They are synthetic protocol/lifecycle evidence, not real-model long-duration task-performance results.
 
 Version 0.6.0 adds `preflight`, `vision-check` and session tasks. Follow [device acceptance](ACCEPTANCE.md) to collect evidence on the target machine. The new tests cover seeded image generation, hit/miss/error accounting, generic/OpenCUA image protocol fixtures, diagnostic cleanup, timed capture, private metadata omission, exclusive report writes and task lifecycle. A pixel-reading HTTP fixture verifies the scoring pipeline; it is not a real VLM and its scores are not model benchmark results.
@@ -15,7 +17,7 @@ A local HTTP fixture also exercises `/v1/models`, multimodal request encoding, a
 Reproduce:
 
 ```sh
-python -m pip install -e '.[dev]'
+python -m pip install -e '.[dev,mcp]'
 python -m pytest -q
 python -m coverage run -m pytest -q
 python -m coverage report
@@ -23,7 +25,7 @@ python -m compileall -q src
 python -m pip wheel . --no-deps -w dist
 ```
 
-The existing CI matrix runs Ubuntu, Windows and macOS with Python 3.11. Check the specific commit's CI results, not a prior green workflow. CI success does not imply a real desktop, GPU or model was tested. Local release testing also used Python 3.13 on CPU Linux.
+The existing CI matrix runs Ubuntu, Windows and macOS with Python 3.11. Check the specific commit's CI results, not a prior green workflow. CI success does not imply a real desktop, GPU or model was tested. Local v0.8 release testing used Python 3.12 on CPU Linux.
 
 ## Not yet verified end to end
 
@@ -36,7 +38,8 @@ The existing CI matrix runs Ubuntu, Windows and macOS with Python 3.11. Check th
 | Hardware resolver | Free-memory estimates, CPU/Metal/CUDA candidates | Actual latency, memory peaks, driver/build compatibility and image-token overhead |
 | Packaging | Standard Python wheel/source distribution | Signed desktop installers, auto-update and OS-specific notarization are not implemented |
 | Wayland/multiple displays | Explicit limitations | Native Wayland control and complete multi-monitor coordinate handling are not implemented |
-| Continual learning | Local trajectory export with unknown labels | No training, reward model, automatic self-modification or weight update pipeline |
+| Policy training | Reviewed visual datasets, integrity checks and experimental offline LoRA recipe | No GPU training run, trained Conway weights, measured learning gain or automatic promotion |
+| Ecosystem | Official-SDK stdio fixture and local Agent Skills loader | Third-party service compatibility, remote HTTP/OAuth and broader skill collections |
 
 ## Suggested device acceptance
 

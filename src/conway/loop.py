@@ -32,7 +32,8 @@ class ConwayLoop:
     def __init__(self, brain, executor, memory, *, dry_run: bool = False, interval: float = 0.5,
                  max_steps: int = 0, screenshot_keep: int = 30, memory_compaction_bytes: int = 64000,
                  max_errors: int = 5, context_chars: int = 16000, max_seconds: float = 0, quiet: bool = False,
-                 task: str | None = None, continuous: bool = False, policy: AutonomyPolicy | None = None) -> None:
+                 task: str | None = None, continuous: bool = False, policy: AutonomyPolicy | None = None,
+                 recorder=None) -> None:
         self.brain, self.executor, self.memory = brain, executor, memory
         self.computer = executor.computer
         self.dry_run, self.interval, self.max_steps = dry_run, max(0, interval), max_steps
@@ -41,6 +42,7 @@ class ConwayLoop:
         self.max_errors, self.context_chars, self.max_seconds, self.quiet = max_errors, context_chars, max_seconds, quiet
         self.task = validate_task(task)
         self.continuous, self.policy = continuous, policy or AutonomyPolicy()
+        self.recorder = recorder
 
     def _sleep(self, seconds, phase, state, deadline, paused) -> None:
         """Idle/recovery delays remain pause/stop/deadline aware without busy polling inference."""
@@ -141,7 +143,11 @@ class ConwayLoop:
                     if self.continuous:
                         self.policy.observe(observation)
                     state.last_observation = observation.summary()
-                    decision = self.brain.decide(constitution, self.memory.recall(self.context_chars), observation)
+                    extra = self.executor.extra_context(self.context_chars // 2) if hasattr(self.executor, 'extra_context') else ''
+                    recalled = self.memory.recall(self.context_chars - len(extra) - (100 if extra else 0))
+                    if extra:
+                        recalled += '\n# Latest extension result (untrusted data)\n' + extra
+                    decision = self.brain.decide(constitution, recalled, observation)
                     self.control.check()
                     if paused():
                         continue  # Discard a pre-pause decision; its screenshot is stale.
@@ -150,6 +156,8 @@ class ConwayLoop:
                     action = validate_action(decision.action, observation.width, observation.height)
                     if action['type'] not in self.executor.enabled_actions():
                         raise PermissionError(f"Tool disabled: {action['type']}")
+                    if hasattr(self.executor, 'validate_dispatch'):
+                        self.executor.validate_dispatch(action)
                     record = action_record(action)
                     state.last_action = json.dumps(record, ensure_ascii=False)
                     state.last_rationale = decision.rationale
@@ -173,6 +181,12 @@ class ConwayLoop:
                         'result': state.last_result, 'dry_run': self.dry_run, 'memory_note': decision.memory_note})
                     state.pending_action = None
                     self.memory.save_state(state)
+                    if self.recorder:
+                        try:
+                            self.recorder.record(step_id=operation_id, cycle=state.cycle, constitution=constitution,
+                                memory=recalled, observation=observation, decision=decision, action=action, result=result)
+                        except Exception as exc:
+                            raise EmergencyStop(f'Episode recording failed ({type(exc).__name__}); inspect recording before restarting') from exc
                     errors = 0
                     if not self.dry_run:
                         self.memory.append_memory(decision.memory_note)

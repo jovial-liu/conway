@@ -70,6 +70,12 @@ def build_parser() -> argparse.ArgumentParser:
     export = sub.add_parser('export', help='Export local trajectory events, without screenshots or uploading')
     export.add_argument('--output', required=True, type=Path)
     export.add_argument('--include-dry-run', action='store_true')
+    sub.add_parser('skills', help='List locally installed Agent Skills without running scripts')
+    sub.add_parser('mcp-check', help='Start configured MCP servers and list allowed tools; never call a tool')
+    dataset = sub.add_parser('dataset', help='Export independently reviewed visual episodes for policy training')
+    dataset.add_argument('--episodes', type=Path, nargs='+', required=True)
+    dataset.add_argument('--output', type=Path, required=True)
+    dataset.add_argument('--validation-percent', type=int, default=20)
     run = sub.add_parser('run', help='Continuously act from the constitution; no conversation or task prompt')
     run.set_defaults(execute=True)
     run.add_argument('--observe', dest='execute', action='store_false', help='Continuous observation and planning without actions')
@@ -86,6 +92,7 @@ def build_parser() -> argparse.ArgumentParser:
         command.add_argument('--max-seconds', type=_positive, default=0)
         command.add_argument('--interval', type=_positive)
         command.add_argument('--quiet', action='store_true')
+        command.add_argument('--record-episode', type=Path, help='Opt in to local screenshot/prompt/action recording in a NEW directory')
     start.add_argument('--execute', action='store_true', help='Enable current-user actions for this process only')
     task = start.add_mutually_exclusive_group()
     task.add_argument('--task', help='Goal for this session, subject to constitution.md')
@@ -161,7 +168,7 @@ def start_conway(args: argparse.Namespace) -> int:
         settings = replace(settings, shell=False, filesystem=False, open_url=False)
     if args.mock:
         settings = replace(settings, gui=False)
-    runtime, brain = None, None
+    runtime, brain, mcp, recorder = None, None, None, None
     with InstanceLock(memory.root / 'instance.lock'), termination_signals():
         try:
             computer = MockComputer(memory.root / 'screenshots') if args.mock else Computer(
@@ -182,10 +189,25 @@ def start_conway(args: argparse.Namespace) -> int:
                     profile_name = runtime.profile_name
                 model_name = runtime.served_model or runtime.model_repo
                 brain_name = _brain_type(config.brain, profile_name, model_name)
+                if brain_name == 'generic' and not args.gui_only:
+                    from .skills import SkillRegistry
+                    executor.skills = SkillRegistry([memory.root / 'skills'] + [Path(p) for p in config.skill_dirs],
+                        page_chars=max(256, min(4000, config.context_chars // 2 - 500)))
+                    if config.mcp_servers and args.execute:
+                        from .mcp_bridge import MCPBridge
+                        mcp = MCPBridge(config.mcp_servers, output_limit=config.tools.max_output_chars)
+                        mcp.start()
+                        executor.mcp = mcp
                 options = {'timeout': config.request_timeout, 'api_key': api_key}
                 brain = (OpenCUABrain(runtime.base_url, model_name, min_pixels=config.opencua_min_pixels,
                                      max_pixels=config.opencua_max_pixels, **options) if brain_name == 'opencua'
                          else OpenAICompatibleVLM(runtime.base_url, model_name, tool_manifest=executor.manifest_text(), **options))
+            if args.record_episode:
+                if brain_name == 'opencua':
+                    raise ValueError('Episode recording currently supports the generic JSON policy only')
+                from .episodes import EpisodeRecorder
+                recorder = EpisodeRecorder(args.record_episode, model=model_name, brain=brain_name,
+                    dry_run=not args.execute, synthetic=args.mock, tool_manifest=executor.manifest_text(), state_root=memory.root)
             state = memory.load_state()
             state.pid, state.session_id = os.getpid(), uuid.uuid4().hex
             state.profile, state.model, state.brain = profile_name, model_name, brain_name
@@ -198,6 +220,7 @@ def start_conway(args: argparse.Namespace) -> int:
                 interval=config.interval, max_steps=args.max_steps, screenshot_keep=config.screenshot_keep,
                 memory_compaction_bytes=config.memory_compaction_bytes, max_errors=config.max_errors,
                 context_chars=config.context_chars, max_seconds=args.max_seconds, quiet=args.quiet, task=task,
+                recorder=recorder,
                 continuous=args.command == 'run', policy=AutonomyPolicy(**{name: getattr(config, name) for name in
                     ('idle_initial_seconds', 'idle_max_seconds', 'recovery_initial_seconds', 'recovery_max_seconds', 'repeat_action_limit')}))
             return 1 if runner.run() == 'error' else 0
@@ -215,11 +238,19 @@ def start_conway(args: argparse.Namespace) -> int:
             raise
         finally:
             try:
-                if brain is not None:
-                    brain.close()
+                if recorder is not None:
+                    recorder.close(memory.load_state().status)
             finally:
-                if runtime is not None:
-                    runtime.close()
+                try:
+                    if mcp is not None:
+                        mcp.close()
+                finally:
+                    try:
+                        if brain is not None:
+                            brain.close()
+                    finally:
+                        if runtime is not None:
+                            runtime.close()
 
 
 def request_control(root, command) -> int:
@@ -311,6 +342,28 @@ def main(argv: list[str] | None = None) -> int:
             return 0 if report['status'] == 'passed' else 2
         if args.command == 'models':
             return show_models()
+        if args.command == 'skills':
+            from .skills import SkillRegistry
+            memory = FileMemory(args.home)
+            config = load_config(memory.root)
+            print(SkillRegistry([memory.root / 'skills'] + [Path(p) for p in config.skill_dirs]).catalog())
+            return 0
+        if args.command == 'mcp-check':
+            from .mcp_bridge import MCPBridge
+            memory = FileMemory(args.home)
+            config = load_config(memory.root)
+            bridge = MCPBridge(config.mcp_servers)
+            with InstanceLock(memory.root / 'instance.lock'):
+                try:
+                    bridge.start()
+                    print(bridge.manifest())
+                finally:
+                    bridge.close()
+            return 0
+        if args.command == 'dataset':
+            from .episodes import export_dataset
+            print(json.dumps(export_dataset(args.episodes, args.output, args.validation_percent), indent=2))
+            return 0
         if args.command in {'stop', 'pause', 'resume'}:
             return request_control(args.home, args.command)
         if args.command == 'export':

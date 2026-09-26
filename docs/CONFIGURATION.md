@@ -65,3 +65,7 @@ For `start`, `completed` means the model returned `finish` with a completed outc
 Memory summaries and tool logs may contain sensitive local information. Screenshots are bounded in count; JSONL journals are split at approximately 5 MB and retained until the owner archives/deletes them. No automatic upload or online training occurs. Export only copies result records to a new local file, excluding dry runs by default and excluding image bytes.
 
 The subprocess environment omits common publishing tokens and the configured model API-key variable. This reduces accidental inheritance; it is not isolation from the user's files, clipboard, shell or GUI. The current-user process has the permissions of its account. Use a disposable account/VM for genuinely untrusted autonomous actions.
+
+## Ecosystem extensions (v0.8)
+
+`skill_dirs` adds local Agent Skills search directories; CONWAY_HOME/skills is always searched for a real generic-policy run. `mcp_servers` declares named stdio programs with `command`, `args`, explicit `allowed_tools`, `env_keys` and `timeout` (1–300 seconds). No services are configured by default. See [ecosystem setup and compatibility](ECOSYSTEM.md) for complete examples and mode-specific behavior.
