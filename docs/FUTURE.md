@@ -81,6 +81,11 @@ record should identify parent model/harness revision, candidate revision, task
 set, input data, compute/time budget, results and rollback target. Reuse the same
 held-out tasks for a model comparison, and the same model for a harness comparison.
 
+Version 0.10 supplies `scripts/compare_acceptance.py` to compare workbench task
+outcomes and retain regressions alongside gains. It checks supplied report
+consistency, not model identity or evidence authenticity, and does not promote
+a candidate. See the [research gaps and measurement workflow](DIGITAL_LIFE.md).
+
 A candidate that changes its own score labels, drops failed tasks or repeats a
 self-report has not demonstrated improvement. Independent artifact checks,
 unseen tasks and retention of old capabilities are necessary evidence. Replacement

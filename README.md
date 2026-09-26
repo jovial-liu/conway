@@ -15,13 +15,13 @@ A persistent autonomous loop, a replaceable visual policy, file memory, MCP tool
 
 Conway loads a constitution, observes the desktop, asks a VLM for one next action, dispatches it, records the outcome, and observes again. The model can choose direct file/system tools or screenshot-driven GUI interaction. GitHub hosts development; Hugging Face distributes source and references existing model weights. This repository is **not a newly trained model** and does not run a hosted agent.
 
-**Status: v0.9.0 engineering release.** `conway run` is the continuous autonomous entry point: no conversation window, input prompt or per-action user turn. It chooses work from the constitution and observations, continues beyond subgoal completion, and paces idle/recovery cycles. Offline tests are not evidence of real-model GUI accuracy. Native accessibility adapters remain experimental.
+**Status: v0.10.0 engineering release.** `conway run` is the continuous autonomous entry point: no conversation window, input prompt or per-action user turn. It chooses work from the constitution and observations, continues beyond subgoal completion, and paces idle/recovery cycles. Offline tests are not evidence of real-model GUI accuracy. Native accessibility adapters remain experimental.
 
 ## Minimal core, replaceable model
 
-Version 0.9 keeps a single acting loop. Owner rules live in `constitution.md`, current work in hot-read `goals.md`, and progress in file memory. Optional `Brain.feedback(Transition)` exposes executed action/result/next-observation evidence to future learning adapters; today's inference-only adapters perform no training or weight updates. Tool descriptions now use parameter definitions instead of fixed example coordinates.
+Conway keeps a single acting loop. Owner rules live in `constitution.md`, current work in hot-read `goals.md`, and progress in file memory. Optional `Brain.feedback(Transition)` exposes executed action/result/next-observation evidence to future learning adapters; today's inference-only adapters perform no training or weight updates. Tool descriptions now use parameter definitions instead of fixed example coordinates.
 
-[Future-model boundary and simple architecture](docs/FUTURE.md) · [Digital-life goals example](examples/goals.digital-life.md) · [Recorded small-model acceptance](docs/validation/2026-09-26-small-models.md)
+[Digital-life gaps and research milestones](docs/DIGITAL_LIFE.md) · [Future-model boundary and simple architecture](docs/FUTURE.md) · [Digital-life goals example](examples/goals.digital-life.md) · [Recorded small-model acceptance](docs/validation/2026-09-26-small-models.md)
 
 ## Two tracks: runtime and policy
 
@@ -75,7 +75,7 @@ conway stop
 
 These management commands can run from another terminal; they are not a chat interface. `run` stays in its launching process, opens no UI and never reads stdin. `--quiet` suppresses cycle output; file state and journal remain available. `finish`/OpenCUA `DONE` or `FAIL` records a model-reported subgoal outcome and continues. No success label is inferred from that declaration.
 
-Unchanged idle observations use 2, 4, 8…60-second backoff. After repeated pre-dispatch errors, the agent waits 5, 10, 20…300 seconds and retries from a fresh observation. Stop/pause remain responsive during these waits. By default, three identical side-effect actions on an unchanged screenshot are allowed; another repeat is suppressed and reported to the model so it can change approach or wait. This heuristic is not a general task-success detector.
+Unchanged idle observations use 2, 4, 8…60-second backoff. After repeated pre-dispatch errors, the agent waits 5, 10, 20…300 seconds and retries from a fresh observation. Stop/pause remain responsive during these waits. By default, three identical side-effect actions are allowed before suppression. GUI counts reset on changed observations; file/Shell/MCP counts survive unrelated screen changes. The latest recorded result or error is shown first in the next decision context. This heuristic is not a general task-success detector.
 
 `--max-steps` and `--max-seconds` optionally bound a run. Explicit stop, Ctrl+C, cooperative SIGTERM, mouse failsafe and uncertain side-effect failures still end execution. There is no automatic respawn after a stop and no boot-service installation. See [autonomous loop semantics](docs/AUTONOMOUS.md) and the [ongoing-constitution example](examples/constitution.autonomous.md).
 

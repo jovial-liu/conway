@@ -1,6 +1,6 @@
 # Device acceptance / 设备验收
 
-This procedure distinguishes installed software, a responding model, synthetic visual localization and a verified desktop task. Completing one stage does not establish the later stages. Run commands in the same activated Python environment. Existing configurations and the constitution remain valid in 0.9.0. The task-based `start` examples below are optional single-session acceptance tests; the primary autonomous entry point is `conway run`, described in [continuous loop semantics](AUTONOMOUS.md).
+This procedure distinguishes installed software, a responding model, synthetic visual localization and a verified desktop task. Completing one stage does not establish the later stages. Run commands in the same activated Python environment. Existing configurations and the constitution remain valid in 0.10.0. The task-based `start` examples below are optional single-session acceptance tests; the primary autonomous entry point is `conway run`, described in [continuous loop semantics](AUTONOMOUS.md).
 
 ## 1. Offline installation
 
@@ -67,6 +67,11 @@ This is a small multi-step tool-use check, not replication of Conway itself,
 installation on another machine, a real desktop test or recursive improvement.
 OpenCUA/computer-use-only adapters are not supported by this suite. As with
 vision checks, all cases must pass for exit `0`; a failed check returns `2`.
+
+Reports now include the step/time/error budgets. Compare two saved workbench
+reports with `python scripts/compare_acceptance.py baseline.json candidate.json`.
+This reports case-level gains and regressions; it does not verify model identity,
+update weights or promote a release. See [research measurements](DIGITAL_LIFE.md).
 
 See the [2026-09-26 real-weight results](validation/2026-09-26-small-models.md)
 for pinned weights, runtime settings, failures and reproduction commands.

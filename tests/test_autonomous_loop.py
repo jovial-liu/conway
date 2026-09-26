@@ -158,8 +158,9 @@ def test_repeated_append_suppressed_even_across_idle(tmp_path):
 
 def test_changed_observation_releases_repeat_guard(tmp_path):
     from PIL import Image
-    action = {'type':'write_file','args':{'path':'repeat.txt','content':'x','append':True}}
+    action = {'type':'click','args':{'x':10,'y':10}}
     memory, executor, brain, loop = setup(tmp_path,[action]*5)
+    executor.computer.execute = lambda action, observation: 'fixture click dispatched'
     original = executor.computer.observe
     def observe(cycle):
         observation = original(cycle)
@@ -168,7 +169,22 @@ def test_changed_observation_releases_repeat_guard(tmp_path):
         return observation
     executor.computer.observe = observe
     assert loop.run() == 'stopped'
-    assert (tmp_path/'repeat.txt').read_text() == 'xxxx'
+    assert sum(e['event'] == 'action_intent' for e in events(memory)) == 4
+
+
+def test_unrelated_screen_changes_do_not_release_file_repeat_guard(tmp_path):
+    from PIL import Image
+    action = {'type':'write_file','args':{'path':'repeat.txt','content':'x','append':True}}
+    memory, executor, brain, loop = setup(tmp_path,[action]*5)
+    original = executor.computer.observe
+    def observe(cycle):
+        observation = original(cycle)
+        Image.new('RGB',(320,200),(cycle,0,0)).save(observation.screenshot_path)
+        return observation
+    executor.computer.observe = observe
+    assert loop.run() == 'stopped'
+    assert (tmp_path/'repeat.txt').read_text() == 'xxx'
+    assert sum(e['event'] == 'action_suppressed' for e in events(memory)) == 2
 
 
 def test_idle_backoff_is_capped_and_resets_on_changed_image(tmp_path):

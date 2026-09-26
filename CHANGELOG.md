@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.0
+
+- Put the latest recorded action result/error first in decision context; trim historical observation/rationale noise while preserving the full audit journal and explicit dry-run/uncertainty markers.
+- Keep repeated file/Shell/MCP action counts across unrelated screen changes; retain visual reset behavior for GUI actions.
+- Add an offline acceptance-report comparison script that reports gained/lost tasks and rejects missing tasks, changed checks and inconsistent success labels. No automatic training or promotion.
+- Document digital-life capability gaps and record a real 0.8B recheck separately from fixture tests.
+
 ## 0.9.0
 
 - Add goals.md as an owner-editable, per-cycle input for continuous operation, preserving existing files and keeping single-session acceptance isolated from ongoing goals.

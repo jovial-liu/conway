@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import hashlib
 import json
+from .actions import GUI_ACTIONS
 
 
 CONTINUOUS_DIRECTIVE = '''
@@ -32,6 +33,7 @@ class AutonomyPolicy:
     observation_key: str | None = None
     action_key: str | None = None
     action_count: int = 0
+    action_visual: bool = False
 
     def observe(self, observation) -> None:
         with observation.screenshot_path.open('rb') as image:
@@ -41,15 +43,17 @@ class AutonomyPolicy:
                           observation.active_app, observation.active_window], ensure_ascii=False)
         if key != self.observation_key:
             self.idle_streak = 0
-            self.action_key, self.action_count = None, 0
+            if self.action_visual:
+                self.action_key, self.action_count = None, 0
         self.observation_key = key
 
     def check_repeat(self, action: dict) -> None:
         key = hashlib.sha256(json.dumps(action, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+        self.action_visual = action['type'] in GUI_ACTIONS or action['type'] == 'open_url'
         if key != self.action_key:
             self.action_key, self.action_count = key, 0
         if self.action_count >= self.repeat_action_limit:
-            raise RepeatedAction('Repeated identical action on an unchanged desktop suppressed; observe results and choose another approach or wait.')
+            raise RepeatedAction('Repeated identical action suppressed; inspect its result and choose another approach or wait. Unrelated screen changes do not reset file/system action counts.')
         self.action_count += 1
 
     def idle_delay(self) -> float:

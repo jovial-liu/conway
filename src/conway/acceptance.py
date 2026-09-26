@@ -137,6 +137,7 @@ def acceptance_check(config, state_root, *, max_steps=12, max_seconds=300):
                        for case in CASES]
     return {'schema_version': 1, 'suite': 'conway-workbench-v1', 'conway_version': __version__,
             'created_at': datetime.now(timezone.utc).isoformat(), **metadata,
+            'budgets': {'max_steps': max_steps, 'max_seconds': max_seconds, 'max_consecutive_errors': 2},
             'status': 'passed' if all(row['passed'] for row in results) else 'failed', 'cases': results,
             'real_desktop_tested': False, 'open_ended_self_replication_tested': False,
             'note': 'Bounded local component checks with synthetic observations and independently checked files/child output; not proof of autonomous self-replication.'}

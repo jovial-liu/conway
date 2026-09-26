@@ -60,17 +60,24 @@ configuration/runtime failures remain explicit startup failures.
 
 ## Repeated actions
 
-The default limit allows three identical side-effect attempts while screenshot
-bytes, display geometry and active window/application remain unchanged. A further
-repeat is not dispatched; `action_suppressed` is recorded and made available to
-the next model decision so it can change approach or wait. Wait/finish decisions
-do not clear this guard; a different side-effect action or changed observation
-does. Read-only file/list operations are not counted as side effects.
+The default limit allows three identical side-effect attempts. A further repeat
+is not dispatched; `action_suppressed` is recorded and shown in the next decision
+context. Wait/finish/read-only actions do not clear this guard; a different
+side-effect action does. Changed screenshot bytes, geometry or active app/window
+reset GUI and open-url counts. File, Shell and MCP counts survive those visual
+changes because a clock or animation is not evidence of a changed tool outcome.
+Counts are process-local and reset on a new run.
 
 This is a conservative repetition heuristic, not proof of progress. Animated
-pixels may reset it, and legitimate repeated commands without visible change may
+pixels may still reset GUI counts, and legitimate repeated commands may
 be suppressed. It does not detect every multi-action cycle. Configure
 `repeat_action_limit` if the intended workflow requires more repetitions.
+
+Decision context puts the latest recorded action result, error or suppression
+before durable notes and other recent events. Old screenshot metadata and model
+rationales remain in the complete journal but are omitted from that compact
+context. Dry-run and uncertain-action markers remain visible. This helps a model
+read evidence; it does not create a verified task reward or update weights.
 
 ## Stop and recovery semantics
 
