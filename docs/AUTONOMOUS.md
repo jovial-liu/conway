@@ -8,9 +8,9 @@ the loop does not require a new user message between tasks.
 
 ## Start
 
-After installing Conway and configuring the model, set ongoing objectives and
-scope in the constitution path printed by `conway init`. An example is in
-`examples/constitution.autonomous.md`. Existing constitutions are not overwritten.
+After installing Conway and configuring the model, set ongoing objectives in
+`goals.md` and identity/scope in `constitution.md`, using paths printed by `conway init`. An example is in
+`examples/constitution.autonomous.md`. Existing constitution and goals files are not overwritten. Goals are reread each continuous cycle; in-flight actions are not cancelled by a file edit.
 
 ```sh
 conway config --check
@@ -94,5 +94,5 @@ fixtures, real temporary-file actions, transient outages, failed reads, partial
 writes, idle pacing, repeated-action suppression, pause/resume/stop during long
 cooldowns, deadlines, and a stdin-free subprocess with cooperative SIGTERM on
 POSIX. They do not measure a real VLM's task competence or native desktop success.
-Use `docs/ACCEPTANCE.md` on the target device for that evidence. Long-term journals
+See [recorded small-model checks](validation/2026-09-26-small-models.md) for the separate real-weight workbench results. Use `docs/ACCEPTANCE.md` on the target device for native-desktop evidence. Long-term journals
 remain local files and require owner-managed archiving as documented previously.

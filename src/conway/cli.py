@@ -44,7 +44,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('--version', action='version', version=__version__)
     parser.add_argument('--home', type=Path, help='Override CONWAY_HOME for this invocation')
     sub = parser.add_subparsers(dest='command', required=True)
-    sub.add_parser('init', help='Create local constitution/config/state, without starting a model')
+    sub.add_parser('init', help='Create local constitution/goals/config/state, without starting a model')
     doctor = sub.add_parser('doctor', help='Hardware and installation diagnostics; no GUI import')
     doctor.add_argument('--json', action='store_true')
     sub.add_parser('status', help='Read stored state and recent trajectory')
@@ -65,6 +65,12 @@ def build_parser() -> argparse.ArgumentParser:
     vision.add_argument('--samples', type=int, default=8)
     vision.add_argument('--seed', type=int, default=0)
     vision.add_argument('--output', type=Path, help='Save JSON to a new file outside the state directory')
+    acceptance = sub.add_parser('acceptance-check', help='Run bounded real-model file/copy-and-launch component checks')
+    acceptance.add_argument('--endpoint')
+    acceptance.add_argument('--model')
+    acceptance.add_argument('--max-steps', type=int, default=12)
+    acceptance.add_argument('--max-seconds', type=float, default=300)
+    acceptance.add_argument('--output', type=Path)
     for name in ('stop', 'pause', 'resume'):
         sub.add_parser(name, help=f'Cooperatively {name} the current session')
     export = sub.add_parser('export', help='Export local trajectory events, without screenshots or uploading')
@@ -76,7 +82,7 @@ def build_parser() -> argparse.ArgumentParser:
     dataset.add_argument('--episodes', type=Path, nargs='+', required=True)
     dataset.add_argument('--output', type=Path, required=True)
     dataset.add_argument('--validation-percent', type=int, default=20)
-    run = sub.add_parser('run', help='Continuously act from the constitution; no conversation or task prompt')
+    run = sub.add_parser('run', help='Continuously act from goals and observations; no conversation prompt')
     run.set_defaults(execute=True)
     run.add_argument('--observe', dest='execute', action='store_false', help='Continuous observation and planning without actions')
     start = sub.add_parser('start', help='Single session / acceptance test; finish ends this session')
@@ -111,7 +117,7 @@ def _brain_type(requested: str, profile_name: str, model_name: str) -> str:
 
 def initialize(root=None) -> int:
     memory = FileMemory(root)
-    print(f'Conway state: {memory.root}\nConfig: {ensure_config(memory.root)}\nConstitution: {memory.constitution_path}')
+    print(f'Conway state: {memory.root}\nConfig: {ensure_config(memory.root)}\nConstitution: {memory.constitution_path}\nGoals: {memory.goals_path}')
     return 0
 
 
@@ -321,7 +327,7 @@ def main(argv: list[str] | None = None) -> int:
             with InstanceLock(memory.root / 'instance.lock'):
                 print(json.dumps(probe_model(config, memory.root), indent=2))
             return 0
-        if args.command in {'preflight', 'vision-check'}:
+        if args.command in {'preflight', 'vision-check', 'acceptance-check'}:
             from .reports import report_path, write_report
             memory = FileMemory(args.home)
             config = load_config(memory.root)
@@ -331,6 +337,11 @@ def main(argv: list[str] | None = None) -> int:
                 if args.command == 'preflight':
                     from .preflight import preflight
                     report = preflight(config, memory.root, desktop=args.desktop)
+                elif args.command == 'acceptance-check':
+                    from .acceptance import acceptance_check
+                    overrides = {name: getattr(args, name) for name in ('endpoint', 'model') if getattr(args, name) is not None}
+                    config = _merge_dataclass(config, overrides)
+                    report = acceptance_check(config, memory.root, max_steps=args.max_steps, max_seconds=args.max_seconds)
                 else:
                     from .evaluation import vision_check
                     overrides = {name: getattr(args, name) for name in ('endpoint', 'model', 'brain') if getattr(args, name) is not None}

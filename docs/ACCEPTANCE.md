@@ -1,6 +1,6 @@
 # Device acceptance / 设备验收
 
-This procedure distinguishes installed software, a responding model, synthetic visual localization and a verified desktop task. Completing one stage does not establish the later stages. Run commands in the same activated Python environment. Existing configurations and the constitution remain valid in 0.7.0. The task-based `start` examples below are optional single-session acceptance tests; the primary autonomous entry point is `conway run`, described in [continuous loop semantics](AUTONOMOUS.md).
+This procedure distinguishes installed software, a responding model, synthetic visual localization and a verified desktop task. Completing one stage does not establish the later stages. Run commands in the same activated Python environment. Existing configurations and the constitution remain valid in 0.9.0. The task-based `start` examples below are optional single-session acceptance tests; the primary autonomous entry point is `conway run`, described in [continuous loop semantics](AUTONOMOUS.md).
 
 ## 1. Offline installation
 
@@ -45,7 +45,33 @@ Reports include suite/Conway version, seed, per-case PNG SHA256, dimensions, tar
 
 Reports must be new paths outside the state directory. Existing files and symlinks are rejected. Configuration and startup failures do not create a successful report. API error bodies and arbitrary response text are not copied into per-case errors.
 
-## 4. One bounded task
+## 4. File and program-copy components
+
+```sh
+conway acceptance-check --max-steps 10 --max-seconds 180 --output ./workbench.json
+```
+
+This uses the configured real model through the generic JSON policy, synthetic
+observations and disposable directories. It executes bounded file operations;
+unlike `vision-check`, it can launch one child process. Each case gets fresh
+memory and its own time/step budget:
+
+- Write exact text to `result.txt` and read it back. Both the bytes and the read
+  action are checked independently of the model's completion claim.
+- Read `seed.py`, copy it exactly to `replica.py`, then run that copy once.
+  Only the fixed trusted print program can run, with a five-second child timeout.
+  Exact bytes, seed read, exit code and output are checked independently.
+
+The harness rejects other commands and writes outside the case directory.
+This is a small multi-step tool-use check, not replication of Conway itself,
+installation on another machine, a real desktop test or recursive improvement.
+OpenCUA/computer-use-only adapters are not supported by this suite. As with
+vision checks, all cases must pass for exit `0`; a failed check returns `2`.
+
+See the [2026-09-26 real-weight results](validation/2026-09-26-small-models.md)
+for pinned weights, runtime settings, failures and reproduction commands.
+
+## 5. One bounded desktop task
 
 On a test desktop/account, use a disposable work directory and task. First inspect plans:
 

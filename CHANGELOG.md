@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.0
+
+- Add goals.md as an owner-editable, per-cycle input for continuous operation, preserving existing files and keeping single-session acceptance isolated from ongoing goals.
+- Centralize Markdown instruction composition and shorten the continuous directive; keep one acting policy and loop.
+- Add optional typed feedback for executed action/result/next-observation transitions. Existing adapters remain inference-only; no online training or automatic checkpoint replacement is enabled.
+- Add bounded real-model file/readback and trusted-program copy/launch acceptance with independent checks and explicit non-replication scope.
+- Replace fixed example values in tool manifests with argument definitions after real-model tests exposed coordinate copying; version the changed grounding prompt as v2.
+- Disable the local llama-server Web UI, document future model/harness boundaries and include reproducible small-model acceptance evidence.
+
 ## 0.8.0
 
 - Add optional official MCP SDK 2.2 stdio clients with persistent sessions, paginated discovery, explicit tool/environment allowlists, schema validation, bounded output and cancellation cleanup. Uncertain calls are never replayed.

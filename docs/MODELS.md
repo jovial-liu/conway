@@ -2,6 +2,13 @@
 
 **Release status:** no Conway-trained policy weights are available from this change. The Hub repository publishes source, not a newly trained foundation model. Version 0.8 adds a concrete data path and an experimental offline training script alongside the harness.
 
+Version 0.9 adds [actual small-model acceptance results](validation/2026-09-26-small-models.md)
+and a [minimal optional feedback boundary](FUTURE.md) for future stateful or
+continually learning adapters. Current adapters still perform inference only.
+The tested abliterated weights are experimental candidates, not a replacement
+for the existing default profiles. Reduced refusal does not establish reliable
+action selection, self-replication or learning.
+
 ## Foundation versus policy
 
 An existing VLM supplies perception/language priors; task-specific training should teach reliable action selection, verification, recovery and useful long-horizon behavior. Do not pretrain a foundation model merely to put a project name on it.

@@ -41,17 +41,18 @@ class ToolExecutor:
 
     def manifest_text(self) -> str:
         definitions = {
-            'wait': '{"seconds": 1}', 'finish': '{"reason": "...", "outcome": "completed|failed"}',
-            'click': '{"x": 100, "y": 100, "button": "left"}',
-            'double_click': '{"x": 100, "y": 100}', 'move': '{"x": 100, "y": 100, "duration": 0.2}',
-            'drag': '{"x": 100, "y": 100, "duration": 0.5}', 'type': '{"text": "..."}',
-            'press': '{"key": "enter"}', 'hotkey': '{"keys": ["ctrl", "l"]}', 'scroll': '{"amount": -5}',
-            'shell': '{"command": "...", "cwd": null, "timeout": 30}',
-            'read_file': '{"path": "...", "max_chars": 12000}',
-            'write_file': '{"path": "...", "content": "...", "append": false}',
-            'list_dir': '{"path": ".", "limit": 200}', 'open_url': '{"url": "https://..."}',
-            'read_skill': '{"name": "skill-name", "resource": "SKILL.md", "offset": 0}',
-            'mcp_call': '{"server": "configured-server", "tool": "tool-name", "arguments": {}}',
+            'wait': 'seconds: number (0..30)', 'finish': 'reason: string, outcome: completed|failed',
+            'click': 'x: integer pixel, y: integer pixel, button: left|middle|right',
+            'double_click': 'x: integer pixel, y: integer pixel',
+            'move': 'x: integer pixel, y: integer pixel, duration: seconds',
+            'drag': 'x: integer pixel, y: integer pixel, duration: seconds', 'type': 'text: string',
+            'press': 'key: string', 'hotkey': 'keys: list of key names', 'scroll': 'amount: integer',
+            'shell': 'command: string, cwd: optional path, timeout: seconds',
+            'read_file': 'path: string, max_chars: optional integer',
+            'write_file': 'path: string, content: string, append: optional boolean',
+            'list_dir': 'path: string, limit: optional integer', 'open_url': 'url: http(s) string',
+            'read_skill': 'name: skill name, resource: relative path (default SKILL.md), offset: integer',
+            'mcp_call': 'server: configured name, tool: tool name, arguments: JSON object',
         }
         text = f'Default working directory: {self.workspace}\n' + '\n'.join(f'- {k}: {definitions[k]}' for k in sorted(self.enabled_actions()))
         if self.skills and self.skills.skills:

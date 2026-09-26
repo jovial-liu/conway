@@ -95,7 +95,7 @@ def start_local_runtime(hardware: HardwareProfile, state_root: Path, requested_p
     alias = 'conway-local'
     command = [binary, '-hf', f"{repo}:{profile['quant']}", '--alias', alias, '--host', '127.0.0.1',
                '--port', str(port), '--ctx-size', str(context_size), '--parallel', '1',
-               '--n-gpu-layers', '0' if hardware.accelerator == 'cpu' else '999', '--jinja']
+               '--n-gpu-layers', '0' if hardware.accelerator == 'cpu' else '999', '--jinja', '--no-webui']
     state_root.mkdir(parents=True, exist_ok=True)
     log_path = state_root / 'llama-runtime.log'
     if log_path.exists() and log_path.stat().st_size > 2000000:

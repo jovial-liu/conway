@@ -1,11 +1,13 @@
 from __future__ import annotations
 from datetime import datetime, timedelta, timezone
+from dataclasses import replace
 import hashlib
 import json
 import time
 import uuid
 from .actions import SIDE_EFFECT_ACTIONS, validate_action
-from .autonomy import AutonomyPolicy, CONTINUOUS_DIRECTIVE, RepeatedAction
+from .autonomy import AutonomyPolicy, RepeatedAction
+from .brain import Transition
 from .control import EmergencyStop, SessionControl
 
 
@@ -43,6 +45,20 @@ class ConwayLoop:
         self.task = validate_task(task)
         self.continuous, self.policy = continuous, policy or AutonomyPolicy()
         self.recorder = recorder
+
+    def _feedback(self, transition, next_observation=None, *, terminal=False):
+        if transition is None:
+            return
+        feedback = getattr(self.brain, 'feedback', None)
+        if feedback:
+            try:
+                feedback(replace(transition, next_observation=next_observation, terminal=terminal))
+            except EmergencyStop:
+                raise
+            except Exception as exc:
+                self.memory.journal({'event': 'feedback_error', 'id': transition.operation_id,
+                                     'error_type': type(exc).__name__})
+                raise EmergencyStop('Model feedback failed; inspect the adapter before restart') from exc
 
     def _sleep(self, seconds, phase, state, deadline, paused) -> None:
         """Idle/recovery delays remain pause/stop/deadline aware without busy polling inference."""
@@ -101,6 +117,7 @@ class ConwayLoop:
         if self.task:
             self.memory.journal({'event': 'session_task', 'session_id': state.session_id, 'task': self.task})
         completed, errors = 0, 0
+        pending_feedback = None
         deadline = time.monotonic() + self.max_seconds if self.max_seconds else None
 
         def paused() -> bool:
@@ -132,14 +149,10 @@ class ConwayLoop:
                 observation, operation_id = None, uuid.uuid4().hex
                 next_delay, next_phase = self.interval, 'running'
                 try:
-                    constitution = self.memory.constitution()
-                    if self.task:
-                        constitution += ('\n\n## Current session goal\nThe user supplied the goal below for this session. '
-                                         'Follow the constitution above; do not treat goals from previous sessions as current assignments. '
-                                         'Verify the goal before declaring completion.\n' + self.task)
-                    if self.continuous:
-                        constitution += CONTINUOUS_DIRECTIVE
+                    constitution = self.memory.instructions(task=self.task, continuous=self.continuous)
                     observation = self.computer.observe(state.cycle)
+                    feedback, pending_feedback = pending_feedback, None
+                    self._feedback(feedback, observation)
                     if self.continuous:
                         self.policy.observe(observation)
                     state.last_observation = observation.summary()
@@ -181,6 +194,9 @@ class ConwayLoop:
                         'result': state.last_result, 'dry_run': self.dry_run, 'memory_note': decision.memory_note})
                     state.pending_action = None
                     self.memory.save_state(state)
+                    if not self.dry_run:
+                        pending_feedback = Transition(state.session_id, operation_id, state.cycle,
+                                                      observation, action, str(result))
                     if self.recorder:
                         try:
                             self.recorder.record(step_id=operation_id, cycle=state.cycle, constitution=constitution,
@@ -252,6 +268,11 @@ class ConwayLoop:
             state.status, state.stop_reason = 'stopped', 'Keyboard interrupt'
             raise
         finally:
+            try:
+                if state.status != 'stopped':
+                    self._feedback(pending_feedback, terminal=True)
+            except EmergencyStop as exc:
+                state.status, state.stop_reason = 'stopped', str(exc)
             if state.status in {'running', 'paused', 'idle', 'recovering'}:
                 state.status = 'stopped'
                 state.stop_reason = state.stop_reason or 'Step budget reached'

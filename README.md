@@ -15,7 +15,13 @@ A persistent autonomous loop, a replaceable visual policy, file memory, MCP tool
 
 Conway loads a constitution, observes the desktop, asks a VLM for one next action, dispatches it, records the outcome, and observes again. The model can choose direct file/system tools or screenshot-driven GUI interaction. GitHub hosts development; Hugging Face distributes source and references existing model weights. This repository is **not a newly trained model** and does not run a hosted agent.
 
-**Status: v0.8.0 engineering release.** `conway run` is the continuous autonomous entry point: no conversation window, input prompt or per-action user turn. It chooses work from the constitution and observations, continues beyond subgoal completion, and paces idle/recovery cycles. Offline tests are not evidence of real-model GUI accuracy. Native accessibility adapters remain experimental.
+**Status: v0.9.0 engineering release.** `conway run` is the continuous autonomous entry point: no conversation window, input prompt or per-action user turn. It chooses work from the constitution and observations, continues beyond subgoal completion, and paces idle/recovery cycles. Offline tests are not evidence of real-model GUI accuracy. Native accessibility adapters remain experimental.
+
+## Minimal core, replaceable model
+
+Version 0.9 keeps a single acting loop. Owner rules live in `constitution.md`, current work in hot-read `goals.md`, and progress in file memory. Optional `Brain.feedback(Transition)` exposes executed action/result/next-observation evidence to future learning adapters; today's inference-only adapters perform no training or weight updates. Tool descriptions now use parameter definitions instead of fixed example coordinates.
+
+[Future-model boundary and simple architecture](docs/FUTURE.md) · [Digital-life goals example](examples/goals.digital-life.md) · [Recorded small-model acceptance](docs/validation/2026-09-26-small-models.md)
 
 ## Two tracks: runtime and policy
 
@@ -36,7 +42,7 @@ conway doctor
 conway start --mock --max-steps 3
 ```
 
-The mock command is genuinely offline: synthetic PNG, no VLM download, no desktop permissions, and no computer actions. Edit the `constitution.md` path printed by `conway init` to establish the ongoing goal and scope.
+The mock command is genuinely offline: synthetic PNG, no VLM download, no desktop permissions, and no computer actions. Keep identity and scope in `constitution.md`; put current work in the `goals.md` path printed by `conway init`. The continuous loop rereads goals each cycle.
 
 For real local inference, install a compatible `llama-server` first. Then:
 
@@ -46,7 +52,7 @@ conway run --observe --max-steps 3
 conway run
 ```
 
-`probe` sends a synthetic PNG and checks the model protocol; it never touches your desktop. `run` executes enabled current-user tools continuously; `run --observe` captures real screenshots and plans without dispatching actions. There is no per-action approval dialog. Set ongoing objectives and scope in constitution.md once, then let the agent choose its next actions. Existing constitutions are preserved.
+`probe` sends a synthetic PNG and checks the model protocol; it never touches your desktop. `run` executes enabled current-user tools continuously; `run --observe` captures real screenshots and plans without dispatching actions. There is no per-action approval dialog. Set ongoing work in goals.md and scope in constitution.md, then let the agent choose its next actions. Existing constitutions are preserved.
 
 For an existing multimodal server, auto-discover its served model ID:
 
@@ -78,6 +84,7 @@ Unchanged idle observations use 2, 4, 8…60-second backoff. After repeated pre-
 ```sh
 conway preflight --desktop --output ./preflight.json
 conway vision-check --samples 8 --seed 42 --output ./vision.json
+conway acceptance-check --max-steps 10 --output ./acceptance.json
 conway start --task "Create a disposable note and verify its contents" --max-steps 10
 conway start --task-file ./task.md --execute --max-steps 30 --max-seconds 300
 ```
@@ -85,6 +92,8 @@ conway start --task-file ./task.md --execute --max-steps 30 --max-seconds 300
 `preflight` checks configuration, the constitution, recovery state, available memory and runtime/model-service readiness. It never downloads weights. `--desktop` adds a time-bounded screenshot check; the temporary image is deleted and is never sent to a model. Input permissions still need a real action test. Without `--desktop`, the report explicitly leaves desktop readiness unchecked.
 
 `vision-check` sends generated color-target images to the configured model and scores the proposed clicks without executing them. Each report includes per-case hits, target bounds, image hashes, latency and model ID. The seed reproduces the suite; this small synthetic check does not measure real application task success. Exit codes: `0` for all targets hit, `2` for misses/errors, `1` for setup errors. Reports must be new files outside the state directory. See [device acceptance](docs/ACCEPTANCE.md).
+
+`acceptance-check` evaluates real-model file creation/readback and one disposable program copy/launch using restricted tools and independent checks. It has no native desktop and does not recursively start agents.
 
 The older `start` command remains for single-session acceptance: a `finish` ends that session, and execution requires `--execute`. Its optional `--task`/UTF-8 `--task-file` is not required or accepted by the continuous `run` entry point. Existing file memory remains intact.
 

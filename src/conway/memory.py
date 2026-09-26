@@ -53,11 +53,15 @@ class FileMemory:
         self.journal_dir = self.root / 'journal'
         self.journal_dir.mkdir(parents=True, exist_ok=True)
         self.constitution_path = self.root / 'constitution.md'
+        self.goals_path = self.root / 'goals.md'
         self.memory_path = self.root / 'memory.md'
         self.state_path = self.root / 'state.json'
         if not self.constitution_path.exists():
             text = resources.files('conway').joinpath('constitution.default.md').read_text(encoding='utf-8')
             atomic_write(self.constitution_path, text)
+        if not self.goals_path.exists():
+            text = resources.files('conway').joinpath('goals.default.md').read_text(encoding='utf-8')
+            atomic_write(self.goals_path, text)
         if not self.memory_path.exists():
             atomic_write(self.memory_path, '# Conway Memory\n\n')
         if not self.state_path.exists():
@@ -68,6 +72,30 @@ class FileMemory:
             text = file.read(32001)
         if len(text) > 32000:
             raise ValueError('constitution.md exceeds 32000 characters; shorten it before starting')
+        return text
+
+    def goals(self) -> str:
+        try:
+            with self.goals_path.open(encoding='utf-8') as file:
+                text = file.read(8001)
+        except FileNotFoundError:
+            return ''
+        if len(text) > 8000 or '\x00' in text:
+            raise ValueError('goals.md must contain at most 8000 characters without NUL')
+        return text.strip()
+
+    def instructions(self, *, task: str | None = None, continuous: bool = False) -> str:
+        """Read the two owner-editable Markdown inputs once per decision cycle."""
+        text = self.constitution()
+        goals = self.goals() if continuous else ''
+        if goals:
+            text += '\n\n## Current goals from goals.md\nFollow these within the constitution.\n' + goals
+        if task:
+            text += ('\n\n## Current session goal\nFollow this goal within the constitution. '
+                     'Do not carry forward assignments from other sessions. Verify before reporting completion.\n' + task)
+        if continuous:
+            from .autonomy import CONTINUOUS_DIRECTIVE
+            text += CONTINUOUS_DIRECTIVE
         return text
 
     def recent_events(self, limit: int = 12, max_chars: int = 8000) -> str:

@@ -2,6 +2,8 @@
 
 This release separates implemented behavior from deployment claims.
 
+Version 0.9 adds hot-read Markdown goals, an optional no-op-by-default model feedback contract and a bounded file/copy-and-launch acceptance suite. [The small-model report](validation/2026-09-26-small-models.md) records actual CPU inference with downloaded weights separately from synthetic policy fixtures. Those runs do not include native GUI actions, online learning or open-ended replication.
+
 Version 0.8.0 adds official-SDK MCP stdio and Agent Skills support plus reviewed visual-policy data export. Tests run a real MCP subprocess, verify stateful calls, allowlists/schema validation, environment forwarding, timeouts, cancellation and cleanup; a scripted autonomous policy reads a skill and invokes tools across a subgoal boundary. Dataset tests exercise prompt alignment, hashes, evidence requirements, split leakage and the training script's no-model validation path. These use synthetic fixtures, not actual VLM decisions or real training demonstrations. No GPU training step or third-party production MCP service was tested.
 
 Version 0.7.0 adds the [continuous autonomous loop](AUTONOMOUS.md). New lifecycle tests verify continued operation after subgoal completion/failure, transient recovery, repeated-action suppression, interruptible backoff, no stdin dependency and cooperative SIGTERM cleanup. They are synthetic protocol/lifecycle evidence, not real-model long-duration task-performance results.
@@ -25,7 +27,7 @@ python -m compileall -q src
 python -m pip wheel . --no-deps -w dist
 ```
 
-The existing CI matrix runs Ubuntu, Windows and macOS with Python 3.11. Check the specific commit's CI results, not a prior green workflow. CI success does not imply a real desktop, GPU or model was tested. Local v0.8 release testing used Python 3.12 on CPU Linux.
+The existing CI matrix runs Ubuntu, Windows and macOS with Python 3.11. Check the specific commit's CI results, not a prior green workflow. CI success does not imply a real desktop, GPU or model was tested. Local v0.9 release testing used Python 3.12 on CPU Linux.
 
 ## Not yet verified end to end
 

@@ -41,12 +41,30 @@ class Decision:
     memory_note: str | None = None
 
 
+@dataclass(frozen=True, slots=True)
+class Transition:
+    """One executed transition for future stateful/learning adapters; no inferred reward."""
+    session_id: str
+    operation_id: str
+    cycle: int
+    observation: Observation
+    action: dict[str, Any]
+    result: str
+    next_observation: Observation | None = None
+    terminal: bool = False
+    task_success: bool | None = None
+
+
 class Brain:
     def decide(self, constitution: str, memory: str, observation: Observation) -> Decision:
         raise NotImplementedError
 
     def compact_memory(self, constitution: str, memory: str) -> str | None:
         return None
+
+    def feedback(self, transition: Transition) -> None:
+        """Optional adapter hook; current inference-only brains do not learn or update weights."""
+        pass
 
     def close(self) -> None:
         pass

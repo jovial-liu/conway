@@ -17,7 +17,7 @@ from .computer import Observation
 from .config import ConwayConfig
 from .diagnostics import model_session
 
-SUITE_VERSION = 'conway-grounding-v1'
+SUITE_VERSION = 'conway-grounding-v2'
 COLORS = {'red': '#D92D20', 'blue': '#175CD3', 'green': '#067647', 'purple': '#7A3EB1'}
 
 
@@ -106,7 +106,7 @@ def vision_check(config: ConwayConfig, state_root: Path, *, samples: int = 8, se
     with TemporaryDirectory(prefix='conway-vision-') as directory:
         cases = make_cases(Path(directory), samples=samples, seed=seed)
         with model_session(config, state_root,
-                           tool_manifest='- click: {"x": 100, "y": 100, "button": "left"}') as (brain, metadata):
+                           tool_manifest='- click: x: integer screenshot pixel, y: integer screenshot pixel, button: left. Choose coordinates from the image.') as (brain, metadata):
             result = run_grounding(brain, cases)
     return {'schema_version': 1, 'suite': SUITE_VERSION, 'conway_version': __version__,
             'created_at': datetime.now(timezone.utc).isoformat(), 'seed': seed, **metadata,

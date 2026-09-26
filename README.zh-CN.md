@@ -1,8 +1,16 @@
 # Conway：通向数字生命的开放模型与自主运行时
 
-Conway 是本地持续运行的自主电脑操作 Agent。用 `conway run` 启动，长期目标写在 `constitution.md` 中；Agent 从环境和记忆里自行选择工作、行动、验证结果、继续下一轮。没有对话窗口，不读取聊天输入，也不需要用户逐条派任务。它既能用截图和鼠标键盘，也能用文件与 Shell 工具。GitHub 和 Hugging Face 负责分发代码，不负责运行你的桌面。
+Conway 是本地持续运行的自主电脑操作 Agent。用 `conway run` 启动，身份和范围写在 `constitution.md`，具体目标写在每轮重读的 `goals.md` 中；Agent 从环境和记忆里自行选择工作、行动、验证结果、继续下一轮。没有对话窗口，不读取聊天输入，也不需要用户逐条派任务。它既能用截图和鼠标键盘，也能用文件与 Shell 工具。GitHub 和 Hugging Face 负责分发代码，不负责运行你的桌面。
 
-当前版本：**0.8.0 工程版**。持续自主 loop 已接入 MCP stdio 工具与 Agent Skills，并增加模型训练所需的视觉轨迹、独立审核、数据导出和实验性微调入口。自动化测试通过不等于真实 VLM 已能稳定完成所有电脑任务。原生 UI 树仍属实验性功能，详见 [验证范围](docs/VALIDATION.md)。
+当前版本：**0.9.0 工程版**。持续自主 loop 已接入 MCP stdio 工具与 Agent Skills，并增加模型训练所需的视觉轨迹、独立审核、数据导出和实验性微调入口。自动化测试通过不等于真实 VLM 已能稳定完成所有电脑任务。原生 UI 树仍属实验性功能，详见 [验证范围](docs/VALIDATION.md)。
+
+## 简单运行，逐步换上更强的模型
+
+默认只有一条“读目标 → 观察 → 决策 → 行动 → 记录”循环。`constitution.md` 放稳定规则，`goals.md` 放当前工作和长期方向，`memory.md` 放进展。未来学习模型可以通过可选的 `feedback(Transition)` 接收动作及前后观察；当前模型该接口不做任何训练或权重更新。
+
+没有加入多 Agent 调度、常驻训练器或自动热替换机制。未来模型变强，主要替换模型适配器；harness 的工具、文件记录和生命周期继续复用。
+
+[简洁架构与未来接口](docs/FUTURE.md) · [数字生命目标示例](examples/goals.digital-life.md) · [真实小模型验收记录](docs/validation/2026-09-26-small-models.md)
 
 ## 模型与 harness 两条线
 
@@ -77,7 +85,7 @@ conway run --endpoint http://127.0.0.1:8000/v1
 conway run --quiet
 ```
 
-目标来自宪法；Agent 自行决定下一件有价值的工作。完成一个子目标时，`finish` / OpenCUA 的 `DONE`、`FAIL` 只记录该子目标的模型报告，不结束 loop。没有可做的工作时等待并重新观察，不为了保持忙碌而虚构任务。
+目标来自 `goals.md`，每轮重新读取，并受宪法约束；Agent 自行决定下一件有价值的工作。完成一个子目标时，`finish` / OpenCUA 的 `DONE`、`FAIL` 只记录该子目标的模型报告，不结束 loop。没有可做的工作时等待并重新观察，不为了保持忙碌而虚构任务。
 
 桌面未变化且持续空闲时，检查间隔从 2 秒逐步增加到 60 秒；连续推理或只读操作错误达到阈值后，冷却从 5 秒增加到最多 300 秒，再重新观察并尝试。桌面未变化时，同一有副作用动作默认最多连续尝试 3 次，后续重复会被抑制并反馈给模型重新规划。这个规则是减少空转的启发式，不代表能判断所有任务进展。
 
@@ -94,6 +102,7 @@ conway run --quiet
 ```sh
 conway preflight --desktop --output ./preflight.json
 conway vision-check --samples 8 --seed 42 --output ./vision.json
+conway acceptance-check --max-steps 10 --output ./acceptance.json
 conway start --task "在工作目录创建 conway-test.txt，写入中文测试内容并读取核对" --max-steps 10
 conway start --task "在工作目录创建 conway-test.txt，写入中文测试内容并读取核对" --execute --max-steps 30 --max-seconds 300
 ```
@@ -103,6 +112,8 @@ conway start --task "在工作目录创建 conway-test.txt，写入中文测试�
 `vision-check` 生成随机位置的彩色目标图，让模型返回点击坐标，再计算命中数、命中率和延迟。模型不知道答案坐标，程序不执行点击。它比单纯 `probe` 多了可核对的定位结果，但不代表真实应用任务成功率。默认 8 张图，全命中时退出码为 0，有漏点或响应错误时为 2，启动/配置错误为 1。报告包含每题结果、种子、模型 ID 和图片哈希；推理引擎版本、权重版本与量化参数需要你另外记录。
 
 报告文件必须是状态目录外的新文件，已有报告不会被覆盖。固定种子可复现题目。完整步骤见 [设备验收说明](docs/ACCEPTANCE.md)。
+
+`acceptance-check` 用真实模型完成受限文件写入/回读，以及单个测试程序的复制/启动/退出检查。验收依据是实际文件和子进程输出，不是模型自己宣称完成。这不等于完整自复制或真实桌面验收。
 
 也可以把较长任务写入 UTF-8 文件：
 
