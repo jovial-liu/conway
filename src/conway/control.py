@@ -1,13 +1,32 @@
 """Cooperative session controls. Never send signals to a reused/unverified PID."""
 from __future__ import annotations
 import json
+from contextlib import contextmanager
 from pathlib import Path
+import signal
+import threading
 import time
 from .storage import atomic_write
 
 
 class EmergencyStop(RuntimeError):
     """A user stop/failsafe request. Must not be retried as a model error."""
+
+
+@contextmanager
+def termination_signals():
+    """Let SIGTERM follow the same cleanup path as an explicit stop; never respawn."""
+    if threading.current_thread() is not threading.main_thread():
+        yield
+        return
+    previous = signal.getsignal(signal.SIGTERM)
+    def stop(signum, frame):
+        raise EmergencyStop('Termination requested')
+    signal.signal(signal.SIGTERM, stop)
+    try:
+        yield
+    finally:
+        signal.signal(signal.SIGTERM, previous)
 
 
 class SessionControl:

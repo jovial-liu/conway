@@ -47,6 +47,11 @@ class ConwayConfig:
     ui_max_nodes: int = 80
     opencua_min_pixels: int = 3136
     opencua_max_pixels: int = 12845056
+    idle_initial_seconds: float = 2.0
+    idle_max_seconds: float = 60.0
+    recovery_initial_seconds: float = 5.0
+    recovery_max_seconds: float = 300.0
+    repeat_action_limit: int = 3
     tools: ToolSettings = field(default_factory=ToolSettings)
 
 
@@ -99,12 +104,18 @@ def _merge_dataclass(config: ConwayConfig, raw: dict[str, Any]) -> ConwayConfig:
         'context_size': (2048, 131072, True), 'ui_timeout': (0.1, 10, False),
         'ui_max_nodes': (1, 500, True), 'opencua_min_pixels': (784, 12845056, True),
         'opencua_max_pixels': (784, 12845056, True),
+        'idle_initial_seconds': (0.1, 3600, False), 'idle_max_seconds': (0.1, 3600, False),
+        'recovery_initial_seconds': (0.1, 3600, False), 'recovery_max_seconds': (0.1, 3600, False),
+        'repeat_action_limit': (1, 50, True),
     }
     for name, (low, high, integer) in ranges.items():
         if name in raw:
             setattr(config, name, _number(raw[name], name, low, high, integer))
     if config.opencua_min_pixels > config.opencua_max_pixels:
         raise ConfigError('opencua_min_pixels must not exceed opencua_max_pixels')
+    for prefix in ('idle', 'recovery'):
+        if getattr(config, prefix + '_initial_seconds') > getattr(config, prefix + '_max_seconds'):
+            raise ConfigError(f'{prefix}_initial_seconds must not exceed {prefix}_max_seconds')
     if 'ui_tree' in raw:
         if type(raw['ui_tree']) is not bool:
             raise ConfigError('ui_tree must be true or false, not a quoted string')

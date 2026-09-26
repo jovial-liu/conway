@@ -1,8 +1,8 @@
 # Conway 使用说明
 
-Conway 是本地运行、没有聊天框的自主电脑操作 harness。目标写在 `constitution.md` 中；模型自行选择下一步，既能用截图和鼠标键盘，也能用文件与 Shell 工具。GitHub 和 Hugging Face 负责分发代码，不负责运行你的桌面。
+Conway 是本地持续运行的自主电脑操作 Agent。用 `conway run` 启动，长期目标写在 `constitution.md` 中；Agent 从环境和记忆里自行选择工作、行动、验证结果、继续下一轮。没有对话窗口，不读取聊天输入，也不需要用户逐条派任务。它既能用截图和鼠标键盘，也能用文件与 Shell 工具。GitHub 和 Hugging Face 负责分发代码，不负责运行你的桌面。
 
-当前版本：**0.6.0 工程候选版**，新增设备预检、可评分的合成视觉测试和单次任务入口。自动化测试通过不等于真实 VLM 已能稳定完成所有电脑任务。原生 UI 树仍属实验性功能，详见 [验证范围](docs/VALIDATION.md)。
+当前版本：**0.7.0 工程候选版**，重点是持续自主 loop：子目标结束后继续、空闲退避、临时故障自动重试、重复动作抑制。自动化测试通过不等于真实 VLM 已能稳定完成所有电脑任务。原生 UI 树仍属实验性功能，详见 [验证范围](docs/VALIDATION.md)。
 
 ## 最短启动流程
 
@@ -35,22 +35,38 @@ py -3.11 -m venv .venv
 
 ```sh
 conway probe
-conway start --max-steps 3
-conway start --execute
+conway run --observe --max-steps 3
+conway run
 ```
 
-第一次可能下载数 GB 模型及视觉投影文件。`probe` 只用合成图片测试模型协议，不代表已经验证视觉定位精度。`start` 默认只观察与规划；加 `--execute` 后才会执行已开启的工具，运行中没有逐步审批框。
+第一次可能下载数 GB 模型及视觉投影文件。`probe` 只用合成图片测试模型协议，不代表已经验证视觉定位精度。`run` 启动即持续执行已开启的工具；`run --observe` 只观察与规划。运行中没有逐步审批框，也不会弹出聊天窗口。
 
 已有支持图片输入的服务时：
 
 ```sh
 conway probe --endpoint http://127.0.0.1:8000/v1
-conway start --endpoint http://127.0.0.1:8000/v1 --execute
+conway run --endpoint http://127.0.0.1:8000/v1
 ```
 
 服务只有一个模型时会自动读取其 ID；多个模型则加 `--model 实际服务ID`。OpenCUA 可以通过 `--brain opencua` 显式选择；模型名含 OpenCUA 时也会自动识别。仅把 OpenCUA 权重文件下载到本地，不等于已经启动对应服务。
 
-## 检查设备并指定本次任务
+## 持续自主运行
+
+```sh
+conway run --quiet
+```
+
+目标来自宪法；Agent 自行决定下一件有价值的工作。完成一个子目标时，`finish` / OpenCUA 的 `DONE`、`FAIL` 只记录该子目标的模型报告，不结束 loop。没有可做的工作时等待并重新观察，不为了保持忙碌而虚构任务。
+
+桌面未变化且持续空闲时，检查间隔从 2 秒逐步增加到 60 秒；连续推理或只读操作错误达到阈值后，冷却从 5 秒增加到最多 300 秒，再重新观察并尝试。桌面未变化时，同一有副作用动作默认最多连续尝试 3 次，后续重复会被抑制并反馈给模型重新规划。这个规则是减少空转的启发式，不代表能判断所有任务进展。
+
+`run` 在启动它的进程中运行，不打开新界面，不读取标准输入。`--quiet` 关闭终端周期输出，状态和日志照常保存。可以从另一个终端执行 `status`、`pause`、`resume`、`stop`；这些是管理指令，不是聊天入口。空闲和冷却期间仍能暂停、恢复和停止。程序不会在用户停止后自行重启。
+
+已有宪法不会被覆盖。可以参考 [持续目标示例](examples/constitution.autonomous.md)。完整运行语义见 [自主 loop 说明](docs/AUTONOMOUS.md)。
+
+## 设备检查与可选单次验收
+
+以下 `start --task` 流程仅用于单次验收；持续运行直接用上面的 `run`，不需要提供单次任务。
 
 配置好模型服务后，在自己的电脑上运行：
 
@@ -83,7 +99,7 @@ conway pause
 conway resume
 conway stop
 conway config --check
-conway start --execute --max-steps 100 --max-seconds 600
+conway run --max-steps 100 --max-seconds 600
 ```
 
 暂停和停止在协作检查点生效。正在执行的系统调用需要先返回；模型请求有超时。鼠标角落 failsafe 不再被当成普通错误重试。崩溃后会保留未确认的动作意图，重启先观察，不会自动重复执行上一条可能已经产生影响的动作。

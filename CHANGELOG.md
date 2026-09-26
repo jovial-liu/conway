@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.0
+
+- Make `conway run` the continuous autonomous entry point: executes enabled tools from the constitution, never reads stdin, and opens no chat UI. `--observe` supports continuous planning only; `start` retains single-session compatibility.
+- Treat `finish`/OpenCUA `DONE`/`FAIL` as subgoal reports in continuous mode, preserving explicit unverified provenance and continuing from fresh observations.
+- Add bounded exponential idle and recovery delays, live idle/recovering state and next-wake metadata; recover from pre-dispatch/readonly failures beyond the former session error limit.
+- Suppress repeated identical side-effect actions on unchanged observations and feed the suppression back into context.
+- Keep pause/resume/stop and time budgets responsive during waits, preserve uncertain-action halts, and handle cooperative SIGTERM with cleanup and no respawn.
+- Stop treating read-only failures as uncertain side effects; ensure stop signals during memory compaction are not swallowed.
+- Add unattended multi-goal, stdin-free process, retry, pacing, repeat-guard and lifecycle tests plus continuous-operation documentation.
+
 ## 0.6.0
 
 - Add `preflight` for constitution/recovery, hardware, runtime/service and GUI-dependency checks without downloading weights; optional timed desktop capture removes its temporary screenshot and omits private window/UI labels.

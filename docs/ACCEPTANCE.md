@@ -1,6 +1,6 @@
 # Device acceptance / 设备验收
 
-This procedure distinguishes installed software, a responding model, synthetic visual localization and a verified desktop task. Completing one stage does not establish the later stages. Run commands in the same activated Python environment. Existing configurations and the constitution remain valid in 0.6.0.
+This procedure distinguishes installed software, a responding model, synthetic visual localization and a verified desktop task. Completing one stage does not establish the later stages. Run commands in the same activated Python environment. Existing configurations and the constitution remain valid in 0.7.0. The task-based `start` examples below are optional single-session acceptance tests; the primary autonomous entry point is `conway run`, described in [continuous loop semantics](AUTONOMOUS.md).
 
 ## 1. Offline installation
 

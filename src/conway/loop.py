@@ -1,10 +1,11 @@
 from __future__ import annotations
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import hashlib
 import json
 import time
 import uuid
-from .actions import validate_action
+from .actions import SIDE_EFFECT_ACTIONS, validate_action
+from .autonomy import AutonomyPolicy, CONTINUOUS_DIRECTIVE, RepeatedAction
 from .control import EmergencyStop, SessionControl
 
 
@@ -31,7 +32,7 @@ class ConwayLoop:
     def __init__(self, brain, executor, memory, *, dry_run: bool = False, interval: float = 0.5,
                  max_steps: int = 0, screenshot_keep: int = 30, memory_compaction_bytes: int = 64000,
                  max_errors: int = 5, context_chars: int = 16000, max_seconds: float = 0, quiet: bool = False,
-                 task: str | None = None) -> None:
+                 task: str | None = None, continuous: bool = False, policy: AutonomyPolicy | None = None) -> None:
         self.brain, self.executor, self.memory = brain, executor, memory
         self.computer = executor.computer
         self.dry_run, self.interval, self.max_steps = dry_run, max(0, interval), max_steps
@@ -39,6 +40,27 @@ class ConwayLoop:
         self.memory_compaction_bytes = min(memory_compaction_bytes, max(1000, context_chars // 2))
         self.max_errors, self.context_chars, self.max_seconds, self.quiet = max_errors, context_chars, max_seconds, quiet
         self.task = validate_task(task)
+        self.continuous, self.policy = continuous, policy or AutonomyPolicy()
+
+    def _sleep(self, seconds, phase, state, deadline, paused) -> None:
+        """Idle/recovery delays remain pause/stop/deadline aware without busy polling inference."""
+        end = time.monotonic() + max(0, seconds)
+        if deadline is not None:
+            end = min(end, deadline)
+        state.status = phase
+        state.next_wake_at = (datetime.now(timezone.utc) + timedelta(seconds=max(0, end - time.monotonic()))).isoformat()
+        self.memory.save_state(state)
+        try:
+            while time.monotonic() < end:
+                self.control.check()
+                if paused():
+                    break  # Resume with a fresh observation instead of finishing an obsolete delay.
+                self.control.sleep(min(0.2, max(0, end - time.monotonic())))
+            if deadline is not None and time.monotonic() >= deadline:
+                raise EmergencyStop('Time budget reached')
+        finally:
+            state.next_wake_at = None
+            state.status = 'running'
 
     def _compact_memory(self, constitution: str, state) -> None:
         if not self.memory.needs_compaction(self.memory_compaction_bytes):
@@ -50,6 +72,8 @@ class ConwayLoop:
                 state.compactions += 1
                 self.memory.journal({'cycle': state.cycle, 'event': 'memory_compaction', 'after_bytes': self.memory.memory_bytes()})
                 return
+        except EmergencyStop:
+            raise
         except Exception as exc:
             self.memory.journal({'cycle': state.cycle, 'event': 'memory_compaction_error', 'error': type(exc).__name__})
         # Run the bounded fallback at the actual threshold, not four times later.
@@ -62,6 +86,8 @@ class ConwayLoop:
         state.session_id = state.session_id or uuid.uuid4().hex
         state.started_at = datetime.now(timezone.utc).isoformat()
         state.task = self.task
+        state.loop_mode = 'continuous' if self.continuous else 'session'
+        state.next_wake_at = None
         state.status, state.dry_run, state.stop_reason = 'running', self.dry_run, None
         self.control = SessionControl(self.memory.root, state.session_id)
         self.executor.control = self.control
@@ -79,8 +105,10 @@ class ConwayLoop:
             was_paused = False
             while self.control.command() == 'pause':
                 was_paused = True
-                state.status = 'paused'
-                self.memory.save_state(state)
+                if state.status != 'paused':
+                    state.status = 'paused'
+                    state.next_wake_at = None
+                    self.memory.save_state(state)
                 if deadline and time.monotonic() >= deadline:
                     raise EmergencyStop('Time budget reached while paused')
                 self.control.sleep(0.2)
@@ -100,13 +128,18 @@ class ConwayLoop:
                 state.cycle += 1
                 completed += 1
                 observation, operation_id = None, uuid.uuid4().hex
+                next_delay, next_phase = self.interval, 'running'
                 try:
                     constitution = self.memory.constitution()
                     if self.task:
                         constitution += ('\n\n## Current session goal\nThe user supplied the goal below for this session. '
                                          'Follow the constitution above; do not treat goals from previous sessions as current assignments. '
                                          'Verify the goal before declaring completion.\n' + self.task)
+                    if self.continuous:
+                        constitution += CONTINUOUS_DIRECTIVE
                     observation = self.computer.observe(state.cycle)
+                    if self.continuous:
+                        self.policy.observe(observation)
                     state.last_observation = observation.summary()
                     decision = self.brain.decide(constitution, self.memory.recall(self.context_chars), observation)
                     self.control.check()
@@ -120,13 +153,18 @@ class ConwayLoop:
                     record = action_record(action)
                     state.last_action = json.dumps(record, ensure_ascii=False)
                     state.last_rationale = decision.rationale
+                    if self.continuous and action['type'] in SIDE_EFFECT_ACTIONS:
+                        self.policy.check_repeat(action)
                     if self.dry_run:
                         result = f"planned only: {action['type']}; no action executed"
+                    elif self.continuous and action['type'] == 'wait':
+                        result = 'Idle requested; the scheduler will wait and obtain a fresh observation.'
                     else:
-                        state.pending_action = {'id': operation_id, 'action': record}
-                        # Write intent durably BEFORE a side effect. Recovery never replays it.
-                        self.memory.save_state(state)
-                        self.memory.journal({'event': 'action_intent', 'cycle': state.cycle, 'id': operation_id, 'action': record})
+                        if action['type'] in SIDE_EFFECT_ACTIONS:
+                            state.pending_action = {'id': operation_id, 'action': record}
+                            # Write intent durably BEFORE a side effect. Recovery never replays it.
+                            self.memory.save_state(state)
+                            self.memory.journal({'event': 'action_intent', 'cycle': state.cycle, 'id': operation_id, 'action': record})
                         self.control.check()
                         result = self.executor.execute(action, observation)
                     state.last_result = str(result)[:16000]
@@ -142,9 +180,27 @@ class ConwayLoop:
                     if not self.quiet:
                         print(json.dumps({'cycle': state.cycle, 'action': action['type'], 'mode': 'plan' if self.dry_run else 'execute'}), flush=True)
                     if action['type'] == 'finish':
-                        state.status = 'planned' if self.dry_run else ('error' if action['args']['outcome'] == 'failed' else 'completed')
-                        state.stop_reason = action['args']['reason'] or 'Model ended the session'
-                        break
+                        if not self.continuous:
+                            state.status = 'planned' if self.dry_run else ('error' if action['args']['outcome'] == 'failed' else 'completed')
+                            state.stop_reason = action['args']['reason'] or 'Model ended the session'
+                            break
+                        state.goal_reports += 1
+                        state.last_goal_report = {**action['args'], 'cycle': state.cycle, 'verified': False, 'dry_run': self.dry_run}
+                        self.memory.journal({'event': 'goal_report', 'session_id': state.session_id,
+                                             **state.last_goal_report})
+                    if self.continuous:
+                        if action['type'] in {'wait', 'finish'}:
+                            next_delay = max(self.policy.idle_delay(), action['args'].get('seconds', 0))
+                            next_phase = 'idle'
+                        else:
+                            self.policy.idle_streak = 0
+                except RepeatedAction as exc:
+                    errors = 0
+                    state.last_result = str(exc)
+                    self.memory.journal({'event': 'action_suppressed', 'cycle': state.cycle,
+                                         'id': operation_id, 'action': record, 'result': state.last_result,
+                                         'dry_run': self.dry_run})
+                    next_delay, next_phase = self.policy.idle_delay(), 'idle'
                 except EmergencyStop:
                     raise
                 except Exception as exc:
@@ -161,25 +217,31 @@ class ConwayLoop:
                         state.status, state.stop_reason = 'error', 'Action outcome uncertain; inspect the desktop before restart'
                         break
                     if errors >= self.max_errors:
-                        state.status, state.stop_reason = 'error', 'Consecutive error limit reached'
-                        break
-                    self.control.sleep(min(10, 0.5 * 2**(errors - 1)))
+                        if not self.continuous:
+                            state.status, state.stop_reason = 'error', 'Consecutive error limit reached'
+                            break
+                        next_delay = self.policy.recovery_delay(errors - self.max_errors)
+                    else:
+                        next_delay = min(10, 0.5 * 2**min(errors - 1, 20))
+                    next_phase = 'recovering' if self.continuous else 'running'
                 finally:
                     try:
                         self.computer.prune_screenshots(keep=self.screenshot_keep)
                     except OSError:
                         pass  # Screenshot cleanup must not replace the primary outcome.
                     self.memory.save_state(state)
-                self.control.sleep(self.interval)
+                if not self.max_steps or completed < self.max_steps:
+                    self._sleep(next_delay, next_phase, state, deadline, paused)
         except EmergencyStop as exc:
             state.status, state.stop_reason = 'stopped', str(exc)
         except KeyboardInterrupt:
             state.status, state.stop_reason = 'stopped', 'Keyboard interrupt'
             raise
         finally:
-            if state.status in {'running', 'paused'}:
+            if state.status in {'running', 'paused', 'idle', 'recovering'}:
                 state.status = 'stopped'
                 state.stop_reason = state.stop_reason or 'Step budget reached'
             state.pid = None
+            state.next_wake_at = None
             self.memory.save_state(state)
         return state.status

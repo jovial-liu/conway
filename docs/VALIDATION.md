@@ -2,6 +2,8 @@
 
 This release separates implemented behavior from deployment claims.
 
+Version 0.7.0 adds the [continuous autonomous loop](AUTONOMOUS.md). New lifecycle tests verify continued operation after subgoal completion/failure, transient recovery, repeated-action suppression, interruptible backoff, no stdin dependency and cooperative SIGTERM cleanup. They are synthetic protocol/lifecycle evidence, not real-model long-duration task-performance results.
+
 Version 0.6.0 adds `preflight`, `vision-check` and session tasks. Follow [device acceptance](ACCEPTANCE.md) to collect evidence on the target machine. The new tests cover seeded image generation, hit/miss/error accounting, generic/OpenCUA image protocol fixtures, diagnostic cleanup, timed capture, private metadata omission, exclusive report writes and task lifecycle. A pixel-reading HTTP fixture verifies the scoring pipeline; it is not a real VLM and its scores are not model benchmark results.
 
 ## Automated coverage

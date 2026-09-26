@@ -10,7 +10,8 @@ from . import __version__
 from .brain import MockBrain, OpenAICompatibleVLM, OpenCUABrain
 from .computer import Computer, MockComputer
 from .config import ensure_config, load_config, _merge_dataclass
-from .control import SessionControl
+from .control import EmergencyStop, SessionControl, termination_signals
+from .autonomy import AutonomyPolicy
 from .hardware import choose_model_profile, detect_hardware, doctor_report, load_model_manifest, InsufficientMemoryError
 from .lock import InstanceLock
 from .loop import ConwayLoop
@@ -69,19 +70,23 @@ def build_parser() -> argparse.ArgumentParser:
     export = sub.add_parser('export', help='Export local trajectory events, without screenshots or uploading')
     export.add_argument('--output', required=True, type=Path)
     export.add_argument('--include-dry-run', action='store_true')
-    start = sub.add_parser('start', help='Run the observe/decide/act loop')
-    start.add_argument('--profile', choices=_PROFILE_CHOICES)
-    start.add_argument('--brain', choices=_BRAIN_CHOICES)
-    start.add_argument('--endpoint')
-    start.add_argument('--model')
-    start.add_argument('--port', type=int)
+    run = sub.add_parser('run', help='Continuously act from the constitution; no conversation or task prompt')
+    run.set_defaults(execute=True)
+    run.add_argument('--observe', dest='execute', action='store_false', help='Continuous observation and planning without actions')
+    start = sub.add_parser('start', help='Single session / acceptance test; finish ends this session')
+    for command in (run, start):
+        command.add_argument('--profile', choices=_PROFILE_CHOICES)
+        command.add_argument('--brain', choices=_BRAIN_CHOICES)
+        command.add_argument('--endpoint')
+        command.add_argument('--model')
+        command.add_argument('--port', type=int)
+        command.add_argument('--gui-only', action='store_true')
+        command.add_argument('--mock', action='store_true', help='Offline synthetic desktop; no model, GUI or system actions')
+        command.add_argument('--max-steps', type=_steps, default=0)
+        command.add_argument('--max-seconds', type=_positive, default=0)
+        command.add_argument('--interval', type=_positive)
+        command.add_argument('--quiet', action='store_true')
     start.add_argument('--execute', action='store_true', help='Enable current-user actions for this process only')
-    start.add_argument('--gui-only', action='store_true')
-    start.add_argument('--mock', action='store_true', help='Offline synthetic desktop; no model, GUI or system actions')
-    start.add_argument('--max-steps', type=_steps, default=0)
-    start.add_argument('--max-seconds', type=_positive, default=0)
-    start.add_argument('--interval', type=_positive)
-    start.add_argument('--quiet', action='store_true')
     task = start.add_mutually_exclusive_group()
     task.add_argument('--task', help='Goal for this session, subject to constitution.md')
     task.add_argument('--task-file', type=Path, help='UTF-8 file containing this session goal (at most 16000 characters)')
@@ -157,7 +162,7 @@ def start_conway(args: argparse.Namespace) -> int:
     if args.mock:
         settings = replace(settings, gui=False)
     runtime, brain = None, None
-    with InstanceLock(memory.root / 'instance.lock'):
+    with InstanceLock(memory.root / 'instance.lock'), termination_signals():
         try:
             computer = MockComputer(memory.root / 'screenshots') if args.mock else Computer(
                 memory.root / 'screenshots', ui_tree=config.ui_tree, ui_timeout=config.ui_timeout, ui_max_nodes=config.ui_max_nodes)
@@ -192,8 +197,16 @@ def start_conway(args: argparse.Namespace) -> int:
             runner = ConwayLoop(brain, executor, memory, dry_run=not args.execute,
                 interval=config.interval, max_steps=args.max_steps, screenshot_keep=config.screenshot_keep,
                 memory_compaction_bytes=config.memory_compaction_bytes, max_errors=config.max_errors,
-                context_chars=config.context_chars, max_seconds=args.max_seconds, quiet=args.quiet, task=task)
+                context_chars=config.context_chars, max_seconds=args.max_seconds, quiet=args.quiet, task=task,
+                continuous=args.command == 'run', policy=AutonomyPolicy(**{name: getattr(config, name) for name in
+                    ('idle_initial_seconds', 'idle_max_seconds', 'recovery_initial_seconds', 'recovery_max_seconds', 'repeat_action_limit')}))
             return 1 if runner.run() == 'error' else 0
+        except EmergencyStop as exc:
+            state = memory.load_state()
+            state.status, state.pid, state.next_wake_at = 'stopped', None, None
+            state.stop_reason = str(exc)
+            memory.save_state(state)
+            return 0
         except Exception as exc:
             state = memory.load_state()
             state.status, state.pid = 'error', None
@@ -212,7 +225,7 @@ def start_conway(args: argparse.Namespace) -> int:
 def request_control(root, command) -> int:
     memory = FileMemory(root)
     state = memory.load_state()
-    if state.status not in {'starting', 'running', 'paused'} or not state.session_id:
+    if state.status not in {'starting', 'running', 'paused', 'idle', 'recovering'} or not state.session_id:
         print('No active session recorded', file=sys.stderr)
         return 1
     SessionControl(memory.root, state.session_id).request(command)

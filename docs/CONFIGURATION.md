@@ -13,7 +13,10 @@ Important defaults:
 | `port`, `context_size` | 8042, 8192 | Local server loopback port and context allocation |
 | `interval` | 0.5 | Delay between cycles in seconds |
 | `request_timeout`, `startup_timeout` | 180, 900 | Model request / initial runtime wait bounds |
-| `max_errors` | 5 | Maximum consecutive pre-dispatch failures |
+| `max_errors` | 5 | Session failure limit; in continuous mode, threshold for longer recovery backoff |
+| `idle_initial_seconds`, `idle_max_seconds` | 2, 60 | Continuous idle backoff range |
+| `recovery_initial_seconds`, `recovery_max_seconds` | 5, 300 | Continuous recovery backoff range after the error threshold |
+| `repeat_action_limit` | 3 | Same side-effect action allowed on an unchanged observation before suppression |
 | `context_chars` | 16000 | Character budget, not a tokenizer-exact context limit |
 | `memory_compaction_bytes` | 64000 | Upper ceiling; effective trigger also respects half the context-character budget |
 | `screenshot_keep` | 30 | Recent images retained |
@@ -24,7 +27,9 @@ Important defaults:
 | `tools.max_shell_seconds` | 45 | Shell command time budget, also bounded by action schema |
 | `tools.max_output_chars` | 12000 | File/shell output bound |
 
-`--execute` is deliberately a process-start flag, not a persistent config value. All default tool settings may be active once it is used. No step-by-step conversational approval is inserted.
+`conway run` executes enabled tools continuously by default; use `run --observe` for planning only. The compatibility `start` command requires `--execute` and stops on `finish`. Execution mode is selected at process start, not persisted as a permission in config. No step-by-step conversational approval is inserted. `run` has no chat/task-input option; its ongoing goal comes from the constitution.
+
+Pacing values must be finite numbers between 0.1 and 3600 seconds, with each initial value no greater than its maximum. `repeat_action_limit` must be an integer from 1 to 50. Old config files inherit these defaults without being rewritten.
 
 Example external setup:
 
@@ -53,7 +58,7 @@ State is atomically replaced and the previous valid version is kept. Malformed s
 
 A new run logs the uncertain previous intent and gets a new observation. It does not replay the old action. The model may choose subsequent work after reading the uncertainty; this is not an exactly-once guarantee for arbitrary GUI/system operations. Review the desktop after a crash before restarting execution.
 
-`completed` means the model returned `finish` with a completed outcome. It does **not** independently verify the external task. OpenCUA `FAIL` becomes a failed outcome, not completion. Exported trajectories leave task-success labels unknown.
+For `start`, `completed` means the model returned `finish` with a completed outcome. It does **not** independently verify the external task. OpenCUA `FAIL` becomes a failed outcome, not completion. For `run`, either outcome increments `goal_reports`, stores `last_goal_report` with `verified: false`, and continues. `idle` and `recovering` are live states with `next_wake_at`, not terminal results. Exported trajectories leave task-success labels unknown.
 
 ## Storage and privacy
 

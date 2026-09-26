@@ -13,7 +13,7 @@ tags:
 
 Conway loads a constitution, observes the desktop, asks a VLM for one next action, dispatches it, records the outcome, and observes again. The model can choose direct file/system tools or screenshot-driven GUI interaction. GitHub hosts development; Hugging Face distributes source and references existing model weights. This repository is **not a newly trained model** and does not run a hosted agent.
 
-**Status: v0.6.0 engineering release candidate.** Includes deployment preflight, scored synthetic vision checks and session goals. Offline protocol/lifecycle tests are not evidence of real-model GUI accuracy. Native accessibility adapters remain experimental. Read the validation matrix before unattended use.
+**Status: v0.7.0 engineering release candidate.** `conway run` is the continuous autonomous entry point: no conversation window, input prompt or per-action user turn. It chooses work from the constitution and observations, continues beyond subgoal completion, and paces idle/recovery cycles. Offline tests are not evidence of real-model GUI accuracy. Native accessibility adapters remain experimental.
 
 ## Start
 
@@ -32,22 +32,38 @@ For real local inference, install a compatible `llama-server` first. Then:
 
 ```sh
 conway probe
-conway start --max-steps 3
-conway start --execute
+conway run --observe --max-steps 3
+conway run
 ```
 
-`probe` sends a synthetic PNG and checks the model protocol; it never touches your desktop. `start` without `--execute` captures real screenshots and plans but does not dispatch actions. `--execute` enables the configured current-user tools for the process; there is no per-action approval dialog.
+`probe` sends a synthetic PNG and checks the model protocol; it never touches your desktop. `run` executes enabled current-user tools continuously; `run --observe` captures real screenshots and plans without dispatching actions. There is no per-action approval dialog. Set ongoing objectives and scope in constitution.md once, then let the agent choose its next actions. Existing constitutions are preserved.
 
 For an existing multimodal server, auto-discover its served model ID:
 
 ```sh
 conway probe --endpoint http://127.0.0.1:8000/v1
-conway start --endpoint http://127.0.0.1:8000/v1 --execute
+conway run --endpoint http://127.0.0.1:8000/v1
 ```
 
 With multiple served models, pass `--model` using a returned `/v1/models` ID. An API's model alias need not equal its Hugging Face repository ID.
 
-## Check your device and give it a task
+## Continuous operation
+
+```sh
+conway run --quiet
+conway status
+conway pause
+conway resume
+conway stop
+```
+
+These management commands can run from another terminal; they are not a chat interface. `run` stays in its launching process, opens no UI and never reads stdin. `--quiet` suppresses cycle output; file state and journal remain available. `finish`/OpenCUA `DONE` or `FAIL` records a model-reported subgoal outcome and continues. No success label is inferred from that declaration.
+
+Unchanged idle observations use 2, 4, 8…60-second backoff. After repeated pre-dispatch errors, the agent waits 5, 10, 20…300 seconds and retries from a fresh observation. Stop/pause remain responsive during these waits. By default, three identical side-effect actions on an unchanged screenshot are allowed; another repeat is suppressed and reported to the model so it can change approach or wait. This heuristic is not a general task-success detector.
+
+`--max-steps` and `--max-seconds` optionally bound a run. Explicit stop, Ctrl+C, cooperative SIGTERM, mouse failsafe and uncertain side-effect failures still end execution. There is no automatic respawn after a stop and no boot-service installation. See [autonomous loop semantics](docs/AUTONOMOUS.md) and the [ongoing-constitution example](examples/constitution.autonomous.md).
+
+## Device checks and optional single-session acceptance
 
 ```sh
 conway preflight --desktop --output ./preflight.json
@@ -60,22 +76,23 @@ conway start --task-file ./task.md --execute --max-steps 30 --max-seconds 300
 
 `vision-check` sends generated color-target images to the configured model and scores the proposed clicks without executing them. Each report includes per-case hits, target bounds, image hashes, latency and model ID. The seed reproduces the suite; this small synthetic check does not measure real application task success. Exit codes: `0` for all targets hit, `2` for misses/errors, `1` for setup errors. Reports must be new files outside the state directory. See [device acceptance](docs/ACCEPTANCE.md).
 
-`--task` or a UTF-8 `--task-file` sets the goal for this invocation, subject to the constitution. It appears in `status` and the journal, does not edit the constitution and is not automatically reused on the next start. Existing file memory remains intact.
+The older `start` command remains for single-session acceptance: a `finish` ends that session, and execution requires `--execute`. Its optional `--task`/UTF-8 `--task-file` is not required or accepted by the continuous `run` entry point. Existing file memory remains intact.
 
 ## Runtime design
 
-```text
-constitution.md + rolling file context
-                  |
-      observe -> decide -> validate -> record intent -> act
-         ^                                        |
-         +----------- next observation <--- record result
-
-Brain: generic JSON VLM | OpenCUA literal action adapter
-Tools: GUI | shell | read/write/list files | open URL | finish
-State: Markdown + atomic JSON + append-only JSONL
-Control: pause / resume / stop + step/time/error budgets
+```mermaid
+flowchart TD
+    O[Observe] --> D[Choose next action]
+    D -->|action| A[Validate and act]
+    A -->|result| O
+    D -->|wait or subgoal report| I[Idle backoff]
+    D -->|temporary error| R[Recovery backoff]
+    I --> O
+    R --> O
+    A -->|uncertain outcome| S[Stop with pending intent]
 ```
+
+The constitution and rolling file context guide each decision. Generic JSON VLM and OpenCUA adapters share the action loop. State uses Markdown, atomic JSON and append-only JSONL. Pause/resume/stop and optional time/step budgets control the process.
 
 Conway does not evaluate OpenCUA-generated Python. Its AST parser translates one allowlisted literal call into the same normalized action schema used by the generic VLM. Smart-resized image coordinates are mapped back to screenshot pixels, then to the host input coordinate space. Server-specific processor limits must match the configured OpenCUA pixel limits.
 
@@ -88,7 +105,7 @@ conway resume
 conway stop
 conway config --check
 conway models
-conway start --execute --max-steps 100 --max-seconds 600
+conway run --max-steps 100 --max-seconds 600
 ```
 
 Controls are cooperative and scoped to one session. A stop arriving during inference prevents its returned action from dispatching; an in-flight native operation still needs to return. `Ctrl+C` and the PyAutoGUI corner failsafe remain available. `--max-seconds` is not an OS-enforced hard deadline.

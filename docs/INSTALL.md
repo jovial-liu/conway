@@ -2,7 +2,7 @@
 
 ## 1. Install Conway
 
-Python 3.11+ is required. Clone the source, create a virtual environment, and run `python -m pip install -e .`. The `conway` console entry point and `python -m conway` are equivalent. A built `conway_agent-0.5.0-py3-none-any.whl` installs with `python -m pip install PATH_TO_WHEEL`; runtime Python dependencies still need to be installed.
+Python 3.11+ is required. Clone the source, create a virtual environment, and run `python -m pip install -e .`. The `conway` console entry point and `python -m conway` are equivalent. A built `conway_agent-0.7.0-py3-none-any.whl` installs with `python -m pip install PATH_TO_WHEEL`; runtime Python dependencies still need to be installed. Use `conway run` for continuous autonomous execution from the constitution; see [loop semantics](AUTONOMOUS.md).
 
 On Windows, use `.venv\Scripts\python.exe` and `.venv\Scripts\conway.exe` directly instead of changing execution policy. On macOS/Linux activate the environment with `source .venv/bin/activate`.
 
@@ -37,7 +37,7 @@ Then connect:
 
 ```sh
 conway probe --endpoint http://127.0.0.1:8000/v1 --brain opencua
-conway start --endpoint http://127.0.0.1:8000/v1 --brain opencua --execute
+conway run --endpoint http://127.0.0.1:8000/v1 --brain opencua
 ```
 
 If needed, add `--model opencua-7b` using the actual served alias. Set `opencua_min_pixels` and `opencua_max_pixels` to match the server's image processor. Defaults follow the model card (3136 and 12845056, factor 28). This adapter uses one screenshot per decision and a strict single-literal-call subset; it is not the official multi-screenshot benchmark harness. Unsupported multiline programs are rejected, never executed.

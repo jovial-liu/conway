@@ -13,6 +13,7 @@ GUI_ACTIONS = frozenset({'wait', 'click', 'double_click', 'move', 'type', 'press
 SYSTEM_ACTIONS = frozenset({'shell', 'read_file', 'write_file', 'list_dir', 'open_url'})
 CONTROL_ACTIONS = frozenset({'finish'})
 ALL_ACTIONS = GUI_ACTIONS | SYSTEM_ACTIONS | CONTROL_ACTIONS
+SIDE_EFFECT_ACTIONS = (GUI_ACTIONS - {'wait'}) | {'shell', 'write_file', 'open_url'}
 
 
 def _number(args: dict[str, Any], key: str) -> float:

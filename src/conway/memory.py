@@ -29,6 +29,10 @@ class RuntimeState:
     dry_run: bool = True
     session_id: str | None = None
     task: str | None = None
+    loop_mode: str = 'session'
+    goal_reports: int = 0
+    last_goal_report: dict[str, Any] | None = None
+    next_wake_at: str | None = None
     pending_action: dict[str, Any] | None = None
     stop_reason: str | None = None
     last_action: str | None = None
@@ -164,16 +168,18 @@ class FileMemory:
         data = json.loads(text)
         if not isinstance(data, dict):
             raise ValueError('state must be an object')
-        for key in ('cycle', 'error_count', 'compactions'):
+        for key in ('cycle', 'error_count', 'compactions', 'goal_reports'):
             if key in data and (type(data[key]) is not int or data[key] < 0):
                 raise ValueError(f'invalid {key} in state')
         if 'schema_version' in data and data['schema_version'] != 1:
             raise ValueError('unsupported state schema')
-        for key in ('status', 'session_id', 'task', 'brain', 'last_result', 'stop_reason'):
+        for key in ('status', 'session_id', 'task', 'loop_mode', 'next_wake_at', 'brain', 'last_result', 'stop_reason'):
             if key in data and data[key] is not None and not isinstance(data[key], str):
                 raise ValueError(f'invalid {key} in state')
         if data.get('pending_action') is not None and not isinstance(data['pending_action'], dict):
             raise ValueError('pending_action must be an object or null')
+        if data.get('last_goal_report') is not None and not isinstance(data['last_goal_report'], dict):
+            raise ValueError('last_goal_report must be an object or null')
         return RuntimeState(**{k: v for k, v in data.items() if k in RuntimeState.__dataclass_fields__})
 
     def load_state(self) -> RuntimeState:
