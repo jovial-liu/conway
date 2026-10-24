@@ -2,7 +2,7 @@
 
 ## 1. Install Conway
 
-Python 3.11+ is required. Clone the source, create a virtual environment, and run `python -m pip install -e .`. The `conway` console entry point and `python -m conway` are equivalent. A built `conway_agent-0.7.0-py3-none-any.whl` installs with `python -m pip install PATH_TO_WHEEL`; runtime Python dependencies still need to be installed. Use `conway run` for continuous autonomous execution from the constitution; see [loop semantics](AUTONOMOUS.md).
+Python 3.11+ is required. Clone the source, create a virtual environment, and run `python -m pip install -e .`. The `conway` console entry point and `python -m conway` are equivalent. A built wheel can be installed with `python -m pip install PATH_TO_WHEEL`; pip resolves its declared runtime dependencies unless `--no-deps` is used. Use `conway run` for continuous autonomous execution from the constitution; see [loop semantics](AUTONOMOUS.md).
 
 On Windows, use `.venv\Scripts\python.exe` and `.venv\Scripts\conway.exe` directly instead of changing execution policy. On macOS/Linux activate the environment with `source .venv/bin/activate`.
 
